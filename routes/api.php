@@ -68,8 +68,9 @@ Route::post('/withdraw', 'WithdrawController@doWithdraw');
 Route::get('/withdrawList', 'WithdrawController@withdrawList');
 
 // pointhistory api
-Route::post('/pointhistory', 'PointHistoryController@doPointHistory');
-Route::get('/pointhistoryList', 'PointHistoryController@pointHistoryList');
+Route::post('/pointHistory', 'PointHistoryController@doPointHistory');
+Route::get('/pointHistoryList', 'PointHistoryController@pointHistoryList');
 
 // xmpp history
-Route::get('/getXmppHistory', 'BasicController@getXmppHistory');
+Route::post('/chatHistory', 'ChatHistoryController@doChatHistory');
+Route::get('/chatHistoryList', 'ChatHistoryController@chatHistoryList');
