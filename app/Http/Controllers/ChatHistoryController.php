@@ -71,12 +71,8 @@ class ChatHistoryController extends BasicController
         }
 
         $response = ChatHistory::select('*');
-        if($user_no != null) {
-            $response = $response->where('from_user_no', $user_no);
-        }
-
-        if($to_user_no != null) {
-            $response = $response->where('to_user_no', $to_user_no);
+        if($user_no != null && $to_user_no != null) {
+            $response = $response->where(['from_user_no' => $user_no,  'to_user_no' => $to_user_no])->orWhere(['to_user_no' => $user_no,  'from_user_no' => $to_user_no]);
         }
 
         $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();

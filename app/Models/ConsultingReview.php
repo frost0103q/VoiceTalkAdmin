@@ -11,9 +11,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TalkReview extends Model
+class ConsultingReview extends Model
 {
-    protected $table = 't_talkreview';
+    protected $table = 't_consultingreview';
 
     protected $primaryKey = 'no';
 }

@@ -16,7 +16,7 @@ class AppUser extends Model
         $real_point = $pointRule[$type];
 
         if($type ==  config('constants.POINT_HISTORY_TYPE_CHAT')) {
-            $real_point = $min_point * $real_point;
+            $real_point = $min_point;
         }
         else if($type ==  config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE') || $type ==  config('constants.POINT_HISTORY_TYPE_SIGN_UP')
             || $type ==  config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')) {

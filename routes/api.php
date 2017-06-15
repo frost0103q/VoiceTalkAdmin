@@ -35,6 +35,7 @@ Route::post('/setAlarmFlag', 'UsersController@setAlarmFlag');
 Route::post('/sendAlarm', 'UsersController@sendAlarm');
 Route::post('/checkRoll', 'UsersController@checkRoll');
 Route::post('/logForVoiceChat', 'UsersController@logForVoiceChat');
+Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
 
 // user relation api
 Route::post('/addFriend', 'UserRelationController@addFriend');
@@ -52,7 +53,6 @@ Route::post('/autoRemoveAuth', 'UsersController@autoRemoveAuth');
 Route::post('/talk', 'TalkController@doTalk');
 Route::get('/talk', 'TalkController@talk');
 Route::get('/talkList', 'TalkController@talkList');
-Route::post('/writeTalkReview', 'TalkController@writeReview');
 Route::get('/checkDuplicateTalk', 'TalkController@duplicateTalk');
 
 

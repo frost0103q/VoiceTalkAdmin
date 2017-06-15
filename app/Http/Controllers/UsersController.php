@@ -8,6 +8,7 @@ use App\Models\AuthCode;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\UserDeclare;
+use App\Models\ConsultingReview;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use App\Providers\AuthServiceProvider;
@@ -120,8 +121,13 @@ class UsersController extends BasicController
         }
         $to = $results[0];
 
-        if($type >= config('constants.POINT_HISTORY_TYPE_ROLL_CHECK') && $type <= config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
-            $from->addPoint($type, (-1)*$point);
+
+        if($type == config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
+                $from->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), (-1)*$point);
+                $to->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+        }
+        else if($type == config('constants.POINT_HISTORY_TYPE_CHAT')) {
+            $from->addPoint($type, (-1) * $point);
             $to->addPoint($type, $point);
         }
         else {
@@ -719,7 +725,50 @@ class UsersController extends BasicController
         $to_user = $results[0];
         $point = $time_in_second/60 * 200;
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
+        $response['no'] = $point;
+        return response()->json($response);
+    }
+
+    public function writeReviewConsulting(HttpRequest $request) {
+        $from_user_no  = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+        $mark = $request->input('mark');
+
+        if($from_user_no == null || $to_user_no == null || $mark == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        if($from_user_no == $to_user_no) {
+            $response = config('constants.ERROR_NOT_ENABLE_SELF_REVIEW');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $from_user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $from_user = $results[0];
+
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $to_user = $results[0];
+
+        $consulting_review = new ConsultingReview;
+
+        $consulting_review->from_user_no = $from_user_no;
+        $consulting_review->to_user_no = $to_user_no;
+        $consulting_review->mark = $mark;
+
+        $consulting_review->save();
 
         return response()->json($response);
     }
+
 }
