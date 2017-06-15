@@ -24,7 +24,9 @@ Route::post('/login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginControl
 Route::post('/setting', array('as'=>"do_setting", 'uses' => 'Admin\AdminSettingController@doSetting'));
 
 // Agreement Pages
-Route::get('/agree/non_agree_photo', 'AgreementController@non_agree_photo');
+Route::get('/agree/non_agree_img', 'AgreementController@non_agree_img');
+Route::get('/agree/profile_img', 'AgreementController@profile_img');
+Route::get('/agree/talk_img', 'AgreementController@talk_img');
 
 // notifiy page
 Route::get('/notify', 'Admin\AdminSettingController@notify');

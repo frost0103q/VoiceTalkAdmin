@@ -76,6 +76,6 @@ class AdminLoginController extends BasicController
 		
 		Session::put('u_email', $email);
 		
-		return redirect('/agree/non_agree_photo');
+		return redirect('/agree/non_agree_img');
 	}
 }

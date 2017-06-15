@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 
-<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
-<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="en">
 <!--<![endif]-->
@@ -46,7 +48,8 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="index.html">
-                <img src="{{ asset('img/logo.png')}}" alt="logo" class="logo-default" style="height: 33px;margin-top: 8px;"/>
+                <img src="{{ asset('img/logo.png')}}" alt="logo" class="logo-default"
+                     style="height: 33px;margin-top: 8px;"/>
             </a>
             <div class="menu-toggler sidebar-toggler hide">
                 <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
@@ -59,9 +62,10 @@
             <ul class="nav navbar-nav pull-right">
                 <!-- BEGIN USER LOGIN DROPDOWN -->
                 <li class="dropdown dropdown-user">
-                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                       data-close-others="true">
                         <i class="icon-user"></i>
-					    <span class="username username-hide-on-mobile">	Admin </span>
+                        <span class="username username-hide-on-mobile">	Admin </span>
                         <i class="fa fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-default">
@@ -106,14 +110,14 @@
                         <span class="arrow "></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">미 승인건 모아보기</a>
+                        <li menu_index="1">
+                            <a href="/agree/non_agree_img">미 승인건 모아보기</a>
                         </li>
-                        <li>
-                            <a href="#">프로필사진</a>
+                        <li menu_index="2">
+                            <a href="/agree/profile_img">프로필사진</a>
                         </li>
-                        <li>
-                            <a href="#">Talk사진</a>
+                        <li menu_index="3">
+                            <a href="/agree/talk_img">Talk사진</a>
                         </li>
                     </ul>
                 </li>
@@ -124,10 +128,10 @@
                         <span class="arrow "></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
+                        <li menu_index="4">
                             <a href="#">미승인Voice</a>
                         </li>
-                        <li>
+                        <li menu_index="5">
                             <a href="#">승인Voice</a>
                         </li>
                     </ul>
@@ -139,7 +143,7 @@
     <!-- END SIDEBAR -->
     <!-- BEGIN CONTENT -->
     @yield('content')
-    <!-- END CONTENT -->
+            <!-- END CONTENT -->
 </div>
 <!-- END CONTAINER -->
 <!-- BEGIN FOOTER -->
@@ -181,15 +185,32 @@
 <script src="{{ asset('scripts/quick-sidebar.js')}}" type="text/javascript"></script>
 <script src="{{ asset('scripts/demo.js')}}" type="text/javascript"></script>
 <script>
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
         Metronic.init(); // init metronic core components
         Layout.init(); // init current layout
         QuickSidebar.init(); // init quick sidebar
         Demo.init(); // init demo features
     });
 </script>
+
+<?php
+if(isset($menu_index)){
+    for($i = 1; $i <= 25;$i++){
+        if ($i == $menu_index){
+        ?>
+        <script>
+            $("li[menu_index='<?=$i?>']").addClass("active");
+            $("li[menu_index='<?=$i?>']").parents('li').addClass('active').addClass("open");
+            $("li.active.open a").append('<span class="selected"></span>');
+        </script>
+        <?php
+        }
+    }
+}
+?>
+
 @yield('scripts')
-<!-- END JAVASCRIPTS -->
+        <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->
 </html>

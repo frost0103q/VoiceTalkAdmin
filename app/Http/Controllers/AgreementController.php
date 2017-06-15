@@ -30,21 +30,18 @@ class AgreementController extends BasicController
         
     }
 
-    public function serviceAgreementPage() {
-        return view('agreement.service_agreement');
-    }
-
-    public function gpsAgreementPage() {
-        return view('agreement.gps_agreement');
-    }
-
-    public function privacyAgreementPage()
+    public function non_agree_img()
     {
-        return view('agreement.privacy_agreement');
+        return view('agreement.non_agree_img',['menu_index'=>1]);
     }
 
-    public function non_agree_photo()
+    public function profile_img()
     {
-        return view('agreement.non_agree_photo');
+        return view('agreement.profile_img',['menu_index'=>2]);
+    }
+
+    public function talk_img()
+    {
+        return view('agreement.talk_img',['menu_index'=>3]);
     }
 }
