@@ -30,6 +30,6 @@ class HomeController extends BasicController
 	
 	public function index()
 	{
-		return view('welcome');
+		return view('layouts.main');
 	}
 }

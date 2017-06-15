@@ -41,4 +41,9 @@ return [
         'CHATMESSAGE_TYPE_SEND_PRESENT'  =>6,
 
         'CHECK_ROLL_POINT'   => 30,
+		'INVALID_EMAIL'   => 1,
+		'INVALID_PASSWORD'   => 2,
+
+		'SUCCESS'   => 'success',
+		'FAIL'   => 'fail',
 ];

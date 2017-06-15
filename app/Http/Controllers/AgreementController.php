@@ -27,7 +27,7 @@ class AgreementController extends BasicController
      */
     public function __construct()
     {
-
+        
     }
 
     public function serviceAgreementPage() {
@@ -41,5 +41,10 @@ class AgreementController extends BasicController
     public function privacyAgreementPage()
     {
         return view('agreement.privacy_agreement');
+    }
+
+    public function non_agree_photo()
+    {
+        return view('agreement.non_agree_photo');
     }
 }

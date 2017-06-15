@@ -1,281 +1,195 @@
 <!DOCTYPE html>
+
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
 <html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="csrf-token" content="{{ csrf_token() }}" />
-<link rel="icon" type="image/png"
-	href="{!! asset('/images/logo.png')!!}">
-<title>{!!env('APP_NAME')!!}</title>
+    <meta charset="utf-8"/>
+    <title>Metronic | Page Layouts - Blank Page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/uniform.default.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/bootstrap-switch.min.css')}}" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
 
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css')}}"/>
+    <!-- END PAGE LEVEL STYLES -->
 
-<!-- basic styles -->
+    <!-- BEGIN THEME STYLES -->
+    <link href="{{ asset('css/components.css')}}" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/plugins.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/layout.css')}}" rel="stylesheet" type="text/css"/>
+    <link id="style_color" href="{{ asset('css/darkblue.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/custom.css')}}" rel="stylesheet" type="text/css"/>
+    <!-- END THEME STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-quick-sidebar-over-content">
+<!-- BEGIN HEADER -->
+<div class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="index.html">
+                <img src="{{ asset('img/logo.png')}}" alt="logo" class="logo-default" style="height: 33px;margin-top: 8px;"/>
+            </a>
+            <div class="menu-toggler sidebar-toggler hide">
+                <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
+            </div>
+        </div>
+        <!-- END LOGO -->
 
-<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/font-awesome.min.css')}}" />
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <div class="top-menu">
+            <ul class="nav navbar-nav pull-right">
+                <!-- BEGIN USER LOGIN DROPDOWN -->
+                <li class="dropdown dropdown-user">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                        <i class="icon-user"></i>
+					    <span class="username username-hide-on-mobile">	Admin </span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-default">
+                        <li>
+                            <a href="/setting">
+                                <i class="fa fa-cog"></i> 비밀번호변경 </a>
+                        </li>
+                        <li>
+                            <a href="/logout">
+                                <i class="fa fa-power-off"></i> 로그아웃 </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END USER LOGIN DROPDOWN -->
+            </ul>
+        </div>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+    <!-- END HEADER INNER -->
+</div>
+<!-- END HEADER -->
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    <div class="page-sidebar-wrapper">
+        <div class="page-sidebar navbar-collapse collapse">
+            <!-- BEGIN SIDEBAR MENU -->
+            <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+                <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+                <li class="sidebar-toggler-wrapper" style="margin-bottom: 15px">
+                    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+                    <div class="sidebar-toggler">
+                    </div>
+                    <!-- END SIDEBAR TOGGLER BUTTON -->
+                </li>
+                <li class="start">
+                    <a href="javascript:;">
+                        <i class="fa fa-photo"></i>
+                        <span class="title">사진승인</span>
+                        <span class="arrow "></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">미 승인건 모아보기</a>
+                        </li>
+                        <li>
+                            <a href="#">프로필사진</a>
+                        </li>
+                        <li>
+                            <a href="#">Talk사진</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-microphone"></i>
+                        <span class="title">Voice승인</span>
+                        <span class="arrow "></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">미승인Voice</a>
+                        </li>
+                        <li>
+                            <a href="#">승인Voice</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- END SIDEBAR MENU -->
+        </div>
+    </div>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    @yield('content')
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+<div class="page-footer">
+    <div class="page-footer-inner">
+        2017 &copy; Voice Talk
+    </div>
+    <div class="scroll-to-top">
+        <i class="icon-arrow-up"></i>
+    </div>
+</div>
+<!-- END FOOTER -->
+<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="{{ asset('scripts/respond.min.js')}}"></script>
+<script src="{{ asset('scripts/excanvas.min.js')}}"></script>
+<![endif]-->
+<script src="{{ asset('scripts/jquery.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/jquery-migrate.min.js')}}" type="text/javascript"></script>
+<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+<script src="{{ asset('scripts/jquery-ui.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/bootstrap.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/bootstrap-hover-dropdown.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/jquery.slimscroll.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/jquery.blockui.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/jquery.cokie.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/jquery.uniform.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/bootstrap-switch.min.js')}}" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
 
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="{{ asset('scripts/toastr.min.js')}}"></script>
+<script src="{{ asset('scripts/ui-toastr.js')}}"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
 
-<!-- page specific plugin styles -->
-
-<link rel="stylesheet" href="{{ asset('css/jquery-ui-1.10.3.full.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/datepicker.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ui.jqgrid.css')}}" />
-
-<!-- fonts  -->
-
-<link rel="stylesheet" href="{{ asset('css/ace-fonts.css')}}" />
-
-<!-- ace styles -->
-
-<link rel="stylesheet" href="{{ asset('css/ace.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ace-rtl.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ace-skins.min.css')}}" />
-
-
-<!-- ace settings handler -->
-
-<script src="{{ asset('js/ace-extra.min.js')}}"></script>
-
-<script src="{{ asset('js/jquery-2.0.3.min.js')}}"></script>
-<script src="{{ asset('js/jquery.validate.min.js')}}"></script>
-<script src="{{ asset('js/jquery.form.js')}}"></script>
-
-
-
-<script src="{{ asset('js/jquery.mobile.custom.min.js')}}"></script>
-<script src="{{ asset('js/bootstrap.min.js')}}"></script>
-<script src="{{ asset('js/typeahead-bs2.min.js')}}"></script>
-
-<script src="{{ asset('js/jqGrid/jquery.jqGrid.min.js')}}"></script>
-<script src="{{ asset('js/jqGrid/i18n/grid.locale-en.js')}}"></script>
-
-<script src="{{ asset('js/excanvas.min.js')}}"></script>
-<script src="{{ asset('js/jquery-ui-1.10.3.custom.min.js')}}"></script>
-<script src="{{ asset('js/jquery.slimscroll.min.js')}}"></script>
-<script src="{{ asset('js/ace-elements.min.js')}}"></script>
-<script src="{{ asset('js/ace.min.js')}}"></script>
-
-<script type="text/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+<script src="{{ asset('scripts/metronic.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/layout.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/quick-sidebar.js')}}" type="text/javascript"></script>
+<script src="{{ asset('scripts/demo.js')}}" type="text/javascript"></script>
+<script>
+    jQuery(document).ready(function() {
+        Metronic.init(); // init metronic core components
+        Layout.init(); // init current layout
+        QuickSidebar.init(); // init quick sidebar
+        Demo.init(); // init demo features
     });
 </script>
-	
-</head>
-<body ng-app='MyApp'>
-
-	@if (env('APP_DEBUG') == true)
-        <div class="alert alert-danger text-center no-mg-b">
-            You are on the development server! If you are here by mistake, please
-            let me know at <strong>admin@gmail.com</strong>
-        </div>
-	@endif
-
-	<div class="navbar navbar-default" id="navbar">
-		<script type="text/javascript">
-        try {
-            ace.settings.check('navbar', 'fixed')
-        } catch (e) {
-        }
-    	</script>
-
-		<div class="navbar-container" id="navbar-container">
-			<div class="navbar-header pull-left">
-				<a href="./main.php" class="navbar-brand"> <small> <img
-						src="{{ asset('images/logo.png')}}"
-						style="display: inline; width: 18px; height: 18px;" />
-						{!!config('app.name')!!}
-				</small>
-				</a>
-				<!-- /.brand -->
-			</div>
-			<!-- /.navbar-header -->
-
-			<div class="navbar-header pull-right" role="navigation">
-				<ul class="nav ace-nav">
-
-					<li class="light-blue"><a data-toggle="dropdown" href="#"
-						class="dropdown-toggle"> <img class="nav-user-photo"
-							src="{{ asset('avatars/avatar2.png')}}" alt="Admin's Photo" /> <span
-							class="user-info"> <small>Welcome,</small> Admin
-						</span> <i class="icon-caret-down"></i>
-					</a>
-
-						<ul
-							class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-
-							<li><a href="/logout"> <i class="icon-off"></i> Logout
-							</a></li>
-
-						</ul></li>
-				</ul>
-				<!-- /.ace-nav -->
-			</div>
-			<!-- /.navbar-header -->
-		</div>
-		<!-- /.container -->
-	</div>
-
-	<div class="main-container" id="main-container">
-		<script type="text/javascript">
-        try {
-            ace.settings.check('main-container', 'fixed')
-        } catch (e) {
-        }
-    </script>
-
-		<div class="main-container-inner">
-			<a class="menu-toggler" id="menu-toggler" href="#"> <span
-				class="menu-text"></span>
-			</a>
-
-			<div class="sidebar" id="sidebar">
-				<script type="text/javascript">
-                try {
-                    ace.settings.check('sidebar', 'fixed')
-                } catch (e) {
-                }
-            </script>
-
-				<div class="sidebar-shortcuts" id="sidebar-shortcuts">
-					<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-
-					</div>
-
-					<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
-						<span class="btn btn-success"></span> <span class="btn btn-info"></span>
-
-						<span class="btn btn-warning"></span> <span class="btn btn-danger"></span>
-					</div>
-				</div>
-				<!-- #sidebar-shortcuts -->
-
-				<ul class="nav nav-list">
-					<li><a href="/home"> <i class="icon-list"></i> <span
-							class="menu-text"> User List </span>
-					</a></li>
-
-					<li><a href="/rants"> <i class="icon-flag"></i> <span
-							class="menu-text"> Rant List </span>
-					</a></li>
-					
-					<li><a href="/rantcomments"> <i class="icon-heart"></i> <span
-							class="menu-text"> Comment List </span>
-					</a></li>
-					
-					<li><a href="/notifications"> <i class="icon-music"></i> <span
-							class="menu-text"> Notification List </span>
-					</a></li>
-					
-					<li><a href="/setting"> <i class="icon-cogs"></i> <span
-							class="menu-text"> Setting </span>
-					</a></li>
-
-
-				</ul>
-				<!-- /.nav-list -->
-
-				<div class="sidebar-collapse" id="sidebar-collapse">
-					<i class="icon-double-angle-left"
-						data-icon1="icon-double-angle-left"
-						data-icon2="icon-double-angle-right"></i>
-				</div>
-
-				<script type="text/javascript">
-                try {
-                    ace.settings.check('sidebar', 'collapsed')
-                } catch (e) {
-                }
-            </script>
-			</div>
-
-			@yield('content')
-
-			<div class="ace-settings-container" id="ace-settings-container">
-				<div class="btn btn-app btn-xs btn-warning ace-settings-btn"
-					id="ace-settings-btn">
-					<i class="icon-cog bigger-150"></i>
-				</div>
-
-				<div class="ace-settings-box" id="ace-settings-box">
-					<div>
-						<div class="pull-left">
-							<select id="skin-colorpicker" class="hide">
-								<option data-skin="default" value="#438EB9">#438EB9</option>
-								<option data-skin="skin-1" value="#222A2D">#222A2D</option>
-								<option data-skin="skin-2" value="#C6487E">#C6487E</option>
-								<option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
-							</select>
-						</div>
-						<span>&nbsp; Choose Skin</span>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-navbar" /> <label class="lbl"
-							for="ace-settings-navbar"> Fixed Navbar</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-sidebar" /> <label class="lbl"
-							for="ace-settings-sidebar"> Fixed Sidebar</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-breadcrumbs" /> <label class="lbl"
-							for="ace-settings-breadcrumbs"> Fixed Breadcrumbs</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-rtl" /> <label class="lbl"
-							for="ace-settings-rtl"> Right To Left (rtl)</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-add-container" /> <label class="lbl"
-							for="ace-settings-add-container"> Inside <b>.container</b>
-						</label>
-					</div>
-				</div>
-			</div>
-			<!-- /#ace-settings-container -->
-		</div>
-		<!-- /.main-container-inner -->
-
-		<a href="#" id="btn-scroll-up"
-			class="btn-scroll-up btn btn-sm btn-inverse"> <i
-			class="icon-double-angle-up icon-only bigger-110"></i>
-		</a>
-	</div>
-	<!-- /.main-container -->
-
-	<!-- 
-	<script src="{{ asset('js/jquery-2.0.3.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.validate.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.form.js')}}"></script>
-	
-	
-	
-	<script src="{{ asset('js/jquery.mobile.custom.min.js')}}"></script>
-	<script src="{{ asset('js/bootstrap.min.js')}}"></script>
-	<script src="{{ asset('js/typeahead-bs2.min.js')}}"></script>
-	
-	<script src="{{ asset('js/jqGrid/jquery.jqGrid.min.js')}}"></script>
-	<script src="{{ asset('js/jqGrid/i18n/grid.locale-en.js')}}"></script>
-	
-	<script src="{{ asset('js/excanvas.min.js')}}"></script>
-	<script src="{{ asset('js/jquery-ui-1.10.3.custom.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.slimscroll.min.js')}}"></script>
-	<script src="{{ asset('js/ace-elements.min.js')}}"></script>
-	<script src="{{ asset('js/ace.min.js')}}"></script>
-	 -->
-	@yield('scripts')
+@yield('scripts')
+<!-- END JAVASCRIPTS -->
 </body>
+<!-- END BODY -->
 </html>
