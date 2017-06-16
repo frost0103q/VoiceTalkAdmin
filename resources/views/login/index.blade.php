@@ -1,138 +1,110 @@
 @extends('layouts.auth')
 
-@section('scripts')
-@parent
-
+@section('content')
+<div class="content">
+		<!-- BEGIN LOGIN FORM -->
+		{!! Form::open(['action' => 'Admin\AdminLoginController@doLogin', 'method' => 'post', 'id'=>'loginForm']) !!}
+			<h3 class="form-title" style="text-align: center"><strong>관리자 로그인</strong></h3>
+			<div class="alert alert-danger display-hide">
+				<button class="close" data-close="alert"></button>
+			<span id="error_content">
+			이메일 혹은 비밀번호를 정확히 입력하세요.</span>
+			</div>
+			<div class="form-group">
+				<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+				<label class="control-label visible-ie8 visible-ie9">이메일</label>
+				<div class="input-icon">
+					<i class="fa fa-user"></i>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="이메일을 입력하세요." name="email" id="email"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">비밀번호</label>
+				<div class="input-icon">
+					<i class="fa fa-lock"></i>
+					<input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="비밀번호를 입력하세요." name="password" id="password"/>
+				</div>
+			</div>
+			<div class="form-actions">
+				<label class="checkbox">
+					<input type="checkbox" name="remember" value="1"/> 자동 로그인</label>
+				<button type="submit" class="btn green-haze pull-right" id="btn_login">
+					로그인 <i class="m-icon-swapright m-icon-white"></i>
+				</button>
+			</div>
+			<div class="create-account" style="border-top: none">
+				<p>
+					관리자만 리용하는 관리페이지입니다.
+				</p>
+			</div>
+		{!! Form::close() !!}
+		<!-- END LOGIN FORM -->
+	</div>
 @stop
 
-@section('content')
+@section('scripts')
+<script>
 
-<script type="text/javascript">
-var error = '<?php if(isset($error)==false){ echo 0;} else {echo $error['error'];}; ?>'; 
+	$(document).ready(function() {
 
-if(error == {!!config('constants.ERROR_NO_MATCH_INFORMATION')['error']!!}) {
-	alert("Account No Exist!");
-}
-else if(error == {!!config('constants.ERROR_NO_MATCH_PASSWORD')['error']!!}) {
-	alert("Password No Match!");
-}
+		var error = '<?php if(isset($error)==false){ echo 0;} else {echo $error;}; ?>';
 
-</script>
+		if(error == '{{config('constants.INVALID_EMAIL')}}') {
+			$("#error_content").text('이메일이 정확하지않습니다.');
+			$('.alert-danger', $('#loginForm')).show();
+		}
+		else if(error =='{{config('constants.INVALID_PASSWORD')}}') {
+			$("#error_content").text('비밀번호가 정확하지않습니다.');
+			$('.alert-danger', $('#loginForm')).show();
+		}
 
-
-<div class="main-container">
-	<div class="main-content">
-		<div class="row">
-			<div class="col-sm-10 col-sm-offset-1">
-				<div class="login-container">
-					<div class="center">
-						<h1>
-							<i class="icon-leaf green"></i>
-							<span class="red">{!!config('app.name')!!}</span>
-						</h1>
-					</div>
-
-					<div class="space-6"></div>
-
-					<div class="position-relative">
-						<div id="login-box" class="login-box visible widget-box no-border">
-							<div class="widget-body">
-								<div class="widget-main">
-									<h4 class="header blue lighter bigger">
-										<!--<i class="icon-coffee green"></i>-->
-										Please Enter Your Information
-									</h4>
-
-									<div class="space-6"></div>
-
-									<!--  <form id="signupForm" method="post" action="login.act.php"> -->
-									{!! Form::open(['action' => 'Admin\AdminLoginController@doLogin', 'method' => 'post', 'id'=>'signupForm']) !!}
-										<fieldset>
-											<label class="block clearfix">
-												<span class="block input-icon input-icon-right">
-													<input type="text" id="email" name="email" class="form-control" placeholder="eMail" maxlength="30" />
-													<i class="icon-user"></i>
-												</span>
-											</label>
-
-											<label class="block clearfix">
-												<span class="block input-icon input-icon-right">
-													<input type="password" id="password" name="password" class="form-control" placeholder="Password" maxlength="20" />
-													<i class="icon-lock"></i>
-												</span>
-											</label>
-
-											<div class="space"></div>
-
-											<div class="clearfix align-center ">
-												<!--<label class="inline">
-													<input type="checkbox" class="ace" />
-													<span class="lbl"> Remember Me</span>
-												</label>-->
-
-												<button type="submit" id="btnLogin" class="width-35 btn btn-sm btn-primary">
-													<i class="icon-key"></i>
-													Login
-												</button>
-											</div>
-
-											<div class="space-4"></div>
-										</fieldset>
-									<!-- </form> -->
-									{!! Form::close() !!}
-
-									
-								</div><!-- /widget-main -->
-
-								<div class="toolbar clearfix">
-									<!--<div>
-										<a href="#" onclick="show_box('forgot-box'); return false;" class="forgot-password-link">
-											<i class="icon-arrow-left"></i>
-											I forgot my password
-										</a>
-									</div>
-
-									<div>
-										<a href="#" onclick="show_box('signup-box'); return false;" class="user-signup-link">
-											I want to register
-											<i class="icon-arrow-right"></i>
-										</a>
-									</div>-->
-								</div>
-							</div><!-- /widget-body -->
-						</div><!-- /login-box -->
-
-					</div><!-- /position-relative -->
-				</div>
-			</div><!-- /.col -->
-		</div><!-- /.row -->
-	</div>
-</div><!-- /.main-container -->
-
-<script type="text/javascript">
-	$(function() {
-
-		$("#signupForm").validate({
+		$('#loginForm').validate({
+			errorElement: 'span', //default input error message container
+			errorClass: 'help-block', // default input error message class
+			focusInvalid: true, // do not focus the last invalid input
 			rules: {
 				email: {
-					required: true,
-					email: true
+					required: true
 				},
 				password: {
-					required: true,
-					minlength: 3
+					required: true
+				},
+				remember: {
+					required: false
 				}
 			},
+
 			messages: {
-				password: {
-					required: "Please provide a password",
-					minlength: "Your password must be at least 3 characters long"
+				email: {
+					required: "이메일을 입력하세요."
 				},
-				email: "Please enter a valid email address"
+				password: {
+					required: "비밀번호를 입력하세요."
+				}
+			},
+
+			invalidHandler: function(event, validator) { //display error alert on form submit
+				/*$('.alert-danger', $('.login-form')).show();*/
+			},
+
+			highlight: function(element) { // hightlight error inputs
+				$(element).closest('.form-group').addClass('has-error'); // set error class to the control group
+			},
+
+			success: function(label) {
+				label.closest('.form-group').removeClass('has-error');
+				label.remove();
+			},
+
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.closest('.input-icon'));
+			},
+
+			submitHandler: function(form) {
+				form.submit(); // form validation success, call ajax form submit
 			}
 		});
-
 	});
-</script>
 
+</script>
 @stop

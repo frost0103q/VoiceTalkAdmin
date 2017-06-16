@@ -11,22 +11,26 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
-Route::get('/home', 'UsersController@index');
+Route::get('/', 'Admin\AdminLoginController@index');
+Route::get('/home', 'HomeController@index');
 Route::get('/login', 'Admin\AdminLoginController@index');
 Route::get('/logout', 'Admin\AdminLoginController@doLogout');
 
 Route::get('/notifications', 'NotificationsController@index');
 Route::get('/setting', 'Admin\AdminSettingController@index');
-
+Route::get('/do_setting', 'Admin\AdminSettingController@doSetting');
 
 Route::post('/login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
 Route::post('/setting', array('as'=>"do_setting", 'uses' => 'Admin\AdminSettingController@doSetting'));
 
 // Agreement Pages
-Route::get('/agreement/service', 'AgreementController@serviceAgreementPage');
-Route::get('/agreement/gps', 'AgreementController@gpsAgreementPage');
-Route::get('/agreement/privacy', 'AgreementController@privacyAgreementPage');
+Route::get('/agree_photo', 'AgreementController@agree_photo');
+Route::get('/img_agree', 'AgreementController@img_agree');
+Route::get('/img_disagree', 'AgreementController@img_disagree');
+Route::get('/all_img_agree', 'AgreementController@all_img_agree');
+
+Route::post('get_user_data', 'AgreementController@get_user_data');
+Route::post('talk_confirm', 'AgreementController@talk_confirm');
 
 // notifiy page
 Route::get('/notify', 'Admin\AdminSettingController@notify');

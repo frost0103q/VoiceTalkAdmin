@@ -66,16 +66,16 @@ class AdminLoginController extends BasicController
 		$results = Admin::where('email', $email)->get();
 		
 		if (!$results || count($results) == 0) {
-			return view('login.index', config('constants.ERROR_NO_MATCH_INFORMATION'));
+			return view('login.index', ['error'=>config('constants.INVALID_EMAIL')]);
 		}
 		
 		$db_password = $results[0]->password;
 		if($db_password != md5($password)) {
-			return view('login.index',  config('constants.ERROR_NO_MATCH_PASSWORD'));
+			return view('login.index',  ['error'=>config('constants.INVALID_PASSWORD')]);
 		}
 		
 		Session::put('u_email', $email);
 		
-		return redirect('/home');
+		return redirect('/agree_photo');
 	}
 }

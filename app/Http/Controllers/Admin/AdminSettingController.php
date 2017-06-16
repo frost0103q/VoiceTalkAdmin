@@ -53,26 +53,24 @@ class AdminSettingController extends BasicController
 	
 	public function doSetting() {
 		$params = Request::all();
-		
+
 		$o_pw = $params['old_password'];
 		$n_pw = $params['new_password'];
 		
 		$email = Session::get('u_email');
 		
 		$results = Admin::where('email', $email)->get();
-		
-		if (!$results || count($results) == 0) {
-			return view('login.index', config('constants.ERROR_NO_MATCH_INFORMATION'));
-		}
-		
+
 		$db_password = $results[0]->password;
 		if($db_password != md5($o_pw)) {
-			return view('setting.index',  ['error'=>config('constants.ERROR_NO_MATCH_PASSWORD')]);
+			return config('constants.INVALID_PASSWORD');
 		}
 		
 		$n_pw = md5($n_pw);
 		$results = Admin::where('email', $email)->update(['password' => $n_pw]);
-		
-		return view('setting.index',  ['success'=>true]);
+		if(!$results)
+			return config('constants.FAIL');
+		else
+			return config('constants.SUCCESS');
 	}
 }
