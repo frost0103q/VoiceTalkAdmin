@@ -223,7 +223,9 @@ class TalkController extends BasicController
             if($age != null) {
                 $update_data['age'] = $age;
             }
-
+            if($greeting != null) {
+                $update_data['greeting'] = $greeting;
+            }
 
             $results = Talk::where('no', $no)->update($update_data);
         }

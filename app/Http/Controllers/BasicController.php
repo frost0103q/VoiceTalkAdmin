@@ -46,18 +46,19 @@ class BasicController extends Controller
 
         $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
 
-        if($user_relation->is_alarm == 0) {
-            return false;
-        }
+        if($user_relation != null) {
+            if ($user_relation->is_alarm == 0) {
+                return false;
+            }
 
-        if($type == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == 0) {
-            return false;
-        }
+            if ($type == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == 0) {
+                return false;
+            }
 
-        if($type == config('constants.CHATMESSAGE_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == 0) {
-            return false;
+            if ($type == config('constants.CHATMESSAGE_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == 0) {
+                return false;
+            }
         }
-
 
         $this->sendXmppMessage($to_user_no, json_encode($message));
 
@@ -71,10 +72,16 @@ class BasicController extends Controller
     }
 
     private function sendXmppMessage($toUser, $content) {
-        $ip = Config::get('config.chatServerIp');
+        $testmode = Config::get('config.testmode');
+        if($testmode == 0) {
+            $ip = Config::get('config.chatLocalServerIp');
+        }
+        else {
+            $ip = Config::get('config.chatServerIp');
+        }
         $tag = Config::get('config.chatAppPrefix');
-        $jidId = $tag.$toUser;
         $port = Config::get('config.chatServerPort');
+        $jidId = $tag.$toUser;
 
         $options = new Options("tcp://".$ip.":".$port);
         $options->setAuthenticated(false)

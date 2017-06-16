@@ -254,8 +254,13 @@ class UsersController extends BasicController
         $sms_message = "VoiceTalk인증코드는 ".$cert_code." 입니다.";
         SMS::send($sms_message, null, function($sms) use ($phone_number) {
             $debug = config('app.debug');
-            if ($debug == true) {
-                $sms->to('+8615699581631');
+            $testmode = Config::get('config.testmode');
+            if($testmode == 0) {
+                if ($debug == true) {
+                    $sms->to('+8615699581631');
+                } else {
+                    $sms->to($phone_number);
+                }
             }
             else {
                 $sms->to($phone_number);
@@ -727,7 +732,7 @@ class UsersController extends BasicController
         $to_user = $results[0];
         $point = $time_in_second/60 * 200;
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
-        $response['no'] = $point;
+        $response['no'] = round($point);
         return response()->json($response);
     }
 
