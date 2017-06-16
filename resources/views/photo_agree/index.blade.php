@@ -53,6 +53,30 @@
 
     <script>
 
+//        $(document).ready(function () {
+//           resizeView();
+//        });
+
+        $(function () {
+            $(window).resize(function () {
+                resizeView();
+            });
+
+            resizeView();
+        });
+        function resizeView() {
+            $(".tab-pane.fade.active .img-responsive").each(function () {
+                var height=$(this).width();
+                $(this).css({'height': height + 'px'});
+            });
+        }
+
+        $(".nav.nav-tabs li").on('click',function () {
+            setTimeout(function () {
+                resizeView();
+            },200);
+        });
+
         /*Agree Img*/
         function img_agree(t_file_no,obj) {
             alert(t_file_no);
