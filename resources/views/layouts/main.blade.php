@@ -27,6 +27,8 @@
 
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css')}}"/>
+    <link href="{{ asset('css/profile.css')}}" rel="stylesheet" type="text/css"/>
+
     <!-- END PAGE LEVEL STYLES -->
 
     <!-- BEGIN THEME STYLES -->
@@ -37,6 +39,21 @@
     <link href="{{ asset('css/custom.css')}}" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
     <link rel="shortcut icon" href="favicon.ico"/>
+
+    <style>
+        .page-content{
+            background-color: #F1F3FA;
+        }
+
+        .portlet > .portlet-title > .caption {
+            float: left;
+            display: inline-block;
+            font-size: 16px;
+            line-height: 21px;
+            padding: 10px 0;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <!-- END HEAD -->
 <!-- BEGIN BODY -->
@@ -103,38 +120,17 @@
                     </div>
                     <!-- END SIDEBAR TOGGLER BUTTON -->
                 </li>
-                <li class="start">
-                    <a href="javascript:;">
+                <li menu_index="1" class="start">
+                    <a href="/agree_photo">
                         <i class="fa fa-photo"></i>
                         <span class="title">사진승인</span>
-                        <span class="arrow "></span>
                     </a>
-                    <ul class="sub-menu">
-                        <li menu_index="1">
-                            <a href="/agree/non_agree_img">미 승인건 모아보기</a>
-                        </li>
-                        <li menu_index="2">
-                            <a href="/agree/profile_img">프로필사진</a>
-                        </li>
-                        <li menu_index="3">
-                            <a href="/agree/talk_img">Talk사진</a>
-                        </li>
-                    </ul>
                 </li>
-                <li>
-                    <a href="javascript:;">
+                <li menu_index="2">
+                    <a href="#">
                         <i class="fa fa-microphone"></i>
                         <span class="title">Voice승인</span>
-                        <span class="arrow "></span>
                     </a>
-                    <ul class="sub-menu">
-                        <li menu_index="4">
-                            <a href="#">미승인Voice</a>
-                        </li>
-                        <li menu_index="5">
-                            <a href="#">승인Voice</a>
-                        </li>
-                    </ul>
                 </li>
             </ul>
             <!-- END SIDEBAR MENU -->
@@ -142,8 +138,14 @@
     </div>
     <!-- END SIDEBAR -->
     <!-- BEGIN CONTENT -->
-    @yield('content')
-            <!-- END CONTENT -->
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN PAGE CONTENT-->
+            @yield('content')
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT -->
 </div>
 <!-- END CONTAINER -->
 <!-- BEGIN FOOTER -->
@@ -199,9 +201,8 @@ if(isset($menu_index)){
         if ($i == $menu_index){
         ?>
         <script>
-            $("li[menu_index='<?=$i?>']").addClass("active");
-            $("li[menu_index='<?=$i?>']").parents('li').addClass('active').addClass("open");
-            $("li.active.open a").append('<span class="selected"></span>');
+            $("li[menu_index='<?=$i?>']").addClass('active').addClass("open");
+            $("li[menu_index='<?=$i?>'] a").append('<span class="selected" style="border-right: 12px solid #f1f3fa;"></span>');
         </script>
         <?php
         }

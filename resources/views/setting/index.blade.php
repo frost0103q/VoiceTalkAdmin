@@ -1,71 +1,50 @@
 @extends('layouts.main')
 
 @section('content')
-	<div class="page-content-wrapper">
-		<div class="page-content">
-			<!-- BEGIN PAGE HEADER-->
-			<div class="page-bar">
-				<ul class="page-breadcrumb">
-					<li>
-						<i class="icon-user"></i>
-						<a>Admn</a>
-						<i class="fa fa-angle-right"></i>
-					</li>
-					<li>
-						<a>비밀번호변경</a>
-					</li>
-				</ul>
-			</div>
-			<!-- END PAGE HEADER-->
-			<!-- BEGIN PAGE CONTENT-->
-			<div class="row">
-				<div class="col-md-12">
-					<div class="portlet light bordered">
-						<div class="portlet-title">
-							<div class="caption font-green-haze">
-								<i class="icon-settings font-green-haze"></i>
-								<span class="caption-subject bold uppercase"> 비밀번호변경</span>
-							</div>
-						</div>
-						<div class="portlet-body form">
-							<form role="form" class="form-horizontal" id="changePwdForm">
-								<div class="form-body">
-									<div class="form-group form-md-line-input">
-										<label class="col-md-2 control-label" for="old_password">이전 비밀번호</label>
-										<div class="col-md-4">
-											<input type="password" class="form-control" id="old_password">
-											<div class="form-control-focus">
-											</div>
-										</div>
-									</div>
-									<div class="form-group form-md-line-input">
-										<label class="col-md-2 control-label" for="new_password">새 비밀번호</label>
-										<div class="col-md-4">
-											<input type="password" class="form-control" id="new_password">
-											<div class="form-control-focus">
-											</div>
-										</div>
-									</div>
-									<div class="form-group form-md-line-input">
-										<label class="col-md-2 control-label" for="confirm_password">비밀번호 확인</label>
-										<div class="col-md-4">
-											<input type="password" class="form-control" id="confirm_password">
-											<div class="form-control-focus">
-											</div>
-										</div>
-									</div>
-									<div class="form-group form-md-line-input">
-										<div class="col-md-offset-2 col-md-10">
-											<button type="button" class="btn blue" id="btn_store">비밀번호 변경</button>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="portlet box green" style="border: none">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-cog"></i>비밀번호변경
 					</div>
 				</div>
+				<div class="portlet-body form">
+					<form role="form" class="form-horizontal" id="changePwdForm">
+						<div class="form-body" style="padding-top: 30px">
+							<div class="form-group form-md-line-input">
+								<label class="col-md-2 control-label" for="old_password">이전 비밀번호</label>
+								<div class="col-md-4">
+									<input type="password" class="form-control" id="old_password">
+									<div class="form-control-focus">
+									</div>
+								</div>
+							</div>
+							<div class="form-group form-md-line-input">
+								<label class="col-md-2 control-label" for="new_password">새 비밀번호</label>
+								<div class="col-md-4">
+									<input type="password" class="form-control" id="new_password">
+									<div class="form-control-focus">
+									</div>
+								</div>
+							</div>
+							<div class="form-group form-md-line-input">
+								<label class="col-md-2 control-label" for="confirm_password">비밀번호 확인</label>
+								<div class="col-md-4">
+									<input type="password" class="form-control" id="confirm_password">
+									<div class="form-control-focus">
+									</div>
+								</div>
+							</div>
+							<div class="form-group form-md-line-input">
+								<div class="col-md-offset-2 col-md-10">
+									<button type="button" class="btn blue" id="btn_store">비밀번호 변경</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
-			<!-- END PAGE CONTENT-->
 		</div>
 	</div>
 @stop
