@@ -52,11 +52,7 @@
     </div>
 
     <script>
-
-//        $(document).ready(function () {
-//           resizeView();
-//        });
-
+        
         $(function () {
             $(window).resize(function () {
                 resizeView();
