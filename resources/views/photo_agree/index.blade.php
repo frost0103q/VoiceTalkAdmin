@@ -40,57 +40,39 @@
                             @include('photo_agree.all_img')
                         </div>
                         <div class="tab-pane fade" id="tab_2">
-                            <p>
-                                Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
-                            </p>
+                            @include('photo_agree.profile_img')
                         </div>
                         <div class="tab-pane fade" id="tab_3">
-                            <p>
-                                Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
-                            </p>
+                            @include('photo_agree.talk_img')
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+
+        /*Agree Img*/
+        function img_agree(t_file_no,obj) {
+            alert(t_file_no);
+        }
+
+        /*Disagree Img*/
+        function img_disagree(t_file_no,obj) {
+            alert(t_file_no);
+        }
+
+        /*Get user data*/
+        function get_user_data(user_no) {
+            alert(user_no)
+        }
+
+        /*Talk Confirm*/
+        function confirm_talk(user_no) {
+            alert(user_no)
+        }
+    </script>
 @stop
 
-@section('scripts')
-<script>
-    $(document).ready(function () {
-        resizeView();
-    });
-    $(function () {
-       $(window).resize(function () {
-           resizeView();
-       })
-    });
-    function resizeView() {
-        $(".img-responsive").each(function () {
-            var height=$(this).width();
-            $(this).css({'height': height + 'px'});
-        });
-    }
 
-    /*Agree Img*/
-    function img_agree(t_file_no,obj) {
-        alert(t_file_no);
-    }
-
-    /*Disagree Img*/
-    function img_disagree(t_file_no,obj) {
-        alert(t_file_no);
-    }
-
-    /*Get user data*/
-    function get_user_data(user_no) {
-        alert(user_no)
-    }
-
-    /*Talk Confirm*/
-    function confirm_talk(user_no) {
-        alert(user_no)
-    }
-</script>
-@stop
