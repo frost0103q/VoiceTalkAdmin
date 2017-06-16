@@ -23,16 +23,16 @@
                 <div class="profile-userbuttons">
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" id="{{'rd_A_'.$user_profile_model->no.'_y'}}" name="{{'rd_A_'.$user_profile_model->no}}" class="md-radiobtn" onclick="img_agree({{$user_profile_model->no}},this)">
-                            <label for="{{'rd_A_'.$user_profile_model->no.'_y'}}">
+                            <input type="radio" id="{{'rd_P_'.$user_profile_model->no.'_y'}}" name="{{'rd_P_'.$user_profile_model->no}}" class="md-radiobtn" onclick="img_agree({{$user_profile_model->no}},this)">
+                            <label for="{{'rd_P_'.$user_profile_model->no.'_y'}}">
                                 <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span>
                                 승인 </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" id="{{'rd_A_'.$user_profile_model->no.'_n'}}" name="{{'rd_A_'.$user_profile_model->no}}" class="md-radiobtn"  onclick="img_disagree({{$user_profile_model->no}},this)">
-                            <label for="{{'rd_A_'.$user_profile_model->no.'_n'}}">
+                            <input type="radio" id="{{'rd_P_'.$user_profile_model->no.'_n'}}" name="{{'rd_P_'.$user_profile_model->no}}" class="md-radiobtn"  onclick="img_disagree({{$user_profile_model->no}},this)">
+                            <label for="{{'rd_P_'.$user_profile_model->no.'_n'}}">
                                 <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span>

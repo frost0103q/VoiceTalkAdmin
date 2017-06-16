@@ -52,7 +52,7 @@
     </div>
 
     <script>
-        
+
         $(function () {
             $(window).resize(function () {
                 resizeView();
@@ -75,12 +75,36 @@
 
         /*Agree Img*/
         function img_agree(t_file_no,obj) {
-            alert(t_file_no);
+            $.ajax({
+                url: "/img_agree",
+                type: "get",
+                data: {
+                    t_file_no : t_file_no
+                },
+                success: function (result) {
+                    if(result=='{{config('constants.FAIL')}}')
+                        toastr["error"]("승인이 실패하였습니다.", "알림");
+                    if(result=='{{config('constants.SUCCESS')}}')
+                        toastr["success"]("정확히 승인되었습니다.", "알림");
+                }
+            });
         }
 
         /*Disagree Img*/
         function img_disagree(t_file_no,obj) {
-            alert(t_file_no);
+            $.ajax({
+                url: "/img_disagree",
+                type: "get",
+                data: {
+                    t_file_no : t_file_no
+                },
+                success: function (result) {
+                    if(result=='{{config('constants.FAIL')}}')
+                        toastr["error"]("거절이 실패하였습니다.", "알림");
+                    if(result=='{{config('constants.SUCCESS')}}')
+                        toastr["success"]("정확히 거절되었습니다.", "알림");
+                }
+            });
         }
 
         /*Get user data*/

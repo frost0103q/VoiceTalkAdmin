@@ -25,6 +25,9 @@ Route::post('/setting', array('as'=>"do_setting", 'uses' => 'Admin\AdminSettingC
 
 // Agreement Pages
 Route::get('/agree_photo', 'AgreementController@agree_photo');
+Route::get('/img_agree', 'AgreementController@img_agree');
+Route::get('/img_disagree', 'AgreementController@img_disagree');
+Route::get('/all_img_agree', 'AgreementController@all_img_agree');
 
 // notifiy page
 Route::get('/notify', 'Admin\AdminSettingController@notify');

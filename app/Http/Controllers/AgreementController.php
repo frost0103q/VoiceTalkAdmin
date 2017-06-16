@@ -7,6 +7,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use DB;
+use Request;
+use App\Models\ServerFile;
+
+
 
 class AgreementController extends BasicController
 {
@@ -198,6 +202,53 @@ class AgreementController extends BasicController
             $status = false;
         }
         return $result_data;
+    }
+
+    public function img_agree(){
+
+        $params = Request::all();
+        $no = $params['t_file_no'];
+
+        if(!isset($no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $no)->update(['checked' => 1]);
+        if(!$results)
+            return config('constants.FAIL');
+        else
+            return config('constants.SUCCESS');
+    }
+
+    public function img_disagree(){
+        $params = Request::all();
+        $no = $params['t_file_no'];
+
+        if(!isset($no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $no)->update(['checked' => 0]);
+        if(!$results)
+            return config('constants.FAIL');
+        else
+            return config('constants.SUCCESS');
+    }
+
+    public function all_img_agree(){
+        $params = Request::all();
+        $img_no_array = $params['img_no_array'];
+
+        if(!isset($img_no_array))
+            return config('constants.FAIL');
+
+        $img_no_array=explode(',',$img_no_array);
+
+        for ($i=0;$i<count($img_no_array);$i++){
+            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => 1]);
+            if(!$results)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
     }
 }
 
