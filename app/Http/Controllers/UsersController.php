@@ -530,9 +530,7 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($friend_no, json_encode($message));
-        $this->addNotification($message['type'],  $from_user->no, $friend_no, $message['title'] ,$message['content'], false);
-
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
         return response()->json($response);
     }
 
@@ -610,14 +608,22 @@ class UsersController extends BasicController
 
         $user = $results[0];
 
-        if($flag == 0) {  // all
+        if($flag == 0) {  // alarm
             $user->enable_alarm_call_request = $value;
-        }
-        else if($flag == 1) { // add enable
-            $user->enable_alarm_call_request = $value;
-        }
-        else if($flag == 2) {
             $user->enable_alarm_add_friend = $value;
+        }
+        else if($flag == 1) { // call_request
+            $user->enable_alarm_call_request = $value;
+        }
+        else if($flag == 2) { // add_friend
+            $user->enable_alarm_add_friend = $value;
+        }
+
+        if($user->enable_alarm_call_request == 1 || $user->enable_alarm_add_friend  == 1) {
+            $user->enable_alarm = 1;
+        }
+        else {
+            $user->enable_alarm = 0;
         }
 
         $user->save();
@@ -629,9 +635,9 @@ class UsersController extends BasicController
         $type = $request->input('type');
         $from_user_no = $request->input('from_user_no');
         $to_user_no = $request->input('to_user_no');
-        $message = $request->input('message');
+        $content = $request->input('message');
 
-        if($from_user_no == null || $to_user_no == null || $message == null || $type == null) {
+        if($from_user_no == null || $to_user_no == null || $content == null || $type == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -650,12 +656,8 @@ class UsersController extends BasicController
         }
 
         $to_user = $results[0];
-        if($type == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == 1) {
-            $this->sendAlarmMessage($to_user_no, $message);
-            $message = json_decode($message, true);
-            $this->addNotification($type, $from_user_no, $to_user_no, $message['title'] ,$message['content']);
-        }
-
+        $message = json_decode($content, true);
+        $this->sendAlarmMessage($from_user_no, $to_user->no, $message);
         return response()->json($response);
     }
 

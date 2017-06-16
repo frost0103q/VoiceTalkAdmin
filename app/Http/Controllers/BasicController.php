@@ -14,6 +14,7 @@ use Fabiang\Xmpp\Protocol\Message;
 
 use App\Models\Notification;
 use App\Models\AppUser;
+use App\Models\UserRelation;
 use App\Models\ServerFile;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
@@ -29,7 +30,47 @@ class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function sendAlarmMessage($toUser, $content) {
+    public function sendAlarmMessage($from_user_no, $to_user_no, $message) {
+        $type = $message['type'];
+
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return false;
+        }
+
+        $to_user = $results[0];
+
+        if($to_user->enable_alarm == 0) {
+            return false;
+        }
+
+        $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
+
+        if($user_relation->is_alarm == 0) {
+            return false;
+        }
+
+        if($type == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == 0) {
+            return false;
+        }
+
+        if($type == config('constants.CHATMESSAGE_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == 0) {
+            return false;
+        }
+
+
+        $this->sendXmppMessage($to_user_no, json_encode($message));
+
+        $remove_point = true;
+        if($type == config('constants.CHATMESSAGE_TYPE_SEND_PRESENT')) {
+            $remove_point = false;
+        }
+
+        $this->addNotification($type, $from_user_no, $to_user_no, $message['title'], $message['content'], $remove_point);
+        return true;
+    }
+
+    private function sendXmppMessage($toUser, $content) {
         $ip = Config::get('config.chatServerIp');
         $tag = Config::get('config.chatAppPrefix');
         $jidId = $tag.$toUser;
@@ -51,9 +92,7 @@ class BasicController extends Controller
         $message = new Message;
         $message->setMessage($content)
             ->setTo($jidId.'@'.$ip);
-        $client->send($message);
-
-        return response()->json("Test");
+        $client->send($message);;
     }
 
     public function getXmppHistory(HttpRequest  $request) {

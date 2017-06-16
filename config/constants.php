@@ -9,6 +9,7 @@ return [
         'ERROR_ALREADY_ADDED' => ["error" => 6,'message' => 'Already Added'],
         'ERROR_NOT_ENOUGH_POINT' => ["error" => 7,'message' => 'Not Enough Point'],
         'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
+        'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
 
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,

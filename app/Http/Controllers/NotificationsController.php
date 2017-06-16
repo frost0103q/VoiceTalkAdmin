@@ -188,10 +188,38 @@ class NotificationsController extends BasicController
         $to_user_no = $request->input('to_user_no');
         $content = $request->input('content');
         $title = config('constants.NOTI_TITLE_SEND_ENVELOPE');
-        $type = config('constants.NOTI_TYPE_SEND_ENVELOPE');
 
-        $response = $this->addNotification($type, $user_no, $to_user_no, $title, $content);
+        $results = AppUser::where('no', $user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $from_user =  $results[0];
 
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $to_user =  $results[0];
+
+        $message = [];
+        $message['type'] = config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP');
+        $message['user_no'] = $user_no;
+        $message['user_name'] = $from_user->nickname;
+
+        $file = ServerFile::where('no', $from_user->img_no)->first();
+        if($file != null) {
+            $message['user_img_url'] = $file->path;
+        }
+        else {
+            $message['user_img_url'] = "";
+        }
+        $message['time'] = "";
+        $message['content'] = $content;
+        $message['title'] = $title;
+
+        $this->sendAlarmMessage($from_user->no, $to_user->no, $message);
+
+        $response = config('constants.ERROR_NO');
         return response()->json($response);
     }
 
@@ -250,12 +278,9 @@ class NotificationsController extends BasicController
             }
             $message['time'] = "";
             $message['content'] = $content;
-            $message['title'] = "쪽지전송";
-            $message['talk_no'] = "";
-            $message['talk_user_no'] = "";
+            $message['title'] = config('constants.NOTI_TITLE_SEND_ENVELOPE');
 
-            $this->sendAlarmMessage($to_user_no->no, json_encode($message));
-            $this->addNotification($type, $from_user->no, $to_user_no->no, $message['title'], $message['content']);
+            $this->sendAlarmMessage($from_user->no, $to_user_no, $message);
         }
 
         $results = AppUser::where('no', $from_user->no)->get();
