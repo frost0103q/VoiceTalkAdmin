@@ -50,5 +50,18 @@ return [
 
 		'WAIT'   => 2,
 		'AGREE'   => 1,
-		'DISAGREE'   => 0
+		'DISAGREE'   => 0,
+		
+			'TALK_POSSIBLE' => 0,
+		'AWAY'	=> 1,
+		'TALKING'	=> 2,
+
+		'MALE'	=> 0,
+		'FEMALE'	=> 1,
+
+		'UNVERIFIED' => 0,
+		'VERIFIED' => 1,
+
+		'ANDROID' => 0,
+		'IOS'	=> 1,
 ];

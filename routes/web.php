@@ -29,6 +29,9 @@ Route::get('/img_agree', 'AgreementController@img_agree');
 Route::get('/img_disagree', 'AgreementController@img_disagree');
 Route::get('/all_img_agree', 'AgreementController@all_img_agree');
 
+Route::post('get_user_data', 'AgreementController@get_user_data');
+Route::post('talk_confirm', 'AgreementController@talk_confirm');
+
 // notifiy page
 Route::get('/notify', 'Admin\AdminSettingController@notify');
 Route::get('/user_guide', 'Admin\AdminSettingController@use_guide');

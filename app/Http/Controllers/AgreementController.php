@@ -250,5 +250,34 @@ class AgreementController extends BasicController
 
         return config('constants.SUCCESS');
     }
+    
+    public function get_user_data()
+    {
+        $no = $_POST["no"];
+        if (!isset($no))
+            die (config('constants.FAIL'));
+        $query = DB::select("select * from t_user where no = ?", [$no]);
+        if (count($query)<0)
+            die (config('constants.FAIL'));
+        $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
+        if (count($img)<0)
+            die (config('constants.FAIL'));
+        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+    }
+
+    public function talk_confirm()
+    {
+        $no = $_POST["no"];
+        if (!isset($no))
+            die (config('constants.FAIL'));
+        $query = DB::select("select * from t_talk where no = ?", [$no]);
+        if (count($query)<0)
+            die (config('constants.FAIL'));
+        $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
+        if (count($img)<0)
+            die (config('constants.FAIL'));
+        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+    }
+
 }
 
