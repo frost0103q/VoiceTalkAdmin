@@ -23,27 +23,60 @@
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab">
-                                미 승인건 모아보기 </a>
+                            <a href="#tab_1" data-toggle="tab">미 승인건 모아보기 </a>
                         </li>
-                        <li>
-                            <a href="#tab_2" data-toggle="tab">
-                                프로필사진 </a>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">프로필사진 <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#tab_2_1" tabindex="-1" data-toggle="tab">대기 </a>
+                                </li>
+                                <li>
+                                    <a href="#tab_2_2" tabindex="-1" data-toggle="tab">승인 </a>
+                                </li>
+                                <li>
+                                    <a href="#tab_2_3" tabindex="-1" data-toggle="tab">거부 </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li>
-                            <a href="#tab_3" data-toggle="tab">
-                                Talk 사진 </a>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">Talk 사진 <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#tab_3_1" tabindex="-1" data-toggle="tab">대기 </a>
+                                </li>
+                                <li>
+                                    <a href="#tab_3_2" tabindex="-1" data-toggle="tab">승인 </a>
+                                </li>
+                                <li>
+                                    <a href="#tab_3_3" tabindex="-1" data-toggle="tab">거부 </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
-                            @include('photo_agree.all_img')
+                            @include('photo_agree.all_wait_img')
                         </div>
-                        <div class="tab-pane fade" id="tab_2">
-                            @include('photo_agree.profile_img')
+                        <div class="tab-pane fade" id="tab_2_1">
+                            @include('photo_agree.profile_img_wait')
                         </div>
-                        <div class="tab-pane fade" id="tab_3">
-                            @include('photo_agree.talk_img')
+                        <div class="tab-pane fade" id="tab_2_2">
+                            @include('photo_agree.profile_img_agree')
+                        </div>
+                        <div class="tab-pane fade" id="tab_2_3">
+                            @include('photo_agree.profile_img_disagree')
+                        </div>
+                        <div class="tab-pane fade" id="tab_3_1">
+                            @include('photo_agree.talk_img_wait')
+                        </div>
+                        <div class="tab-pane fade" id="tab_3_2">
+                            @include('photo_agree.talk_img_agree')
+                        </div>
+                        <div class="tab-pane fade" id="tab_3_3">
+                            @include('photo_agree.talk_img_disagree')
                         </div>
                     </div>
                 </div>

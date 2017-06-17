@@ -37,7 +37,7 @@ class AgreementController extends BasicController
 
     public function agree_photo()
     {
-        $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE checked!=1 AND type=0";
+        $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0";
         $user_profile_img=DB::select($user_profile_query);
 
         $profile_img_declare=array();
@@ -55,7 +55,7 @@ class AgreementController extends BasicController
         }
 
 
-        $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.checked!=1 AND t_file.type=0) AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+        $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0) AS A LEFT JOIN t_user ON A.user_no=t_user.no";
         $talk_img=DB::select($talk_img_query);
 
         $talk_img_declare=array();
@@ -212,7 +212,7 @@ class AgreementController extends BasicController
         if(!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => 1]);
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE')]);
         if(!$results)
             return config('constants.FAIL');
         else
@@ -226,7 +226,7 @@ class AgreementController extends BasicController
         if(!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => 0]);
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE')]);
         if(!$results)
             return config('constants.FAIL');
         else
@@ -243,7 +243,7 @@ class AgreementController extends BasicController
         $img_no_array=explode(',',$img_no_array);
 
         for ($i=0;$i<count($img_no_array);$i++){
-            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => 1]);
+            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE')]);
             if(!$results)
                 return config('constants.FAIL');
         }
