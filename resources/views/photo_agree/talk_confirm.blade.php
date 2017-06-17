@@ -1,11 +1,3 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Hrs
- * Date: 6/16/2017
- * Time: 6:23 PM
- */
-?>
 
 <button class="hidden" role="button" data-toggle="modal" data-target="#talk_confirm_modal" id="btn_talk_confirm"></button>
 <div class="modal fade bs-modal-lg in" id="talk_confirm_modal" tabindex="-1" aria-hidden="true">

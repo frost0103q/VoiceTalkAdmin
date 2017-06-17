@@ -92,8 +92,8 @@
         </div>
     </div>
 
-    @include('photo_agree.user_info');
-    @include('photo_agree.talk_confirm');
+    @include('photo_agree.user_info')
+    @include('photo_agree.talk_confirm')
     <script>
 
         $(function () {
@@ -122,15 +122,21 @@
                 url: "/img_agree",
                 type: "get",
                 data: {
-                    t_file_no : t_file_no
+                    t_file_no : t_file_no,
+                    type : type
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
                         toastr["error"]("승인이 실패하였습니다.", "알림");
-                    if(result=='{{config('constants.SUCCESS')}}'){
+                    else{
                         toastr["success"]("정확히 승인되었습니다.", "알림");
                         if(cur_status!='{{config('constants.AGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
+
+                            if(type=='talk')
+                                $("#tab_3_2 .row").append(result);
+                            else
+                                $("#tab_2_2 .row").append(result);
                         }
                     }
                 }
@@ -143,15 +149,21 @@
                 url: "/img_disagree",
                 type: "get",
                 data: {
-                    t_file_no : t_file_no
+                    t_file_no : t_file_no,
+                    type : type
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
                         toastr["error"]("거절이 실패하였습니다.", "알림");
-                    if(result=='{{config('constants.SUCCESS')}}'){
+                    else{
                         toastr["success"]("정확히 거절되었습니다.", "알림");
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
+
+                            if(type=='talk')
+                                $("#tab_3_3 .row").append(result);
+                            else
+                                $("#tab_2_3 .row").append(result);
                         }
                     }
                 }
@@ -164,7 +176,7 @@
                 type: "POST",
                 data: {
                     no: user_no,
-                    _token: "{{csrf_token()}}" ,
+                    _token: "{{csrf_token()}}"
                 },
                 url: 'get_user_data',
                 success: function (result) {
@@ -209,11 +221,11 @@
 
         /*Talk Confirm*/
         function confirm_talk(user_no) {
-            /*$.ajax({
+            $.ajax({
                 type: "POST",
                 data: {
                     no: user_no,
-                    _token: "{{csrf_token()}}" ,
+                    _token: "{{csrf_token()}}"
                 },
                 url: 'talk_confirm',
                 success: function (result) {
@@ -227,7 +239,7 @@
                         $("#btn_talk_confirm").trigger('click');
                     }
                 }
-            });*/
+            });
         }
     </script>
 @stop

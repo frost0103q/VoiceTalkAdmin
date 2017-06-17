@@ -208,6 +208,7 @@ class AgreementController extends BasicController
 
         $params = Request::all();
         $no = $params['t_file_no'];
+        $type = $params['type'];
 
         if(!isset($no))
             return config('constants.FAIL');
@@ -215,13 +216,58 @@ class AgreementController extends BasicController
         $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE')]);
         if(!$results)
             return config('constants.FAIL');
-        else
-            return config('constants.SUCCESS');
+        else{
+            if($type=='talk'){
+                $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+                $talk_img=DB::select($talk_img_query);
+                $img_model=$talk_img[0];
+
+                $no=$img_model->user_no;
+                $declare_cnt = DB::table('t_declare')
+                    ->where('to_user_no', $no)
+                    ->count('no');
+                $talk_img_declare[$no]=$declare_cnt;
+
+                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+                $diff_time = $this->get_time_diff($time);
+                $talk_img_diff_time[$no]=$diff_time;
+
+                return view('photo_agree.img',
+                    ['img_model'=>$img_model,
+                        'type'=>$type,
+                        'all_flag'=>false,
+                        'talk_img_declare'=>$talk_img_declare,
+                        'talk_img_diff_time'=>$talk_img_diff_time]);
+            }
+            else{
+                $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
+                $user_profile_img=DB::select($user_profile_query);
+                $img_model=$user_profile_img[0];
+
+                $no=$img_model->user_no;
+                $declare_cnt = DB::table('t_declare')
+                    ->where('to_user_no', $no)
+                    ->count('no');
+                $profile_img_declare[$no]=$declare_cnt;
+
+                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+                $diff_time = $this->get_time_diff($time);
+                $profile_img_diff_time[$no]=$diff_time;
+
+                return view('photo_agree.img',
+                    ['img_model'=>$img_model,
+                        'type'=>$type,
+                        'all_flag'=>false,
+                        'profile_img_declare'=>$profile_img_declare,
+                        'profile_img_diff_time'=>$profile_img_diff_time]);
+            }
+        }
     }
 
     public function img_disagree(){
         $params = Request::all();
         $no = $params['t_file_no'];
+        $type = $params['type'];
 
         if(!isset($no))
             return config('constants.FAIL');
@@ -229,8 +275,53 @@ class AgreementController extends BasicController
         $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE')]);
         if(!$results)
             return config('constants.FAIL');
-        else
-            return config('constants.SUCCESS');
+        else{
+
+            if($type=='talk'){
+                $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+                $talk_img=DB::select($talk_img_query);
+                $img_model=$talk_img[0];
+
+                $no=$img_model->user_no;
+                $declare_cnt = DB::table('t_declare')
+                    ->where('to_user_no', $no)
+                    ->count('no');
+                $talk_img_declare[$no]=$declare_cnt;
+
+                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+                $diff_time = $this->get_time_diff($time);
+                $talk_img_diff_time[$no]=$diff_time;
+
+                return view('photo_agree.img',
+                    ['img_model'=>$img_model,
+                        'type'=>$type,
+                        'all_flag'=>false,
+                        'talk_img_declare'=>$talk_img_declare,
+                        'talk_img_diff_time'=>$talk_img_diff_time]);
+            }
+            else{
+                $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
+                $user_profile_img=DB::select($user_profile_query);
+                $img_model=$user_profile_img[0];
+
+                $no=$img_model->user_no;
+                $declare_cnt = DB::table('t_declare')
+                    ->where('to_user_no', $no)
+                    ->count('no');
+                $profile_img_declare[$no]=$declare_cnt;
+
+                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+                $diff_time = $this->get_time_diff($time);
+                $profile_img_diff_time[$no]=$diff_time;
+
+                return view('photo_agree.img',
+                    ['img_model'=>$img_model,
+                        'type'=>$type,
+                        'all_flag'=>false,
+                        'profile_img_declare'=>$profile_img_declare,
+                        'profile_img_diff_time'=>$profile_img_diff_time]);
+            }
+        }
     }
 
     public function all_img_agree(){
@@ -255,28 +346,32 @@ class AgreementController extends BasicController
     {
         $no = $_POST["no"];
         if (!isset($no))
-            die (config('constants.FAIL'));
+            return (config('constants.FAIL'));
         $query = DB::select("select * from t_user where no = ?", [$no]);
         if (count($query)<0)
-            die (config('constants.FAIL'));
+            return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
         if (count($img)<0)
-            die (config('constants.FAIL'));
-        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+            $img_path="";
+        else
+            $img_path=$img[0]->path;
+        return (json_encode(array('info'=>$query[0], 'path'=>$img_path)));
     }
 
     public function talk_confirm()
     {
         $no = $_POST["no"];
         if (!isset($no))
-            die (config('constants.FAIL'));
+            return (config('constants.FAIL'));
         $query = DB::select("select * from t_talk where no = ?", [$no]);
         if (count($query)<0)
-            die (config('constants.FAIL'));
+            return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
         if (count($img)<0)
-            die (config('constants.FAIL'));
-        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+            $img_path="";
+        else
+            $img_path=$img[0]->path;
+        return (json_encode(array('info'=>$query[0], 'path'=>$img_path)));
     }
 
 }

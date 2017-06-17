@@ -1,7 +1,7 @@
 <?php
 /*
  ***Image disaplay page***
- inputdata:$img_model,$type,$all_flag
+ inputdata:$img_model,$type('talk','profile'),$all_flag,array $talk_img_declare,array $talk_img_diff_time,array $profile_img_declare,array $profile_img_diff_time
  */
 ?>
 

@@ -1,11 +1,3 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Hrs
- * Date: 6/16/2017
- * Time: 6:21 PM
- */
-?>
 
 <button class="hidden" role="button" data-toggle="modal" data-target="#user_info_modal" id="btn_get_data"></button>
 <div class="modal fade bs-modal-lg in" id="user_info_modal" tabindex="-1" aria-hidden="true">
