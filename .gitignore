@@ -7,8 +7,6 @@
 Homestead.json
 Homestead.yaml
 .env
-/public/css
-/public/fonts
-/public/img
-/public/scripts
+/public/assets
+/public/vendor
 /public/uploads

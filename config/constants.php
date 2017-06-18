@@ -52,7 +52,7 @@ return [
 		'AGREE'   => 1,
 		'DISAGREE'   => 0,
 		
-			'TALK_POSSIBLE' => 0,
+		'TALK_POSSIBLE' => 0,
 		'AWAY'	=> 1,
 		'TALKING'	=> 2,
 

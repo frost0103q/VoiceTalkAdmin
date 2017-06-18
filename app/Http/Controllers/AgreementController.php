@@ -43,17 +43,11 @@ class AgreementController extends BasicController
         $profile_img_declare=array();
         $profile_img_diff_time=array();
         foreach ($user_profile_img as $profile_model){
-            $no=$profile_model->user_no;
-            $declare_cnt = DB::table('t_declare')
-                ->where('to_user_no', $no)
-                ->count('no');
-            $profile_img_declare[$no]=$declare_cnt;
+            $profile_img_declare[$profile_model->user_no]=$this->get_declare_cnt($profile_model->user_no);
 
             $time=$profile_model->updated_at==null ? $profile_model->created_at:$profile_model->updated_at;
-            $diff_time = $this->get_time_diff($time);
-            $profile_img_diff_time[$no]=$diff_time;
+            $profile_img_diff_time[$profile_model->no]=$this->get_time_diff($time);
         }
-
 
         $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0) AS A LEFT JOIN t_user ON A.user_no=t_user.no";
         $talk_img=DB::select($talk_img_query);
@@ -61,15 +55,10 @@ class AgreementController extends BasicController
         $talk_img_declare=array();
         $talk_img_diff_time=array();
         foreach ($talk_img as $talk_img_model){
-            $no=$talk_img_model->user_no;
-            $declare_cnt = DB::table('t_declare')
-                ->where('to_user_no', $no)
-                ->count('no');
-            $talk_img_declare[$no]=$declare_cnt;
+            $talk_img_declare[$talk_img_model->user_no]=$this->get_declare_cnt($talk_img_model->user_no);
 
             $time=$talk_img_model->updated_at==null ? $talk_img_model->created_at:$talk_img_model->updated_at;
-            $diff_time = $this->get_time_diff($time);
-            $talk_img_diff_time[$no]=$diff_time;
+            $talk_img_diff_time[$talk_img_model->no]=$this->get_time_diff($time);
         }
         
 
@@ -204,6 +193,13 @@ class AgreementController extends BasicController
         return $result_data;
     }
 
+    public function get_declare_cnt($user_no){
+        $declare_cnt = DB::table('t_declare')
+            ->where('to_user_no', $user_no)
+            ->count('no');
+        return $declare_cnt;
+    }
+
     public function img_agree(){
 
         $params = Request::all();
@@ -213,54 +209,11 @@ class AgreementController extends BasicController
         if(!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE')]);
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE'),'updated_at'=>date('Y-m-d H:i:s')]);
         if(!$results)
             return config('constants.FAIL');
         else{
-            if($type=='talk'){
-                $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
-                $talk_img=DB::select($talk_img_query);
-                $img_model=$talk_img[0];
-
-                $no=$img_model->user_no;
-                $declare_cnt = DB::table('t_declare')
-                    ->where('to_user_no', $no)
-                    ->count('no');
-                $talk_img_declare[$no]=$declare_cnt;
-
-                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
-                $diff_time = $this->get_time_diff($time);
-                $talk_img_diff_time[$no]=$diff_time;
-
-                return view('photo_agree.img',
-                    ['img_model'=>$img_model,
-                        'type'=>$type,
-                        'all_flag'=>false,
-                        'talk_img_declare'=>$talk_img_declare,
-                        'talk_img_diff_time'=>$talk_img_diff_time]);
-            }
-            else{
-                $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
-                $user_profile_img=DB::select($user_profile_query);
-                $img_model=$user_profile_img[0];
-
-                $no=$img_model->user_no;
-                $declare_cnt = DB::table('t_declare')
-                    ->where('to_user_no', $no)
-                    ->count('no');
-                $profile_img_declare[$no]=$declare_cnt;
-
-                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
-                $diff_time = $this->get_time_diff($time);
-                $profile_img_diff_time[$no]=$diff_time;
-
-                return view('photo_agree.img',
-                    ['img_model'=>$img_model,
-                        'type'=>$type,
-                        'all_flag'=>false,
-                        'profile_img_declare'=>$profile_img_declare,
-                        'profile_img_diff_time'=>$profile_img_diff_time]);
-            }
+            return $this->get_img_html($type,$no);
         }
     }
 
@@ -272,55 +225,11 @@ class AgreementController extends BasicController
         if(!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE')]);
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE'),'updated_at'=>date('Y-m-d H:i:s')]);
         if(!$results)
             return config('constants.FAIL');
         else{
-
-            if($type=='talk'){
-                $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
-                $talk_img=DB::select($talk_img_query);
-                $img_model=$talk_img[0];
-
-                $no=$img_model->user_no;
-                $declare_cnt = DB::table('t_declare')
-                    ->where('to_user_no', $no)
-                    ->count('no');
-                $talk_img_declare[$no]=$declare_cnt;
-
-                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
-                $diff_time = $this->get_time_diff($time);
-                $talk_img_diff_time[$no]=$diff_time;
-
-                return view('photo_agree.img',
-                    ['img_model'=>$img_model,
-                        'type'=>$type,
-                        'all_flag'=>false,
-                        'talk_img_declare'=>$talk_img_declare,
-                        'talk_img_diff_time'=>$talk_img_diff_time]);
-            }
-            else{
-                $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
-                $user_profile_img=DB::select($user_profile_query);
-                $img_model=$user_profile_img[0];
-
-                $no=$img_model->user_no;
-                $declare_cnt = DB::table('t_declare')
-                    ->where('to_user_no', $no)
-                    ->count('no');
-                $profile_img_declare[$no]=$declare_cnt;
-
-                $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
-                $diff_time = $this->get_time_diff($time);
-                $profile_img_diff_time[$no]=$diff_time;
-
-                return view('photo_agree.img',
-                    ['img_model'=>$img_model,
-                        'type'=>$type,
-                        'all_flag'=>false,
-                        'profile_img_declare'=>$profile_img_declare,
-                        'profile_img_diff_time'=>$profile_img_diff_time]);
-            }
+            return $this->get_img_html($type,$no);
         }
     }
 
@@ -334,7 +243,7 @@ class AgreementController extends BasicController
         $img_no_array=explode(',',$img_no_array);
 
         for ($i=0;$i<count($img_no_array);$i++){
-            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE')]);
+            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE'),'updated_at'=>date('Y-m-d H:i:s')]);
             if(!$results)
                 return config('constants.FAIL');
         }
@@ -374,5 +283,39 @@ class AgreementController extends BasicController
         return (json_encode(array('info'=>$query[0], 'path'=>$img_path)));
     }
 
+    public function get_img_html($type,$no){
+        if($type=='talk'){
+            $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+            $talk_img=DB::select($talk_img_query);
+            $img_model=$talk_img[0];
+            $talk_img_declare[$img_model->user_no]=$this->get_declare_cnt($img_model->user_no);
+
+            $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+            $talk_img_diff_time[$img_model->no]=$this->get_time_diff($time);
+
+            return view('photo_agree.img',
+                ['img_model'=>$img_model,
+                    'type'=>$type,
+                    'all_flag'=>false,
+                    'talk_img_declare'=>$talk_img_declare,
+                    'talk_img_diff_time'=>$talk_img_diff_time]);
+        }
+        else{
+            $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
+            $user_profile_img=DB::select($user_profile_query);
+            $img_model=$user_profile_img[0];
+            $profile_img_declare[$img_model->user_no]=$this->get_declare_cnt($img_model->user_no);
+
+            $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+            $profile_img_diff_time[$img_model->no]=$this->get_time_diff($time);
+
+            return view('photo_agree.img',
+                ['img_model'=>$img_model,
+                    'type'=>$type,
+                    'all_flag'=>false,
+                    'profile_img_declare'=>$profile_img_declare,
+                    'profile_img_diff_time'=>$profile_img_diff_time]);
+        }
+    }
 }
 

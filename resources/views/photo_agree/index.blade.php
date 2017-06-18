@@ -181,8 +181,7 @@
                 url: 'get_user_data',
                 success: function (result) {
                     if (result == "{{config('constants.FAIL')}}") {
-                        shortCutFunction = "error";
-                        $toast = toastr[shortCutFunction]("{{trans('failed')}}", "");
+                        $toast = toastr["error"]("상세보기가 실패하였습니다.", "");
 
                     } else {
                         var data1 = JSON.parse(result);
@@ -191,22 +190,21 @@
                         $("#email").val(data.email);
                         $("#profile_img").attr("src", data1.path);
                         if (data.status == "{{config('constants.TALK_POSSIBLE')}}")
-                            $("#status").html("{{trans('photo_agree.talk_possible')}}");
+                            $("#status").html("상담가능");
                         else if (data.status == "{{config('constants.AWAY')}}")
-                            $("#status").html("{{trans('photo_agree.away')}}");
+                            $("#status").html("부재중");
                         else if (data.status == "{{config('constants.TALKING')}}")
-                            $("#status").html("{{trans('photo_agree.talking')}}");
+                            $("#status").html("상담중");
                         if (data.sex == "{{config('constants.MALE')}}")
-                            $("#sex").val("{{trans('photo_agree.male')}}");
+                            $("#sex").val("남자");
                         else if (data.sex == "{{config('constants.FEMALE')}}")
-                            $("#sex").val("{{trans('photo_agree.female')}}");
+                            $("#sex").val("여자");
                         $("#age").val(data.age);
                         $("#subject").val(data.subject);
                         if (data.verified == "{{config('constants.VERIFIED')}}")
                             $("#verify").removeClass("hidden");
                         else
                             $("#verify").addClass("hidden");
-                        $("#deposite_time").val(data.deposite_time + " {{trans('photo_agree.hour')}}");
                         $("#point").html(data.point);
                         $("#phone_number").val(data.phone_number);
                         if (data.device_type == "{{config('constants.android')}}")

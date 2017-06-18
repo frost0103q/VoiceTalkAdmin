@@ -5,7 +5,7 @@
  */
 ?>
 
-<div class="col-md-3 col-xs-4 col-sm-6">
+<div class="col-md-3">
     <div class="portlet light image-potlet">
         <div class="profile-userpic">
             <img src="{{$img_model->path}}" class="img-responsive" alt="">
@@ -16,16 +16,28 @@
             </div>
             <div class="profile-usertitle-job">
                 @if($type=='talk')
-                    {{'경고  '.$talk_img_declare[$img_model->user_no]}}
+                    <?php
+                    if(isset($talk_img_declare[$img_model->user_no]))
+                        echo '경고  '.$talk_img_declare[$img_model->user_no];
+                    ?>
                 @elseif($type=='profile')
-                    {{'경고  '.$profile_img_declare[$img_model->user_no]}}
+                    <?php
+                    if(isset($profile_img_declare[$img_model->user_no]))
+                        echo '경고  '.$profile_img_declare[$img_model->user_no];
+                    ?>
                 @endif
             </div>
             <div class="profile-usertitle-job">
                 @if($type=='talk')
-                    {{$talk_img_diff_time[$img_model->user_no]}}
+                    <?php
+                    if(isset($talk_img_diff_time[$img_model->no]))
+                        echo $talk_img_diff_time[$img_model->no];
+                    ?>
                 @elseif($type=='profile')
-                    {{$profile_img_diff_time[$img_model->user_no]}}
+                    <?php
+                    if(isset($profile_img_diff_time[$img_model->no]))
+                        echo $profile_img_diff_time[$img_model->no];
+                    ?>
                 @endif
             </div>
         </div>
@@ -49,16 +61,16 @@
                         }
                     }
                     ?>
-                    <input type="radio" id="{{$rad_identy.$img_model->no.'_y'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn" onclick="img_agree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')" <?php if($img_model->checked==1) echo 'checked';?>>
-                    <label for="{{$rad_identy.$img_model->no.'_y'}}">
+                    <input type="radio" id="{{$rad_identy.$img_model->no.$img_model->checked.'_y'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn" value="{{$img_model->no}}" onclick="img_agree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')" <?php if($img_model->checked==1) echo 'checked';?>>
+                    <label for="{{$rad_identy.$img_model->no.$img_model->checked.'_y'}}">
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
                         승인 </label>
                 </div>
                 <div class="md-radio">
-                    <input type="radio" id="{{$rad_identy.$img_model->no.'_n'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn"  onclick="img_disagree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')"  <?php if($img_model->checked==0) echo 'checked';?>>
-                    <label for="{{$rad_identy.$img_model->no.'_n'}}">
+                    <input type="radio" id="{{$rad_identy.$img_model->no.$img_model->checked.'_n'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn"  value="{{$img_model->no}}"  onclick="img_disagree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')"  <?php if($img_model->checked==0) echo 'checked';?>>
+                    <label for="{{$rad_identy.$img_model->no.$img_model->checked.'_n'}}">
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
@@ -68,4 +80,4 @@
         </div>
     </div>
 </div>
-<input type="hidden" class="all_img_agree" value="{{$img_model->no}}">
+<input type="hidden" class="file_no" value="{{$img_model->no}}">
