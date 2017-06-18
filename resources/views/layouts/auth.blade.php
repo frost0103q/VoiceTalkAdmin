@@ -24,23 +24,29 @@ License: You must have a valid license purchased only from themeforest(the above
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <meta content="" name="description"/>
     <meta content="" name="author"/>
+
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/uniform.default.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/uniform/css/uniform.default.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')}}" rel="stylesheet" type="text/css"/>
     <!-- END GLOBAL MANDATORY STYLES -->
+
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="{{ asset('css/login3.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/select2/select2.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/admin/pages/css/login3.css')}}" rel="stylesheet" type="text/css"/>
     <!-- END PAGE LEVEL SCRIPTS -->
+
     <!-- BEGIN THEME STYLES -->
-    <link href="{{ asset('css/components.css')}}" id="style_components" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/plugins.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/layout.css')}}" rel="stylesheet" type="text/css"/>
-    <link id="style_color" href="{{ asset('css/darkblue.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('css/custom.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/css/components.css')}}" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/css/plugins.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/admin/layout/css/layout.css')}}" rel="stylesheet" type="text/css"/>
+    <link id="style_color" href="{{ asset('assets/admin/layout/css/themes/darkblue.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/admin/layout/css/custom.css')}}" rel="stylesheet" type="text/css"/>
     <!-- END THEME STYLES -->
+
     <link rel="shortcut icon" href="favicon.ico"/>
 </head>
 <!-- END HEAD -->
@@ -66,24 +72,25 @@ License: You must have a valid license purchased only from themeforest(the above
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->
 <!--[if lt IE 9]>
-<script src="{{ asset('scripts/respond.min.js')}}"></script>
-<script src="{{ asset('scripts/excanvas.min.js')}}"></script>
+<script src="{{ asset('assets/global/plugins/respond.min.js')}}"></script>
+<script src="{{ asset('assets/global/plugins/excanvas.min.js')}}"></script>
 <![endif]-->
-<script src="{{ asset('scripts/jquery.min.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/jquery-migrate.min.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/bootstrap.min.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/jquery.blockui.min.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/jquery.uniform.min.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/jquery.cokie.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-migrate.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery.blockui.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/uniform/jquery.uniform.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery.cokie.min.js')}}" type="text/javascript"></script>
 <!-- END CORE PLUGINS -->
 <!-- BEGIN PAGE LEVEL PLUGINS -->
-<script src="{{ asset('scripts/jquery.validate.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js')}}" type="text/javascript"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
 <!-- END PAGE LEVEL PLUGINS -->
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="{{ asset('scripts/metronic.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/layout.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/quick-sidebar.js')}}" type="text/javascript"></script>
-<script src="{{ asset('scripts/demo.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/scripts/metronic.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/layout/scripts/layout.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/layout/scripts/demo.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/pages/scripts/login.js')}}" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
     jQuery(document).ready(function() {

@@ -4,7 +4,7 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="index.html">
-                <img src="{{ asset('img/logo.png')}}" alt="logo" class="logo-default"
+                <img src="{{ asset('assets/admin/pages/img/logo.png')}}" alt="logo" class="logo-default"
                      style="height: 33px;margin-top: 8px;"/>
             </a>
             <div class="menu-toggler sidebar-toggler hide">
