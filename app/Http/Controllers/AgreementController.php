@@ -257,10 +257,10 @@ class AgreementController extends BasicController
         if (!isset($no))
             return (config('constants.FAIL'));
         $query = DB::select("select * from t_user where no = ?", [$no]);
-        if (count($query)<0)
+        if (count($query)<1)
             return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
-        if (count($img)<0)
+        if (count($img)<1)
             $img_path="";
         else
             $img_path=$img[0]->path;
@@ -269,18 +269,25 @@ class AgreementController extends BasicController
 
     public function talk_confirm()
     {
-        $no = $_POST["no"];
-        if (!isset($no))
+        $user_no = $_POST["user_no"];
+        if (!isset($user_no))
             return (config('constants.FAIL'));
-        $query = DB::select("select * from t_talk where no = ?", [$no]);
-        if (count($query)<0)
+        $query = DB::select("select * from t_talk where user_no = ?", [$user_no]);
+        if (count($query)<1)
             return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
-        if (count($img)<0)
+        if (count($img)<1)
             $img_path="";
         else
             $img_path=$img[0]->path;
-        return (json_encode(array('info'=>$query[0], 'path'=>$img_path)));
+
+        $voice = DB::select("select * from t_file where no = ?", [$query[0]->voice_no]);
+        if (count($voice)<1)
+            $voice_path="";
+        else
+            $voice_path=$voice[0]->path;
+
+        return (json_encode(array('info'=>$query[0], 'img_path'=>$img_path,'voice_path'=>$voice_path)));
     }
 
     public function get_img_html($type,$no){

@@ -222,18 +222,43 @@
             $.ajax({
                 type: "POST",
                 data: {
-                    no: user_no,
+                    user_no: user_no,
                     _token: "{{csrf_token()}}"
                 },
                 url: 'talk_confirm',
                 success: function (result) {
                     if (result == "{{config('constants.FAIL')}}") {
-                        shortCutFunction = "error";
-                        $toast = toastr[shortCutFunction]("{{trans('failed')}}", "");
-
+                        toastr["error"]("작성한 Talk가 없습니다.");
                     } else {
-                        var data1 = JSON.parse(result);
-                        var data = data1.info;
+                        var jsonData = JSON.parse(result);
+                        var talk = jsonData.info;
+                        var talk_img=jsonData.img_path;
+                        var talk_voice=jsonData.voice_path;
+
+                        if(talk_img!="" || talk_img!=null){
+                             $("#talk_img").attr("src",talk_img);
+                        }
+                        else
+                             $("#talk_img").addClass("hidden");
+
+                        if(talk_voice!="" || talk_voice!=null){
+                            $("#voice_path").attr("src",talk_voice);
+                        }
+                        else
+                            $("#voice_path").addClass("hidden");
+
+                        if(talk['voice_type']==0) $("#voice_type").val('일반 목소리');
+                        if(talk['voice_type']==1) $("#voice_type").val('귀여운 목소리');
+                        if(talk['voice_type']==2) $("#voice_type").val('중후한 목소리');
+                        if(talk['voice_type']==3) $("#voice_type").val('일반 목소리');
+                        if(talk['voice_type']==4) $("#voice_type").val('통통목소리');
+                        if(talk['voice_type']==5) $("#voice_type").val('애교목소리');
+
+                        $("#talk_subject").val(talk['subject']);
+                        $("#greeting").val(talk['greeting']);
+                        $("#talk_nickname").val(talk['nickname']);
+                        $("#talk_age").val(talk['age']);
+
                         $("#btn_talk_confirm").trigger('click');
                     }
                 }

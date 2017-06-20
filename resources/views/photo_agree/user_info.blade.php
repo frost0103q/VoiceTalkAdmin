@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn default" data-dismiss="modal">닫기</button>
+                <button type="button" class="btn default" data-dismiss="modal"><i class="fa fa-rotate-right"></i>&nbsp; 닫기</button>
             </div>
         </div>
         <!-- /.modal-content -->
