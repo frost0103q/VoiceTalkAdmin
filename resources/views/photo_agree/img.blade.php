@@ -15,17 +15,7 @@
                 {{$img_model->nickname}}
             </div>
             <div class="profile-usertitle-job">
-                @if($type=='talk')
-                    <?php
-                    if(isset($talk_img_declare[$img_model->user_no]))
-                        echo '경고  '.$talk_img_declare[$img_model->user_no];
-                    ?>
-                @elseif($type=='profile')
-                    <?php
-                    if(isset($profile_img_declare[$img_model->user_no]))
-                        echo '경고  '.$profile_img_declare[$img_model->user_no];
-                    ?>
-                @endif
+                {{'경고 '.$img_model->declare_cnt}}
             </div>
             <div class="profile-usertitle-job">
                 @if($type=='talk')
@@ -54,23 +44,23 @@
                     }
                     else{
                         if($type=='talk'){
-                            $rad_identy='rd_T_';
+                            $rad_identy='rd_T_'.$img_model->talk_no.'_';
                         }
                         elseif($type=='profile'){
                             $rad_identy='rd_P_';
                         }
                     }
                     ?>
-                    <input type="radio" id="{{$rad_identy.$img_model->no.$img_model->checked.'_y'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn" value="{{$img_model->no}}" onclick="img_agree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')" <?php if($img_model->checked==1) echo 'checked';?>>
-                    <label for="{{$rad_identy.$img_model->no.$img_model->checked.'_y'}}">
+                    <input type="radio" id="{{$rad_identy.$img_model->no.'_'.$img_model->checked.'_y'}}" name="{{$rad_identy.$img_model->no.'_'.$img_model->checked}}" class="md-radiobtn" value="{{$img_model->no}}" onclick="img_agree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')" <?php if($img_model->checked==1) echo 'checked';?>>
+                    <label for="{{$rad_identy.$img_model->no.'_'.$img_model->checked.'_y'}}">
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
                         승인 </label>
                 </div>
                 <div class="md-radio">
-                    <input type="radio" id="{{$rad_identy.$img_model->no.$img_model->checked.'_n'}}" name="{{$rad_identy.$img_model->no}}" class="md-radiobtn"  value="{{$img_model->no}}"  onclick="img_disagree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')"  <?php if($img_model->checked==0) echo 'checked';?>>
-                    <label for="{{$rad_identy.$img_model->no.$img_model->checked.'_n'}}">
+                    <input type="radio" id="{{$rad_identy.$img_model->no.'_'.$img_model->checked.'_n'}}" name="{{$rad_identy.$img_model->no.'_'.$img_model->checked}}" class="md-radiobtn"  value="{{$img_model->no}}"  onclick="img_disagree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')"  <?php if($img_model->checked==0) echo 'checked';?>>
+                    <label for="{{$rad_identy.$img_model->no.'_'.$img_model->checked.'_n'}}">
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>

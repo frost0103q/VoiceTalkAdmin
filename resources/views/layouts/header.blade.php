@@ -26,11 +26,11 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-default">
                         <li>
-                            <a href="/setting">
+                            <a href="setting">
                                 <i class="fa fa-cog"></i> 비밀번호변경 </a>
                         </li>
                         <li>
-                            <a href="/logout">
+                            <a href="logout">
                                 <i class="fa fa-power-off"></i> 로그아웃 </a>
                         </li>
                     </ul>

@@ -49,7 +49,7 @@
         });
         img_no_array=img_no_array.substr(0,img_no_array.length-1);
         $.ajax({
-            url: "/all_img_agree",
+            url: "all_img_agree",
             type: "get",
             data: {
                 img_no_array : img_no_array

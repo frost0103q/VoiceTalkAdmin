@@ -51,28 +51,28 @@
 	<script>
 		$("#btn_store").click(function () {
 			if($("#old_password").val()==''){
-				toastr["success"]("이전 비밀번호를 입력하세요.", "알림");
+				toastr["error"]("이전 비밀번호를 입력하세요.", "알림");
 				$("#old_password").focus();
 				return;
 			}
 			if($("#new_password").val()==''){
-				toastr["success"]("새 비밀번호를 입력하세요.", "알림");
+				toastr["error"]("새 비밀번호를 입력하세요.", "알림");
 				$("#new_password").focus();
 				return;
 			}
 			if($("#confirm_password").val()==''){
-				toastr["success"]("비밀번호 확인을 하세요.", "알림");
+				toastr["error"]("비밀번호 확인을 하세요.", "알림");
 				$("#confirm_password").focus();
 				return;
 			}
 			if($("#new_password").val()!=$("#confirm_password").val()){
-				toastr["success"]("비밀번호 확인을 다시하세요.", "알림");
+				toastr["error"]("비밀번호 확인을 다시하세요.", "알림");
 				$("#confirm_password").focus();
 				return;
 			}
 
 			$.ajax({
-				url: "/do_setting",
+				url: "do_setting",
 				type: "get",
 				data: {
 					old_password : $("#old_password").val(),
@@ -80,9 +80,9 @@
 				},
 				success: function (result) {
 					if(result=='{{config('constants.INVALID_PASSWORD')}}')
-						toastr["success"]("이전비밀번호가 정확	하지 않습니다.", "알림");
+						toastr["error"]("이전비밀번호가 정확	하지 않습니다.", "알림");
 					if(result=='{{config('constants.FAIL')}}')
-						toastr["success"]("변경이 실해하였습니다.", "알림");
+						toastr["error"]("변경이 실해하였습니다.", "알림");
 					if(result=='{{config('constants.SUCCESS')}}')
 						toastr["success"]("정확히 변경되었습니다.", "알림");
 				}

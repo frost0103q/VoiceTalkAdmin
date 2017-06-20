@@ -37,27 +37,21 @@ class AgreementController extends BasicController
 
     public function agree_photo()
     {
-        $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0";
+        $user_profile_query="SELECT * FROM  v_profile_file";
         $user_profile_img=DB::select($user_profile_query);
 
-        $profile_img_declare=array();
         $profile_img_diff_time=array();
         foreach ($user_profile_img as $profile_model){
-            $profile_img_declare[$profile_model->user_no]=$this->get_declare_cnt($profile_model->user_no);
-
-            $time=$profile_model->updated_at==null ? $profile_model->created_at:$profile_model->updated_at;
+            $time=($profile_model->updated_at==null || $profile_model->updated_at=='0000-00-00 00:00:00') ? $profile_model->created_at:$profile_model->updated_at;
             $profile_img_diff_time[$profile_model->no]=$this->get_time_diff($time);
         }
 
-        $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0) AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+        $talk_img_query="SELECT * FROM v_talk_file where type='0'";
         $talk_img=DB::select($talk_img_query);
 
-        $talk_img_declare=array();
         $talk_img_diff_time=array();
         foreach ($talk_img as $talk_img_model){
-            $talk_img_declare[$talk_img_model->user_no]=$this->get_declare_cnt($talk_img_model->user_no);
-
-            $time=$talk_img_model->updated_at==null ? $talk_img_model->created_at:$talk_img_model->updated_at;
+            $time=($talk_img_model->updated_at==null || $talk_img_model->updated_at=='0000-00-00 00:00:00') ? $talk_img_model->created_at:$talk_img_model->updated_at;
             $talk_img_diff_time[$talk_img_model->no]=$this->get_time_diff($time);
         }
         
@@ -66,8 +60,6 @@ class AgreementController extends BasicController
             ['menu_index'=>1,
             'user_profile_img'=>$user_profile_img,
             'talk_img'=>$talk_img,
-            'profile_img_declare'=>$profile_img_declare,
-            'talk_img_declare'=>$talk_img_declare,
             'profile_img_diff_time'=>$profile_img_diff_time,
             'talk_img_diff_time'=>$talk_img_diff_time]);
     }
@@ -292,37 +284,103 @@ class AgreementController extends BasicController
 
     public function get_img_html($type,$no){
         if($type=='talk'){
-            $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0 AND t_file.no=".$no.") AS A LEFT JOIN t_user ON A.user_no=t_user.no";
+            $talk_img_query="SELECT * FROM v_talk_file where type='0' and `no`='".$no."'";
             $talk_img=DB::select($talk_img_query);
             $img_model=$talk_img[0];
-            $talk_img_declare[$img_model->user_no]=$this->get_declare_cnt($img_model->user_no);
 
-            $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+            $time=($img_model->updated_at==null || $img_model->updated_at=='0000-00-00 00:00:00') ? $img_model->created_at:$img_model->updated_at;
             $talk_img_diff_time[$img_model->no]=$this->get_time_diff($time);
 
             return view('photo_agree.img',
                 ['img_model'=>$img_model,
                     'type'=>$type,
                     'all_flag'=>false,
-                    'talk_img_declare'=>$talk_img_declare,
                     'talk_img_diff_time'=>$talk_img_diff_time]);
         }
         else{
-            $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0 AND t_file.`no`=".$no;
+            $user_profile_query="SELECT * FROM  v_profile_file WHERE `no`='".$no."'";
             $user_profile_img=DB::select($user_profile_query);
             $img_model=$user_profile_img[0];
-            $profile_img_declare[$img_model->user_no]=$this->get_declare_cnt($img_model->user_no);
 
-            $time=$img_model->updated_at==null ? $img_model->created_at:$img_model->updated_at;
+            $time=($img_model->updated_at==null || $img_model->updated_at=='0000-00-00 00:00:00') ? $img_model->created_at:$img_model->updated_at;
             $profile_img_diff_time[$img_model->no]=$this->get_time_diff($time);
 
             return view('photo_agree.img',
                 ['img_model'=>$img_model,
                     'type'=>$type,
                     'all_flag'=>false,
-                    'profile_img_declare'=>$profile_img_declare,
                     'profile_img_diff_time'=>$profile_img_diff_time]);
         }
     }
+
+    public function agree_voice(){
+
+        $voice_query="SELECT * FROM v_talk_file where type='1'";
+        $talk_voice=DB::select($voice_query);
+
+        $talk_voice_diff_time=array();
+        foreach ($talk_voice as $model){
+            $time=($model->updated_at==null || $model->updated_at=='0000-00-00 00:00:00') ? $model->created_at:$model->updated_at;
+            $talk_voice_diff_time[$model->no]=$this->get_time_diff($time);
+        }
+
+
+        return view('voice_agree.index',
+            [   'menu_index'=>2,
+                'talk_voice'=>$talk_voice,
+                'talk_voice_diff_time'=>$talk_voice_diff_time,
+            ]);
+    }
+
+    public function get_voice_html($talk_no){
+        $voice_query="SELECT * FROM v_talk_file where type='1' and talk_no='".$talk_no."'";
+        $talk_voice=DB::select($voice_query);
+
+        $talk_voice_diff_time=array();
+        foreach ($talk_voice as $model){
+            $time=($model->updated_at==null || $model->updated_at=='0000-00-00 00:00:00') ? $model->created_at:$model->updated_at;
+            $talk_voice_diff_time[$model->no]=$this->get_time_diff($time);
+        }
+
+
+        return view('voice_agree.voice',
+            [   'voice_model'=>$talk_voice[0],
+                'talk_voice_diff_time'=>$talk_voice_diff_time,
+            ]);
+    }
+
+    public function voice_agree(){
+
+        $params = Request::all();
+        $file_no = $params['t_file_no'];
+        $talk_no = $params['talk_no'];
+
+        if(!isset($file_no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $file_no)->update(['checked' => config('constants.AGREE'),'updated_at'=>date('Y-m-d H:i:s')]);
+        if(!$results)
+            return config('constants.FAIL');
+        else{
+            return $this->get_voice_html($talk_no);
+        }
+    }
+
+    public function voice_disagree(){
+        $params = Request::all();
+        $file_no = $params['t_file_no'];
+        $talk_no = $params['talk_no'];
+
+        if(!isset($file_no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $file_no)->update(['checked' => config('constants.DISAGREE'),'updated_at'=>date('Y-m-d H:i:s')]);
+        if(!$results)
+            return config('constants.FAIL');
+        else{
+            return $this->get_voice_html($talk_no);
+        }
+    }
+
 }
 

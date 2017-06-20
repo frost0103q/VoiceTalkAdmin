@@ -10,13 +10,13 @@
                 <!-- END SIDEBAR TOGGLER BUTTON -->
             </li>
             <li menu_index="1" class="start">
-                <a href="/agree_photo">
+                <a href="agree_photo">
                     <i class="fa fa-photo"></i>
                     <span class="title">사진승인</span>
                 </a>
             </li>
             <li menu_index="2">
-                <a href="#">
+                <a href="agree_voice">
                     <i class="fa fa-microphone"></i>
                     <span class="title">Voice승인</span>
                 </a>

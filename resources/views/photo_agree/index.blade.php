@@ -119,7 +119,7 @@
         /*Agree Img*/
         function img_agree(t_file_no,obj,type,cur_status) {
             $.ajax({
-                url: "/img_agree",
+                url: "img_agree",
                 type: "get",
                 data: {
                     t_file_no : t_file_no,
@@ -146,7 +146,7 @@
         /*Disagree Img*/
         function img_disagree(t_file_no,obj,type,cur_status) {
             $.ajax({
-                url: "/img_disagree",
+                url: "img_disagree",
                 type: "get",
                 data: {
                     t_file_no : t_file_no,
@@ -239,13 +239,13 @@
                              $("#talk_img").attr("src",talk_img);
                         }
                         else
-                             $("#talk_img").addClass("hidden");
+                            $("#talk_img").parent('div').addClass("hidden");
 
                         if(talk_voice!="" || talk_voice!=null){
                             $("#voice_path").attr("src",talk_voice);
                         }
                         else
-                            $("#voice_path").addClass("hidden");
+                            $("#voice_path").parent('div').addClass("hidden");
 
                         if(talk['voice_type']==0) $("#voice_type").val('일반 목소리');
                         if(talk['voice_type']==1) $("#voice_type").val('귀여운 목소리');
