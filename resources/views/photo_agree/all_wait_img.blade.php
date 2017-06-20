@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="note note-success">
-            <p>프로필사진</p>
+            <p>{{trans('lang.profile_photo')}}</p>
         </div>
     </div>
     <div id="profile_img_list">
@@ -20,7 +20,7 @@
     <div class="col-md-12">
         <div class="note note-success">
             <p>
-                Talk 사진
+                {{trans('lang.talk_photo')}}
             </p>
         </div>
     </div>
@@ -36,7 +36,7 @@
         @endforeach
     </div>
     <div class="col-md-12">
-        <button type="button" class="btn blue" id="btn_all_img_agree">전체사진승인</button>
+        <button type="button" class="btn blue" id="btn_all_img_agree">{{trans('lang.all_agree_photo')}}</button>
     </div>
 </div>
 
@@ -82,14 +82,14 @@
                 var talk_img_list_html=$("#talk_img_list").html();
 
                 if(result=='{{config('constants.FAIL')}}')
-                    toastr["error"]("승인이 실패하였습니다.", "알림");
+                    toastr["error"]("{{trans('lang.fail_agree')}}", "{{trans('lang.notice')}}");
                 if(result=='{{config('constants.SUCCESS')}}'){
                     $("#profile_img_list").empty();
                     $("#talk_img_list").empty();
 
                     $("#tab_2_2 .row").append(profile_img_list_html);
                     $("#tab_3_2 .row").append(talk_img_list_html);
-                    toastr["success"]("정확히 승인되었습니다.", "알림");
+                    toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");
                 }
             }
         });

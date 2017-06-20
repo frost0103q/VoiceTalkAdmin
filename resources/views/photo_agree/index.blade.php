@@ -25,41 +25,41 @@
             <div class="portlet box green" style="border: none">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-photo"></i>사진승인
+                        <i class="fa fa-photo"></i>{{trans('lang.photo_agree')}}
                     </div>
                 </div>
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab">미 승인건 모아보기 </a>
+                            <a href="#tab_1" data-toggle="tab">{{trans('lang.wait_all_view')}} </a>
                         </li>
                         <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">프로필사진 <i class="fa fa-angle-down"></i>
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{trans('lang.profile_photo')}} <i class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="#tab_2_1" tabindex="-1" data-toggle="tab">대기 </a>
+                                    <a href="#tab_2_1" tabindex="-1" data-toggle="tab">{{trans('lang.wait')}} </a>
                                 </li>
                                 <li>
-                                    <a href="#tab_2_2" tabindex="-1" data-toggle="tab">승인 </a>
+                                    <a href="#tab_2_2" tabindex="-1" data-toggle="tab">{{trans('lang.agree')}} </a>
                                 </li>
                                 <li>
-                                    <a href="#tab_2_3" tabindex="-1" data-toggle="tab">거부 </a>
+                                    <a href="#tab_2_3" tabindex="-1" data-toggle="tab">{{trans('lang.disagree')}} </a>
                                 </li>
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">Talk 사진 <i class="fa fa-angle-down"></i>
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{trans('lang.talk_photo')}} <i class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="#tab_3_1" tabindex="-1" data-toggle="tab">대기 </a>
+                                    <a href="#tab_3_1" tabindex="-1" data-toggle="tab">{{trans('lang.wait')}} </a>
                                 </li>
                                 <li>
-                                    <a href="#tab_3_2" tabindex="-1" data-toggle="tab">승인 </a>
+                                    <a href="#tab_3_2" tabindex="-1" data-toggle="tab">{{trans('lang.agree')}} </a>
                                 </li>
                                 <li>
-                                    <a href="#tab_3_3" tabindex="-1" data-toggle="tab">거부 </a>
+                                    <a href="#tab_3_3" tabindex="-1" data-toggle="tab">{{trans('lang.disagree')}} </a>
                                 </li>
                             </ul>
                         </li>
@@ -127,9 +127,9 @@
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
-                        toastr["error"]("승인이 실패하였습니다.", "알림");
+                        toastr["error"]("{{trans('lang.fail_agree')}}", "{{trans('lang.notice')}}");
                     else{
-                        toastr["success"]("정확히 승인되었습니다.", "알림");
+                        toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.AGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
@@ -154,9 +154,9 @@
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
-                        toastr["error"]("거절이 실패하였습니다.", "알림");
+                        toastr["error"]("{{trans('lang.fail_disagree')}}", "{{trans('lang.notice')}}");
                     else{
-                        toastr["success"]("정확히 거절되었습니다.", "알림");
+                        toastr["success"]("{{trans('lang.success_disagree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
@@ -181,7 +181,7 @@
                 url: 'get_user_data',
                 success: function (result) {
                     if (result == "{{config('constants.FAIL')}}") {
-                        $toast = toastr["error"]("상세보기가 실패하였습니다.", "");
+                        $toast = toastr["error"]("{{trans('lang.fail_detail_view')}}", "");
 
                     } else {
                         var data1 = JSON.parse(result);
@@ -190,15 +190,15 @@
                         $("#email").val(data.email);
                         $("#profile_img").attr("src", data1.path);
                         if (data.status == "{{config('constants.TALK_POSSIBLE')}}")
-                            $("#status").html("상담가능");
+                            $("#status").html("{{trans('lang.enable_talk')}}");
                         else if (data.status == "{{config('constants.AWAY')}}")
-                            $("#status").html("부재중");
+                            $("#status").html("{{trans('lang.away')}}");
                         else if (data.status == "{{config('constants.TALKING')}}")
-                            $("#status").html("상담중");
+                            $("#status").html("{{trans('lang.in_talking')}}");
                         if (data.sex == "{{config('constants.MALE')}}")
-                            $("#sex").val("남자");
+                            $("#sex").val("{{trans('lang.man')}}");
                         else if (data.sex == "{{config('constants.FEMALE')}}")
-                            $("#sex").val("여자");
+                            $("#sex").val("{{trans('lang.woman')}}");
                         $("#age").val(data.age);
                         $("#subject").val(data.subject);
                         if (data.verified == "{{config('constants.VERIFIED')}}")
@@ -228,7 +228,7 @@
                 url: 'talk_confirm',
                 success: function (result) {
                     if (result == "{{config('constants.FAIL')}}") {
-                        toastr["error"]("작성한 Talk가 없습니다.");
+                        toastr["error"]("{{trans('lang.no_talk')}}");
                     } else {
                         var jsonData = JSON.parse(result);
                         var talk = jsonData.info;
@@ -247,12 +247,11 @@
                         else
                             $("#voice_path").parent('div').addClass("hidden");
 
-                        if(talk['voice_type']==0) $("#voice_type").val('일반 목소리');
-                        if(talk['voice_type']==1) $("#voice_type").val('귀여운 목소리');
-                        if(talk['voice_type']==2) $("#voice_type").val('중후한 목소리');
-                        if(talk['voice_type']==3) $("#voice_type").val('일반 목소리');
-                        if(talk['voice_type']==4) $("#voice_type").val('통통목소리');
-                        if(talk['voice_type']==5) $("#voice_type").val('애교목소리');
+                        if(talk['voice_type']==0) $("#voice_type").val('{{trans('lang.nomal_voice')}}');
+                        if(talk['voice_type']==1) $("#voice_type").val('{{trans('lang.pretty_voice')}}');
+                        if(talk['voice_type']==2) $("#voice_type").val('{{trans('lang.weight_voice')}}');
+                        if(talk['voice_type']==3) $("#voice_type").val('{{trans('lang.tt_voice')}}');
+                        if(talk['voice_type']==4) $("#voice_type").val('{{trans('lang.love_voice')}}');
 
                         $("#talk_subject").val(talk['subject']);
                         $("#greeting").val(talk['greeting']);

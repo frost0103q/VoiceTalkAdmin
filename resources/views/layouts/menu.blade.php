@@ -12,7 +12,7 @@
             <li menu_index="1" class="start">
                 <a href="agree_photo">
                     <i class="fa fa-photo"></i>
-                    <span class="title">사진승인</span>
+                    <span class="title">{{trans('lang.photo_agree')}}</span>
                 </a>
             </li>
             <li menu_index="2">

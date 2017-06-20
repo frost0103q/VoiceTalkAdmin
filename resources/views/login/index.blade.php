@@ -4,37 +4,36 @@
 <div class="content">
 		<!-- BEGIN LOGIN FORM -->
 		{!! Form::open(['action' => 'Admin\AdminLoginController@doLogin', 'method' => 'post', 'id'=>'loginForm']) !!}
-			<h3 class="form-title" style="text-align: center"><strong>관리자 로그인</strong></h3>
+			<h3 class="form-title" style="text-align: center"><strong>{{trans('lang.admin_login')}}</strong></h3>
 			<div class="alert alert-danger display-hide">
 				<button class="close" data-close="alert"></button>
-			<span id="error_content">
-			이메일 혹은 비밀번호를 정확히 입력하세요.</span>
+			<span id="error_content">{{trans('lang.input_correct_email_and_password')}}</span>
 			</div>
 			<div class="form-group">
 				<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-				<label class="control-label visible-ie8 visible-ie9">이메일</label>
+				<label class="control-label visible-ie8 visible-ie9">{{trans('lang.email')}}</label>
 				<div class="input-icon">
 					<i class="fa fa-user"></i>
-					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="이메일을 입력하세요." name="email" id="email"/>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="{{trans('lang.input_email')}}" name="email" id="email"/>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label visible-ie8 visible-ie9">비밀번호</label>
+				<label class="control-label visible-ie8 visible-ie9">{{trans('lang.password')}}</label>
 				<div class="input-icon">
 					<i class="fa fa-lock"></i>
-					<input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="비밀번호를 입력하세요." name="password" id="password"/>
+					<input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="{{trans('lang.input_password')}}" name="password" id="password"/>
 				</div>
 			</div>
 			<div class="form-actions">
 				<label class="checkbox">
-					<input type="checkbox" name="remember" value="1"/> 자동 로그인</label>
+					<input type="checkbox" name="remember" value="1"/> {{trans('lang.auto_login')}}</label>
 				<button type="submit" class="btn green-haze pull-right" id="btn_login">
-					로그인 <i class="m-icon-swapright m-icon-white"></i>
+					{{trans('lang.login')}} <i class="m-icon-swapright m-icon-white"></i>
 				</button>
 			</div>
 			<div class="create-account" style="border-top: none">
 				<p>
-					관리자만 리용하는 관리페이지입니다.
+					{{trans('lang.admin_using_page')}}
 				</p>
 			</div>
 		{!! Form::close() !!}
@@ -50,11 +49,11 @@
 		var error = '<?php if(isset($error)==false){ echo 0;} else {echo $error;}; ?>';
 
 		if(error == '{{config('constants.INVALID_EMAIL')}}') {
-			$("#error_content").text('이메일이 정확하지않습니다.');
+			$("#error_content").text('{{trans('lang.incorrect_email')}}');
 			$('.alert-danger', $('#loginForm')).show();
 		}
 		else if(error =='{{config('constants.INVALID_PASSWORD')}}') {
-			$("#error_content").text('비밀번호가 정확하지않습니다.');
+			$("#error_content").text('{{trans('lang.incorrect_password')}}');
 			$('.alert-danger', $('#loginForm')).show();
 		}
 
@@ -76,10 +75,10 @@
 
 			messages: {
 				email: {
-					required: "이메일을 입력하세요."
+					required: "{{trans('lang.input_email')}}"
 				},
 				password: {
-					required: "비밀번호를 입력하세요."
+					required: "{{trans('lang.input_password')}}"
 				}
 			},
 

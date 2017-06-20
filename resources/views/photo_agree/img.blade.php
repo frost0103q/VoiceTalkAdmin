@@ -15,7 +15,7 @@
                 {{$img_model->nickname}}
             </div>
             <div class="profile-usertitle-job">
-                {{'경고 '.$img_model->declare_cnt}}
+                {{trans('lang.declare').' '.$img_model->declare_cnt}}
             </div>
             <div class="profile-usertitle-job">
                 @if($type=='talk')
@@ -32,8 +32,8 @@
             </div>
         </div>
         <div class="profile-userbuttons">
-            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_user_data({{$img_model->user_no}})">회원정보</button>
-            <button type="button" class="btn btn-circle btn-danger btn-sm"  onclick="confirm_talk({{$img_model->user_no}})">Talk 확인</button>
+            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_user_data({{$img_model->user_no}})">{{trans('lang.user_info')}}</button>
+            <button type="button" class="btn btn-circle btn-danger btn-sm"  onclick="confirm_talk({{$img_model->user_no}})">{{trans('lang.talk_confirm')}}</button>
         </div>
         <div class="profile-userbuttons">
             <div class="md-radio-inline">
@@ -56,7 +56,7 @@
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
-                        승인 </label>
+                        {{trans('lang.agree')}} </label>
                 </div>
                 <div class="md-radio">
                     <input type="radio" id="{{$rad_identy.$img_model->no.'_'.$img_model->checked.'_n'}}" name="{{$rad_identy.$img_model->no.'_'.$img_model->checked}}" class="md-radiobtn"  value="{{$img_model->no}}"  onclick="img_disagree('{{$img_model->no}}',this,'{{$type}}','{{$img_model->checked}}')"  <?php if($img_model->checked==0) echo 'checked';?>>
@@ -64,7 +64,7 @@
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
-                        거절 </label>
+                        {{trans('lang.disagree')}} </label>
                 </div>
             </div>
         </div>

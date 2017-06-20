@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="profile-userbuttons">
-            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_confirm_voice({{$voice_model->path}})">Voice 듣기</button>
+            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_confirm_voice({{$voice_model->path}})">{{trans('lang.hear_voice')}}</button>
         </div>
         <div class="profile-userbuttons">
             <div class="md-radio-inline">
@@ -37,7 +37,7 @@
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
-                        승인 </label>
+                        {{trans('lang.agree')}} </label>
                 </div>
                 <div class="md-radio">
                     <input type="radio" id="{{$rd_lavel.'_n'}}" name="{{$rd_lavel}}" class="md-radiobtn"  value="{{$voice_model->no}}"  onclick="voice_disagree('{{$voice_model->no}}','{{$voice_model->talk_no}}',this,'{{$voice_model->checked}}')"  <?php if($voice_model->checked==0) echo 'checked=""';?>>
@@ -45,7 +45,7 @@
                         <span></span>
                         <span class="check"></span>
                         <span class="box"></span>
-                        거절 </label>
+                        {{trans('lang.disagree')}}  </label>
                 </div>
             </div>
         </div>

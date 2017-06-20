@@ -25,19 +25,19 @@
             <div class="portlet box green" style="border: none">
                 <div class="portlet-title">
                     <div class="caption">
-                        <i class="fa fa-microphone"></i>Voice 승인
+                        <i class="fa fa-microphone"></i>{{trans('lang.voice_agree')}}
                     </div>
                 </div>
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab">미승인 Voice</a>
+                            <a href="#tab_1" data-toggle="tab">{{trans('lang.wait_voice')}}</a>
                         </li>
                         <li>
-                            <a href="#tab_2" data-toggle="tab">승인된 Voice</a>
+                            <a href="#tab_2" data-toggle="tab">{{trans('lang.agree_voice')}}</a>
                         </li>
                         <li>
-                            <a href="#tab_3" data-toggle="tab">거절된 Voice</a>
+                            <a href="#tab_3" data-toggle="tab">{{trans('lang.disagree_voice')}}</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -87,9 +87,9 @@
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
-                        toastr["error"]("승인이 실패하였습니다.", "알림");
+                        toastr["error"]("{{trans('lang.fail_agree')}}", "{{trans('lang.notice')}}");
                     else{
-                        toastr["success"]("정확히 승인되었습니다.", "알림");
+                        toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.AGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
                             $("#tab_2 .row").append(result);
@@ -109,9 +109,9 @@
                 },
                 success: function (result) {
                     if(result=='{{config('constants.FAIL')}}')
-                        toastr["error"]("거절이 실패하였습니다.", "알림");
+                        toastr["error"]("{{trans('lang.fail_disagree')}}", "{{trans('lang.notice')}}");
                     else{
-                        toastr["success"]("정확히 거절되었습니다.", "알림");
+                        toastr["success"]("{{trans('lang.success_disagree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
                             $("#tab_3 .row").append(result);

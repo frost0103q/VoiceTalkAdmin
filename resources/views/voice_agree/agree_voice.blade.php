@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="note note-success">
-            <p>승인된 Voice</p>
+            <p>{{trans('lang.agree_voice')}}</p>
         </div>
     </div>
     @foreach($talk_voice as $voice_model)
