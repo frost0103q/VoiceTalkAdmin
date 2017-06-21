@@ -45,3 +45,5 @@ Route::get('/google_card_register_guide', 'Admin\AdminSettingController@google_c
 //Talk and User manage
 Route::get('talk_user_mgr', 'TalkController@index');
 Route::post('ajax_user_table', 'UsersController@ajax_user_table');
+Route::post('ajax_talk_table', 'TalkController@ajax_talk_table');
+Route::post('ajax_declare_table', 'DeclareController@ajax_declare_table');

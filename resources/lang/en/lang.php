@@ -92,4 +92,14 @@ return [
     'display_cnt'=>'현시개수',
     'all_cnt'=>'전체개수',
     'unit'=>'개',
+    'reg_time'=>'가입일자',
+    'recent_connect'=>'최근접속',
+    'talk_reg_time'=>'Talk 등록일',
+    'from_user_declare'=>'신고회원',
+    'from_user_photo'=>'신고인사진',
+    'to_user_declare'=>'피신고회원',
+    'declare_time'=>'신고시간',
+    'process_time'=>'처리시간',
+    'processing'=>'처리',
+
 ];
