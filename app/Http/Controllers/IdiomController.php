@@ -6,6 +6,7 @@ use App\Http\Controllers\BasicController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
+use App\Models\InterdictIdiom;
 
 use Config;
 use DB;
@@ -49,9 +50,9 @@ class IdiomController extends BasicController
 
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if($interdict_idiom==null){
-            $result=DB::table('t_interdict_idiom')->insert(
-                ['content' => $content,'updated_at'=>null, 'created_at' => date('Y-m-d H:i:s')]
-            );
+
+            $result=DB::insert('insert into t_interdict_idiom (no,content,created_at) values(1,?,?)',[$content,date('Y-m-d H:i:s')]);
+            
             if($result){
                 return view('idiom_manage.select_idiom',['content'=>$content]);
             }
@@ -80,8 +81,7 @@ class IdiomController extends BasicController
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if($interdict_idiom==null){
             $result=DB::table('t_interdict_idiom')->insert(
-                ['content' => $content,'updated_at'=>null, 'created_at' => date('Y-m-d H:i:s')]
-            );
+                ['content' => $content,'updated_at'=>'', 'created_at' => date('Y-m-d H:i:s')]);
             if($result){
                 return view('idiom_manage.select_idiom',['content'=>$content]);
             }
