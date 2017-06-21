@@ -81,9 +81,9 @@ class DeclareController extends BasicController
                     if($results!=null){
                         $verified=$results['verified'];
                         if($verified=='1')
-                            return $d.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                            return $results['nickname'].'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
                         else
-                            return $d;
+                            return $results['nickname'];
                     }
                     else
                         return '';

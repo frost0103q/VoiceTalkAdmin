@@ -47,3 +47,8 @@ Route::get('talk_user_mgr', 'TalkController@index');
 Route::post('ajax_user_table', 'UsersController@ajax_user_table');
 Route::post('ajax_talk_table', 'TalkController@ajax_talk_table');
 Route::post('ajax_declare_table', 'DeclareController@ajax_declare_table');
+
+//Interdict Idiom Manage
+Route::get('interdict_idiom_reg', 'IdiomController@index');
+Route::post('save_interdict_idiom', 'IdiomController@save_interdict_idiom');
+Route::post('del_selected_idiom', 'IdiomController@del_selected_idiom');

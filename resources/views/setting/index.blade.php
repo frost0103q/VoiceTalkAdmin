@@ -6,14 +6,14 @@
 			<div class="portlet box green" style="border: none">
 				<div class="portlet-title">
 					<div class="caption">
-						<i class="fa fa-cog"></i>비밀번호변경
+						<i class="fa fa-cog"></i>{{trans('lang.change_password')}}
 					</div>
 				</div>
 				<div class="portlet-body form">
 					<form role="form" class="form-horizontal" id="changePwdForm">
 						<div class="form-body" style="padding-top: 30px">
 							<div class="form-group form-md-line-input">
-								<label class="col-md-2 control-label" for="old_password">이전 비밀번호</label>
+								<label class="col-md-2 control-label" for="old_password">{{trans('lang.old_password')}}</label>
 								<div class="col-md-4">
 									<input type="password" class="form-control" id="old_password">
 									<div class="form-control-focus">
@@ -21,7 +21,7 @@
 								</div>
 							</div>
 							<div class="form-group form-md-line-input">
-								<label class="col-md-2 control-label" for="new_password">새 비밀번호</label>
+								<label class="col-md-2 control-label" for="new_password">{{trans('lang.new_password')}}</label>
 								<div class="col-md-4">
 									<input type="password" class="form-control" id="new_password">
 									<div class="form-control-focus">
@@ -29,7 +29,7 @@
 								</div>
 							</div>
 							<div class="form-group form-md-line-input">
-								<label class="col-md-2 control-label" for="confirm_password">비밀번호 확인</label>
+								<label class="col-md-2 control-label" for="confirm_password">{{trans('lang.confirm_password')}}</label>
 								<div class="col-md-4">
 									<input type="password" class="form-control" id="confirm_password">
 									<div class="form-control-focus">
@@ -38,7 +38,7 @@
 							</div>
 							<div class="form-group form-md-line-input">
 								<div class="col-md-offset-2 col-md-10">
-									<button type="button" class="btn blue" id="btn_store">비밀번호 변경</button>
+									<button type="button" class="btn blue" id="btn_store">{{trans('lang.change_password')}}</button>
 								</div>
 							</div>
 						</div>
@@ -51,22 +51,22 @@
 	<script>
 		$("#btn_store").click(function () {
 			if($("#old_password").val()==''){
-				toastr["error"]("이전 비밀번호를 입력하세요.", "알림");
+				toastr["error"]("{{trans('lang.input_old_password')}}", "{{trans('lang.notice')}}");
 				$("#old_password").focus();
 				return;
 			}
 			if($("#new_password").val()==''){
-				toastr["error"]("새 비밀번호를 입력하세요.", "알림");
+				toastr["error"]("{{trans('lang.input_new_password')}}", "{{trans('lang.notice')}}");
 				$("#new_password").focus();
 				return;
 			}
 			if($("#confirm_password").val()==''){
-				toastr["error"]("비밀번호 확인을 하세요.", "알림");
+				toastr["error"]("{{trans('lang.confirm_password_')}}", "{{trans('lang.notice')}}");
 				$("#confirm_password").focus();
 				return;
 			}
 			if($("#new_password").val()!=$("#confirm_password").val()){
-				toastr["error"]("비밀번호 확인을 다시하세요.", "알림");
+				toastr["error"]("{{trans('lang.retry_confirm_password')}}", "{{trans('lang.notice')}}");
 				$("#confirm_password").focus();
 				return;
 			}
@@ -80,11 +80,11 @@
 				},
 				success: function (result) {
 					if(result=='{{config('constants.INVALID_PASSWORD')}}')
-						toastr["error"]("이전비밀번호가 정확	하지 않습니다.", "알림");
+						toastr["error"]("{{trans('lang.incorrect_old_password')}}", "{{trans('lang.notice')}}");
 					if(result=='{{config('constants.FAIL')}}')
-						toastr["error"]("변경이 실해하였습니다.", "알림");
+						toastr["error"]("{{trans('lang.fail_change_password')}}", "{{trans('lang.notice')}}");
 					if(result=='{{config('constants.SUCCESS')}}')
-						toastr["success"]("정확히 변경되었습니다.", "알림");
+						toastr["success"]("{{trans('lang.success_change_password')}}", "{{trans('lang.notice')}}");
 				}
 			});
 

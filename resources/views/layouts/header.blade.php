@@ -27,11 +27,11 @@
                     <ul class="dropdown-menu dropdown-menu-default">
                         <li>
                             <a href="setting">
-                                <i class="fa fa-cog"></i> 비밀번호변경 </a>
+                                <i class="fa fa-cog"></i> {{trans('lang.change_password')}} </a>
                         </li>
                         <li>
                             <a href="logout">
-                                <i class="fa fa-power-off"></i> 로그아웃 </a>
+                                <i class="fa fa-power-off"></i> {{trans('lang.logout')}} </a>
                         </li>
                     </ul>
                 </li>

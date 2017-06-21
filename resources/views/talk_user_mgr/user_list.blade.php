@@ -49,6 +49,23 @@
             </tbody>
         </table>
     </div>
+    <div class="col-md-12"  style="padding-top: 30px">
+        <div class=" col-md-2">
+            <a class="btn blue" id="btn_warning_user">{{trans('lang.warning')}}</a>
+            <a class="btn blue" id="btn_del_user_photo">{{trans('lang.del_only_photo')}}</a>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control select2me" id="user_sex">
+                <option value="">{{trans('lang.all')}}</option>
+                <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
+                <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
+            </select>
+        </div>
+        <label class="control-label col-md-1" for="admin_memo" style="text-align: right">{{trans('lang.admin_memo')}}</label>
+        <div class="col-md-3">
+            <input class="form-control" placeholder="" type="text" id="admin_memo">
+        </div>
+    </div>
 </div>
 
 <script>
@@ -92,7 +109,7 @@
             },
             "lengthMenu": [
                 [5, 10, 20, -1],
-                [5, 10, 20, "전체"] // change per page values here
+                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
             "pageLength": 5,

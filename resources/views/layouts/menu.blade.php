@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li menu_index="9">
-                <a href="#">
+                <a href="interdict_idiom_reg">
                     <i class="fa fa-file-word-o"></i>
                     <span class="title">{{trans('lang.interdict_manage')}}</span>
                 </a>

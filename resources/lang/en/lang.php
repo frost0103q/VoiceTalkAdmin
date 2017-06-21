@@ -12,6 +12,7 @@ return [
     'auto_login'=>'자동 로그인',
     'admin_using_page'=>'관리자만 리용하는 관리페이지입니다.',
     'login'=>'로그인',
+    'logout'=>'로그아웃',
     'incorrect_email'=>'이메일이 정확하지않습니다.',
     'incorrect_password'=>'비밀번호가 정확하지않습니다.',
 
@@ -101,5 +102,36 @@ return [
     'declare_time'=>'신고시간',
     'process_time'=>'처리시간',
     'processing'=>'처리',
+    'warning'=>'경고하기',
+    'del_only_photo'=>'사진만 삭제',
+    'admin_memo'=>'관리자메모',
+    'force_stop'=>'강퇴차단',
+    'del_talk'=>'Talk삭제',
+
+    //Setting
+    'change_password'=>'비밀번호변경',
+    'old_password'=>'이전 비밀번호',
+    'new_password'=>'새 비밀번호',
+    'confirm_password'=>'비밀번호 확인',
+    'input_old_password'=>'이전 비밀번호를 입력하세요.',
+    'input_new_password'=>'새 비밀번호를 입력하세요.',
+    'confirm_password_'=>'비밀번호 확인을 하세요.',
+    'retry_confirm_password'=>'비밀번호 확인을 다시하세요.',
+    'incorrect_old_password'=>'이전비밀번호가 정확하지 않습니다.',
+    'fail_change_password'=>'변경이 실해하였습니다.',
+    'success_change_password'=>'정확히 변경되었습니다.',
+
+    //Idiom manage
+    'registered_idiom'=>'등록된 금지어',
+    'input_idiom'=>'금지어를 입력하세요.',
+    'save_fail'=>'보관이 실패하였습니다.',
+    'save_success'=>'정확히 보관되었습니다.',
+    'reg_interdict_idiom'=>'금지어등록',
+    'register'=>'등록하기',
+    'multi_reg_enable_comma'=>'콤마로 녀러 건 등록가능',
+    'select_del'=>'선택삭제',
+    'select_idiom_del'=>'삭제할 금지어를 선택하세요.',
+    'delete_fail'=>'삭제가 실패하였습니다.',
+    'delete_success'=>'정확히 삭제되었습니다.',
 
 ];

@@ -15,7 +15,7 @@
                 {{$voice_model->nickname}}
             </div>
             <div class="profile-usertitle-job">
-                {{'경고  '.$voice_model->declare_cnt}}
+                {{trans('lang.declare').' '.$voice_model->declare_cnt}}
             </div>
             <div class="profile-usertitle-job">
                 @if(isset($talk_voice_diff_time[$voice_model->no]))
