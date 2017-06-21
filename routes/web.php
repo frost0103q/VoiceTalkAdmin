@@ -41,3 +41,7 @@ Route::get('voice_disagree', 'AgreementController@voice_disagree');
 Route::get('/notify', 'Admin\AdminSettingController@notify');
 Route::get('/user_guide', 'Admin\AdminSettingController@use_guide');
 Route::get('/google_card_register_guide', 'Admin\AdminSettingController@google_card_register_guide');
+
+//Talk and User manage
+Route::get('talk_user_mgr', 'TalkController@index');
+Route::post('ajax_user_table', 'UsersController@ajax_user_table');

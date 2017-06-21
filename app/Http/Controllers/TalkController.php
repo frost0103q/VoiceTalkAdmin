@@ -7,6 +7,7 @@ use App\Models\AppUser;
 use App\Models\Talk;
 use App\Models\ServerFile;
 use App\Models\TalkReview;
+use App\Models\SSP;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
@@ -39,7 +40,7 @@ class TalkController extends BasicController
 
     public function index()
     {
-        return view('welcome');
+        return view('talk_user_mgr.index',['menu_index'=>4]);
     }
 
     /**

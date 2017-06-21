@@ -8,6 +8,8 @@ use App\Models\AuthCode;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\UserDeclare;
+use App\Models\SSP;
+use App\Models\User;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use App\Providers\AuthServiceProvider;
@@ -721,5 +723,81 @@ class UsersController extends BasicController
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
 
         return response()->json($response);
+    }
+
+    public function ajax_user_table(){
+        $table = 't_user';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sex=$_POST['sex'];
+        $user_no=$_POST['user_no'];
+        $nickname=$_POST['nickname'];
+        $phone_number=$_POST['phone_number'];
+        $email=$_POST['email'];
+        $chat_content=$_POST['chat_content'];
+
+        if($sex!="")
+            $custom_where.=" and sex=$sex";
+        if($user_no!="")
+            $custom_where.=" and no='".$user_no."'";
+        if($nickname!="")
+            $custom_where.=" and nickname='".$nickname."'";
+        if($phone_number!="")
+            $custom_where.=" and phone_number='".$phone_number."'";
+        if($email!="")
+            $custom_where.=" and email='".$email."'";
+        if($chat_content!=""){
+
+        }
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0,
+                'formatter'=>function($d,$row){
+                    return '<input type="checkbox" value="'.$d.'">';
+                }
+            ),
+            array('db' => 'no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null){
+                        $verified=$results['verified'];
+                        if($verified=='1')
+                            return $d.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                        else
+                            return $d;
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = ServerFile::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['path'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'nickname', 'dt' => 3),
+            array('db' => 'no', 'dt' => 4),
+            array('db' => 'created_at', 'dt' => 5)
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
     }
 }

@@ -28,6 +28,10 @@
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/bootstrap-toastr/toastr.min.css')}}"/>
     <link href="{{ asset('assets/admin/pages/css/profile.css')}}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/select2/select2.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/select2/select2.css')}}"/>
+
     <!-- END PAGE LEVEL STYLES -->
 
     <!-- BEGIN THEME STYLES -->
@@ -112,6 +116,10 @@
 
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <script src="{{ asset('assets/global/plugins/bootstrap-toastr/toastr.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/datatables/media/js/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 
 <script src="{{ asset('assets/global/scripts/metronic.js')}}" type="text/javascript"></script>
@@ -119,6 +127,14 @@
 <script src="{{ asset('assets/admin/layout/scripts/quick-sidebar.js')}}" type="text/javascript"></script>
 <script src="{{ asset('assets/admin/layout/scripts/demo.js')}}" type="text/javascript"></script>
 
+<script>
+    $(document).ready(function () {
+        $('select').select2();
+        setTimeout(function () {
+            $(".select2-search").remove();
+        }, 100);
+    })
+</script>
 
 <?php
 if(isset($menu_index)){
@@ -134,7 +150,6 @@ if(isset($menu_index)){
     }
 }
 ?>
-
 <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->

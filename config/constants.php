@@ -64,4 +64,10 @@ return [
 
 		'ANDROID' => 0,
 		'IOS'	=> 1,
+
+		'DB_USER' => 'root',
+		'DB_PW'	=> 'root',
+		'DB_NAME' => 'voicetalk',
+		'DB_HOST'	=> 'localhost',
+	
 ];

@@ -18,7 +18,49 @@
             <li menu_index="2">
                 <a href="agree_voice">
                     <i class="fa fa-microphone"></i>
-                    <span class="title">Voice승인</span>
+                    <span class="title">{{trans('lang.voice_agree')}}</span>
+                </a>
+            </li>
+            <li menu_index="3">
+                <a href="#">
+                    <i class="fa fa-credit-card"></i>
+                    <span class="title">{{trans('lang.cash_question')}}</span>
+                </a>
+            </li>
+            <li menu_index="4">
+                <a href="talk_user_mgr">
+                    <i class="fa fa-list"></i>
+                    <span class="title">Talk/{{trans('lang.user_manage')}}</span>
+                </a>
+            </li>
+            <li menu_index="5">
+                <a href="#">
+                    <i class="fa fa-edit"></i>
+                    <span class="title">{{trans('lang.notice_manage')}}</span>
+                </a>
+            </li>
+            <li menu_index="6">
+                <a href="#">
+                    <i class="fa fa-bank"></i>
+                    <span class="title">{{trans('lang.cach_manage')}}</span>
+                </a>
+            </li>
+            <li menu_index="7">
+                <a href="#">
+                    <i class="fa fa-line-chart"></i>
+                    <span class="title">{{trans('lang.statistic_manage')}}</span>
+                </a>
+            </li>
+            <li menu_index="8">
+                <a href="#">
+                    <i class="fa fa-file-text-o"></i>
+                    <span class="title">{{trans('lang.admin_notice')}}</span>
+                </a>
+            </li>
+            <li menu_index="9">
+                <a href="#">
+                    <i class="fa fa-file-word-o"></i>
+                    <span class="title">{{trans('lang.interdict_manage')}}</span>
                 </a>
             </li>
         </ul>

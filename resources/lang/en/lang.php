@@ -15,8 +15,18 @@ return [
     'incorrect_email'=>'이메일이 정확하지않습니다.',
     'incorrect_password'=>'비밀번호가 정확하지않습니다.',
 
-    //Photo agree
+    //menu
     'photo_agree'=>'사진승인',
+    'voice_agree'=>'Voice 승인',
+    'cash_question'=>'결제문의',
+    'user_manage'=>'회원관리',
+    'notice_manage'=>'공지관리',
+    'cach_manage'=>'입출금관리',
+    'statistic_manage'=>'통계관리',
+    'admin_notice'=>'운영자계시판',
+    'interdict_manage'=>'금지어등록',
+
+    //Photo agree
     'wait_all_view'=>'미 승인건 모아보기',
     'profile_photo'=>'프로필사진',
     'wait'=>'대기',
@@ -61,11 +71,25 @@ return [
     'close'=>'닫기',
 
     //Voice agree
-    'voice_agree'=>'Voice 승인',
     'wait_voice'=>'미승인 Voice',
     'agree_voice'=>'승인된 Voice',
     'disagree_voice'=>'거절된 Voice',
     'hear_voice'=>'Voice 듣기',
     'confirm_voice_for_test'=>'검수를 위한 Voice 확인',
 
+    //Talk/User manage
+    'user_list'=>'회원리스트',
+    'talk_list'=>'Talk리스트',
+    'declare_content'=>'신고내역',
+    'all'=>'전체',
+    'user_no'=>'회원번호',
+    'chat_content'=>'채팅내용',
+    'search'=>'검색',
+    'photo'=>'사진',
+    'content'=>'내용',
+    'edit_time'=>'작성일자',
+    'no_display_data'=>'현시할 내용이 없습니다.',
+    'display_cnt'=>'현시개수',
+    'all_cnt'=>'전체개수',
+    'unit'=>'개',
 ];
