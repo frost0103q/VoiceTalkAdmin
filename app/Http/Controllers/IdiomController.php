@@ -10,6 +10,7 @@ use App\Models\InterdictIdiom;
 
 use Config;
 use DB;
+use Session;
 
 class IdiomController extends BasicController
 {
@@ -36,6 +37,11 @@ class IdiomController extends BasicController
     
     public function index(){
 
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
+        
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if($interdict_idiom!=null)
             $content=$interdict_idiom->content;
@@ -52,7 +58,7 @@ class IdiomController extends BasicController
         if($interdict_idiom==null){
 
             $result=DB::insert('insert into t_interdict_idiom (no,content,created_at) values(1,?,?)',[$content,date('Y-m-d H:i:s')]);
-            
+
             if($result){
                 return view('idiom_manage.select_idiom',['content'=>$content]);
             }

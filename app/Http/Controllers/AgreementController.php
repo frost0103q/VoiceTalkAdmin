@@ -8,6 +8,7 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use DB;
 use Request;
+use Session;
 use App\Models\ServerFile;
 
 
@@ -32,11 +33,17 @@ class AgreementController extends BasicController
      */
     public function __construct()
     {
-        
+
     }
 
     public function agree_photo()
     {
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
+
         $user_profile_query="SELECT * FROM  v_profile_file";
         $user_profile_img=DB::select($user_profile_query);
 
@@ -314,6 +321,11 @@ class AgreementController extends BasicController
     }
 
     public function agree_voice(){
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
 
         $voice_query="SELECT * FROM v_talk_file where type='1'";
         $talk_voice=DB::select($voice_query);

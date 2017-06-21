@@ -14,6 +14,7 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 
 use Config;
+use Session;
 use DB;
 
 class TalkController extends BasicController
@@ -41,6 +42,12 @@ class TalkController extends BasicController
 
     public function index()
     {
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
+
         return view('talk_user_mgr.index',['menu_index'=>4]);
     }
 
