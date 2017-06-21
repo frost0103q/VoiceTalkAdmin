@@ -43,7 +43,7 @@
                                 <label class="col-md-3 control-label"
                                        style="text-align: right"><strong>{{trans('lang.audio')}}</strong></label>
                                 <div class="col-md-9">
-                                    <audio id="voice_path" src="{{ asset('uploads/1.mp3')}}" controls></audio>
+                                    <audio id="voice_path" src="" controls></audio>
                                 </div>
                             </div>
                         </div>

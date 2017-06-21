@@ -56,6 +56,8 @@
         </div>
     </div>
 
+    @include('voice_agree.confirm_voice')
+
     <script>
         $(function () {
             $(window).resize(function () {
@@ -119,6 +121,11 @@
                     }
                 }
             });
+        }
+
+        function get_confirm_voice(voice_path) {
+            $("#talk_voice_path").attr('src',voice_path);
+            $("#btn_voice_confirm").trigger('click');
         }
     </script>
 @stop

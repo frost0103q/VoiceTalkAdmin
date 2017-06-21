@@ -66,5 +66,6 @@ return [
     'agree_voice'=>'승인된 Voice',
     'disagree_voice'=>'거절된 Voice',
     'hear_voice'=>'Voice 듣기',
+    'confirm_voice_for_test'=>'검수를 위한 Voice 확인',
 
 ];

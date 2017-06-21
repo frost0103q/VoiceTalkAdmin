@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="profile-userbuttons">
-            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_confirm_voice({{$voice_model->path}})">{{trans('lang.hear_voice')}}</button>
+            <button type="button" class="btn btn-circle green-haze btn-sm" onclick="get_confirm_voice('{{$voice_model->path}}')">{{trans('lang.hear_voice')}}</button>
         </div>
         <div class="profile-userbuttons">
             <div class="md-radio-inline">
