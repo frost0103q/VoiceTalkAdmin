@@ -55,7 +55,7 @@
         <div class=" col-md-4">
             <a class="btn blue" id="btn_warning_user_talk">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_stop_user">{{trans('lang.force_stop')}}</a>
-            <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_photo')}}</a>
+            <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_talk_img')}}</a>
         </div>
         <div class="col-md-2">
             <select class="form-control select2me" id="user_sex">
@@ -108,8 +108,10 @@
                 }
             },
             "createdRow": function (row, data, dataIndex) {
-                $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
-                $('td:eq(7)', row).html('<img src="'+data[7]+'" height="50px">');
+                if(data[2]!=null)
+                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                if(data[7]!=null)
+                    $('td:eq(7)', row).html('<img src="'+data[7]+'" height="50px">');
             },
             "lengthMenu": [
                 [5, 10, 20, -1],
@@ -137,4 +139,72 @@
         tbl_talk.draw(false);
     });
 
+
+    $("#btn_warning_user_talk").click(function () {
+        var selected_user_str='';
+        $("#tbl_talk .talk_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).attr('user_no')+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_warning',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.fail_warning')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_user.draw(false);
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
+
+    $("#btn_del_user_photo_talk").click(function () {
+        var selected_talk_str='';
+        $("#tbl_talk .talk_no").each(function () {
+            if($(this).is(':checked'))
+                selected_talk_str+=$(this).val()+',';
+        });
+
+        selected_talk_str=selected_talk_str.substr(0,selected_talk_str.length-1);
+
+        if(selected_talk_str==''){
+            toastr["error"]("{{trans('lang.select_talk_img_to_delete')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_talk_str: selected_talk_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_talk_img',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_talk.draw(false);
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
 </script>

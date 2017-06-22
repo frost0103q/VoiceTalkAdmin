@@ -41,7 +41,7 @@ class IdiomController extends BasicController
         if (!isset($email) || $email == null) {
             return redirect("/login");
         }
-        
+
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if($interdict_idiom!=null)
             $content=$interdict_idiom->content;

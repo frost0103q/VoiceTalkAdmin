@@ -10,6 +10,7 @@ use App\Models\ServerFile;
 use App\Models\UserDeclare;
 use App\Models\SSP;
 use App\Models\User;
+use App\Models\Warning;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use App\Providers\AuthServiceProvider;
@@ -743,21 +744,21 @@ class UsersController extends BasicController
         if($sex!="")
             $custom_where.=" and sex=$sex";
         if($user_no!="")
-            $custom_where.=" and no='".$user_no."'";
+            $custom_where.=" and no like '%".$user_no."%'";
         if($nickname!="")
-            $custom_where.=" and nickname='".$nickname."'";
+            $custom_where.=" and nickname like '%".$nickname."%'";
         if($phone_number!="")
-            $custom_where.=" and phone_number='".$phone_number."'";
+            $custom_where.=" and phone_number like '%".$phone_number."%'";
         if($email!="")
-            $custom_where.=" and email='".$email."'";
+            $custom_where.=" and email like '%".$email."'%";
         if($chat_content!=""){
-
+            $custom_where.=" and subject like '%".$chat_content."%'";
         }
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
                 'formatter'=>function($d,$row){
-                    return '<input type="checkbox" value="'.$d.'">';
+                    return '<input type="checkbox" class="user_no" value="'.$d.'">';
                 }
             ),
             array('db' => 'no', 'dt' => 1,
@@ -774,7 +775,7 @@ class UsersController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'no', 'dt' => 2,
+            array('db' => 'img_no', 'dt' => 2,
                 'formatter'=>function($d,$row){
                     $results = ServerFile::where('no', $d)->first();
                     if($results!=null)
@@ -784,8 +785,14 @@ class UsersController extends BasicController
                 }
             ),
             array('db' => 'nickname', 'dt' => 3),
-            array('db' => 'no', 'dt' => 4),
-            array('db' => 'created_at', 'dt' => 5)
+            array('db' => 'subject', 'dt' => 4),
+            array('db' => 'created_at', 'dt' => 5),
+            array('db' => 'no', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    $results = Warning::where('user_no', $d)->get();
+                    return count($results);
+                }
+            )
         );
 
         // SQL server connection information
@@ -799,5 +806,48 @@ class UsersController extends BasicController
         return json_encode(
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
+    }
+
+    public function del_selected_profile(){
+        $selected_user_str=$_POST['selected_user_str'];
+        $selected_user_array=explode(',',$selected_user_str);
+
+        for($i=0;$i<count($selected_user_array);$i++){
+
+            $result=DB::update('update t_user set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_user_array[$i]]);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function del_selected_warning(){
+        $selected_user_str=$_POST['selected_user_str'];
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $new_selected_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+
+        for($i=0;$i<count($new_selected_array);$i++){
+
+            $no=DB::table('t_warning')->max('no');
+            if($no==null)
+                $no=0;
+            $result=DB::table('t_warning')->insert(
+                ['no'=>($no+1),
+                    'user_no' => $selected_user_array[$i],
+                 'created_at' => date('Y-m-d H:i:s')]
+            );
+
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
     }
 }

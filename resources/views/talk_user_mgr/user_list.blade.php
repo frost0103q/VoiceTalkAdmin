@@ -25,7 +25,7 @@
             <input class="form-control" placeholder="" type="text" id="user_email">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.chat_content')}}</label>
+            <label class="control-label">{{trans('lang.content')}}</label>
             <input class="form-control" placeholder="" type="text" id="user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">
@@ -43,6 +43,7 @@
                 <th>Nickname</th>
                 <th>{{trans('lang.content')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
+                <th>{{trans('lang.warn')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -116,7 +117,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,1,2,3,4]
+                'targets': [0,1,2,3,4,6]
             },
                 {  // set default column settings
                     'orderable': true,
@@ -132,5 +133,75 @@
     $("#btn_user_search").click(function () {
         tbl_user.draw(false);
     });
+    
+    $("#btn_del_user_photo").click(function () {
+
+        var selected_user_str='';
+        $("#tbl_user .user_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).val()+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_delete')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_profile',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_user.draw(false);
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
+
+    $("#btn_warning_user").click(function () {
+
+        var selected_user_str='';
+        $("#tbl_user .user_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).val()+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_warning',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.fail_warning')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_user.draw(false);
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    })
 
 </script>

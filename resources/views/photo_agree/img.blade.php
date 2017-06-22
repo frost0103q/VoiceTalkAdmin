@@ -15,7 +15,7 @@
                 {{$img_model->nickname}}
             </div>
             <div class="profile-usertitle-job">
-                {{trans('lang.declare').' '.$img_model->declare_cnt}}
+                {{trans('lang.warn').' '.$img_model->declare_cnt}}
             </div>
             <div class="profile-usertitle-job">
                 @if($type=='talk')

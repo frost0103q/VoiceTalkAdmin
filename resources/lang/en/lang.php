@@ -52,7 +52,7 @@ return [
     'tt_voice'=>'통통목소리',
     'love_voice'=>'애교목소리',
     'all_agree_photo'=>'전체사진승인',
-    'declare'=>'경고',
+    'declare'=>'신고',
     'user_info'=>'회원정보',
     'talk_confirm'=>'Talk 확인',
     'A_talk'=>'상담 Talk',
@@ -70,6 +70,7 @@ return [
     'talk_insure'=>'상담인증',
     'earn_point'=>'적립포인트',
     'close'=>'닫기',
+    'warn'=>'경고',
 
     //Voice agree
     'wait_voice'=>'미승인 Voice',
@@ -107,6 +108,12 @@ return [
     'admin_memo'=>'관리자메모',
     'force_stop'=>'강퇴차단',
     'del_talk'=>'Talk삭제',
+    'select_user_to_delete'=>'삭제하시려는 회원을 선택하세요.',
+    'select_user_to_declare'=>'경고하려는 회원을 선택하세요.',
+    'success_warning'=>'정확히 진행되었습니다.',
+    'fail_warning'=>'경고가 실패하였습니다.',
+    'select_talk_img_to_delete'=>'삭제하시려는 Talk이미지를 선택하세요.',
+    'del_only_talk_img'=>'Talk사진만 삭제',
 
     //Setting
     'change_password'=>'비밀번호변경',

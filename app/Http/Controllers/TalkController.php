@@ -394,21 +394,21 @@ class TalkController extends BasicController
         if($sex!="")
             $custom_where.=" and talk_user_sex=$sex";
         if($user_no!="")
-            $custom_where.=" and user_no='".$user_no."'";
+            $custom_where.=" and user_no like '%".$user_no."%'";
         if($nickname!="")
-            $custom_where.=" and user_nickname='".$nickname."'";
+            $custom_where.=" and user_nickname like '%".$nickname."%'";
         if($phone_number!="")
-            $custom_where.=" and phone_number='".$phone_number."'";
+            $custom_where.=" and phone_number like '%".$phone_number."%'";
         if($email!="")
-            $custom_where.=" and email='".$email."'";
+            $custom_where.=" and email like '%".$email."%'";
         if($chat_content!=""){
-
+            $custom_where.=" and greeting like '%".$chat_content."%'";
         }
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
                 'formatter'=>function($d,$row){
-                    return '<input type="checkbox" value="'.$d.'">';
+                    return '<input type="checkbox" class="talk_no" user_no="'.$row['user_no'].'" value="'.$d.'">';
                 }
             ),
             array('db' => 'user_no', 'dt' => 1,
@@ -426,7 +426,7 @@ class TalkController extends BasicController
                 }
             ),
             array('db' => 'talk_img_path', 'dt' => 2),
-            array('db' => 'nickname', 'dt' => 3),
+            array('db' => 'user_nickname', 'dt' => 3),
             array('db' => 'greeting', 'dt' => 4),
             array('db' => 'talk_edit_time', 'dt' => 5),
             array('db' => 'no', 'dt' => 6),
@@ -444,5 +444,20 @@ class TalkController extends BasicController
         return json_encode(
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
+    }
+
+    public function del_selected_talk_img(){
+
+        $selected_talk_str=$_POST['selected_talk_str'];
+        $selected_talk_str_array=explode(',',$selected_talk_str);
+
+        for($i=0;$i<count($selected_talk_str_array);$i++){
+
+            $result=DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_talk_str_array[$i]]);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
     }
 }
