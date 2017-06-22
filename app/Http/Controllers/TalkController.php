@@ -462,6 +462,7 @@ class TalkController extends BasicController
     }
 
     public function del_selected_user_talk(){
+        
         $selected_user_str=$_POST['selected_user_str'];
         $selected_user_array=explode(',',$selected_user_str);
 
