@@ -67,18 +67,6 @@ class UsersController extends BasicController
      * Private Functions
      *
     ******************************************************************/
-    private function addImageData($results, $image_no) {
-        $file = ServerFile::where('no', $image_no)->first();
-
-        if($file != null) {
-            $results->img_checked = $file->checked;
-            $results->img_url = $file->path;
-        }
-        else {
-            $results->img_checked = 0;
-            $results->img_url = "";
-        }
-    }
 
     private function getUserInfo($user_no) {
         $response = config('constants.ERROR_NO');
@@ -256,13 +244,11 @@ class UsersController extends BasicController
             $debug = config('app.debug');
             $testmode = Config::get('config.testmode');
             if($testmode == 0) {
-                if ($debug == true) {
-                    $sms->to('+8615699581631');
-                } else {
-                    $sms->to($phone_number);
-                }
+                $phone_number = '+86'.$phone_number; //'+8615699581631'
+                $sms->to($phone_number);
             }
             else {
+                $phone_number = '+82'.$phone_number;
                 $sms->to($phone_number);
             }
         });

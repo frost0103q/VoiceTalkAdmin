@@ -98,6 +98,7 @@ class TalkController extends BasicController
 
         for($i = 0; $i < count($response); $i++) {
             $response[$i] = $this->getDetailTalkInfo($response[$i]);
+            $this->addImageData($response[$i], $response[$i]->img_no);
         }
 
         return response()->json($response);

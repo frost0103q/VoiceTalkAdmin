@@ -101,25 +101,34 @@ class NotificationsController extends BasicController
         $type = $request->input('type') == null? 0 :  $request->input('type');
 
 		$response = Notification::select('*');
-        if($read != null && $read >= 0) {
-            $response = $response->where('unread_count', '>', 0);
-        }
-
         if($type != null && $type >= 0) {
             $response = $response->where('type', $type);
         }
 
-        if($user_no != null) {
-            $response = $response->where('to_user_no', $user_no);
+        if($read != null && $read >= 0) {
+            $response = $response->where('unread_count', '>', 0);
+            if($user_no != null) {
+                $response = $response->where('to_user_no', $user_no);
+            }
         }
-
+        else {
+            if($user_no != null) {
+                $response = $response->where('to_user_no', $user_no)->orWhere('from_user_no', $user_no);
+            }
+        }
 
         $response = $response->orderBy('updated_at', 'desc')->offset($limit*($page - 1))->limit($limit)->get();
 
-
         for($i = 0; $i < count($response); $i++) {
             $notification = $response[$i];
-            $user = AppUser::where('no', $notification->from_user_no)->first();
+            if($notification->from_user_no == $user_no){
+                $response[$i]->unread_count =  0;
+                $user = AppUser::where('no', $notification->to_user_no)->first();
+            }
+            else {
+                $user = AppUser::where('no', $notification->from_user_no)->first();
+            }
+
             if($user != null) {
                 $imagefile = ServerFile::where('no', $user->img_no)->first();
 
@@ -145,6 +154,7 @@ class NotificationsController extends BasicController
 		$from_id = $request->input('from_user_no');
 		$to_id = $request->input('to_user_no');
 		$content = $request->input('content');
+        $unread_cnt = $request->input('unread_count');
 		
 		$id = $request->input("no");
 		
@@ -166,7 +176,10 @@ class NotificationsController extends BasicController
 			if($text != null) {
 				$update_data['title'] = $text;
 			}
-			
+            if($unread_cnt != null) {
+                $update_data['unread_count'] = $unread_cnt;
+            }
+
 			$results = Notification::where('no', $id)->update($update_data);
 		}
 		else if($oper == 'del') {

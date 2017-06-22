@@ -22,9 +22,9 @@ return [
 				'threadresponse' => 10
 		],
 		'toReportProblemEmail' => 'tyler@plus11.com',
-        'chatLocalServerIp' => '192.168.0.119',
+        'chatLocalServerIp' => '192.168.0.121',
         'chatServerIp' => '175.126.38.49',
         'chatServerPort' => '5222',
         'chatAppPrefix' => 'voicetalk',
-        'testmode' => 1,        // 0:local, 1: global
+        'testmode' => 0,        // 0:local, 1: global
 ];

@@ -192,4 +192,17 @@ class BasicController extends Controller
         $response['no'] = $notification->no;
         return $response;
     }
+
+    public function addImageData($results, $image_no) {
+        $file = ServerFile::where('no', $image_no)->first();
+
+        if($file != null) {
+            $results->img_checked = $file->checked;
+            $results->img_url = $file->path;
+        }
+        else {
+            $results->img_checked = 0;
+            $results->img_url = "";
+        }
+    }
 }
