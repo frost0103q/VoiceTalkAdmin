@@ -812,9 +812,16 @@ class UsersController extends BasicController
         $selected_user_str=$_POST['selected_user_str'];
         $selected_user_array=explode(',',$selected_user_str);
 
-        for($i=0;$i<count($selected_user_array);$i++){
+        $new_selected_array=array();
 
-            $result=DB::update('update t_user set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_user_array[$i]]);
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+        
+        for($i=0;$i<count($new_selected_array);$i++){
+
+            $result=DB::update('update t_user set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$new_selected_array[$i]]);
             if(!$result)
                 return config('constants.FAIL');
         }

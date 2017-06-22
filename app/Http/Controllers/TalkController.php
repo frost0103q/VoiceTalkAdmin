@@ -460,4 +460,25 @@ class TalkController extends BasicController
 
         return config('constants.SUCCESS');
     }
+
+    public function del_selected_user_talk(){
+        $selected_user_str=$_POST['selected_user_str'];
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $user_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$user_array))
+                array_push($user_array,$item);
+        }
+
+        for($i=0;$i<count($user_array);$i++){
+
+            $result=DB::delete('delete from t_talk where user_no = ?',[$user_array[$i]]);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
 }

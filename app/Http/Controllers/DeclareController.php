@@ -58,21 +58,21 @@ class DeclareController extends BasicController
         if($sex!="")
             $custom_where.=" and from_user_sex=$sex";
         if($user_no!="")
-            $custom_where.=" and from_user_no='".$user_no."'";
+            $custom_where.=" and from_user_no like '%".$user_no."%'";
         if($nickname!="")
-            $custom_where.=" and from_user_nickname='".$nickname."'";
+            $custom_where.=" and from_user_nickname like '%".$nickname."%'";
         if($phone_number!="")
-            $custom_where.=" and from_user_phone_number='".$phone_number."'";
+            $custom_where.=" and from_user_phone_number like '%".$phone_number."%'";
         if($email!="")
-            $custom_where.=" and from_user_email='".$email."'";
+            $custom_where.=" and from_user_email like '%".$email."%'";
         if($chat_content!=""){
-
+            $custom_where.=" and content like '%".$chat_content."%'";
         }
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
                 'formatter'=>function($d,$row){
-                    return '<input type="checkbox" value="'.$d.'">';
+                    return '<input type="checkbox" class="declare_no" to_user_no="'.$row['to_user_no'].'" value="'.$d.'">';
                 }
             ),
             array('db' => 'from_user_no', 'dt' => 1,
@@ -100,10 +100,11 @@ class DeclareController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'content', 'dt' => 4),
-            array('db' => 'created_at', 'dt' => 5),
-            array('db' => 'updated_at', 'dt' => 6),
-            array('db' => 'no', 'dt' => 7,
+            array('db' => 'to_user_profile_img_path', 'dt' => 4),
+            array('db' => 'content', 'dt' => 5),
+            array('db' => 'created_at', 'dt' => 6),
+            array('db' => 'updated_at', 'dt' => 7),
+            array('db' => 'no', 'dt' => 8,
                 'formatter'=>function($d,$row){
                     return '<input type="checkbox" value="'.$d.'">';
                 }

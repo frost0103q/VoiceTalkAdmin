@@ -25,7 +25,7 @@
             <input class="form-control" placeholder="" type="text" id="declare_user_email">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.chat_content')}}</label>
+            <label class="control-label">{{trans('lang.declare_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="declare_user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">
@@ -40,6 +40,7 @@
                 <th></th>
                 <th>{{trans('lang.from_user_declare')}}</th>
                 <th>{{trans('lang.from_user_photo')}}</th>
+                <th>{{trans('lang.to_user_declare')}}</th>
                 <th>{{trans('lang.to_user_declare')}}</th>
                 <th>{{trans('lang.declare_content')}}</th>
                 <th>{{trans('lang.declare_time')}}</th>
@@ -108,7 +109,10 @@
                 }
             },
             "createdRow": function (row, data, dataIndex) {
-                $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                if(data[2]!=null)
+                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                if(data[4]!=null)
+                    $('td:eq(4)', row).html('<img src="'+data[4]+'" height="50px">');
             },
             "lengthMenu": [
                 [5, 10, 20, -1],
@@ -119,15 +123,15 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,1,2,3,4,6,7]
+                'targets': [0,1,2,3,4,5,7,8]
             },
                 {  // set default column settings
                     'orderable': true,
-                    'targets': [5]
+                    'targets': [6]
                 }],
 
             "order": [
-                [5, "desc"]
+                [6, "desc"]
             ] // set first column as a default sort by asc
         });
     });
@@ -136,4 +140,72 @@
         tbl_declare.draw(false);
     });
 
+
+    $("#btn_del_user_photo_declare").click(function () {
+        var selected_user_str='';
+        $("#tbl_declare .declare_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).attr('to_user_no')+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_delete')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_profile',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_declare.draw(false);
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
+
+    $("#btn_del_talk").click(function () {
+        var selected_user_str='';
+        $("#tbl_declare .declare_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).attr('to_user_no')+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_delete')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'del_selected_user_talk',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_talk.draw(false);
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    })
 </script>
