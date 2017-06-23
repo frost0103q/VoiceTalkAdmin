@@ -106,7 +106,8 @@
                 }
             },
             "createdRow": function (row, data, dataIndex) {
-                $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                if(data[2]!=null)
+                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
             },
             "lengthMenu": [
                 [5, 10, 20, -1],

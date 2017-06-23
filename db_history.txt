@@ -6,4 +6,11 @@
 		t_interdict_idiom (no int 11,content longtext,created_at datetime,updated_at datetime) //금지어등록테불
 		t_warning (no int 11,user_no int 11,created_at datetime) 	//경고테불
 	View테불작성
-		v_declare,v_profile_file,v_talk,v_talk_file작성				 
+		v_declare,v_profile_file,v_talk,v_talk_file작성	
+-2017-06-23
+	새테불추가
+		t_banner(no int 11, title varchar 255,content longtext,img_url varchar 255,created_at datetime,updated_at datetime)	
+		t_talk_notice(no int 11, sender_type int 11,content longtext,created_at datetime,updated_at datetime)	
+		t_push(no int 11, send_type int 11,title varchar 255,content longtext,created_at datetime,updated_at datetime)	
+		t_message(no,sendtype,receive_type,user_id,sentence_type,content,created_at,updated_at)
+		t_sms(no,receive_number,conent,created_at,upadted_at)
