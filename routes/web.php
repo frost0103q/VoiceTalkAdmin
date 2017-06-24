@@ -56,3 +56,12 @@ Route::post('del_selected_user_talk', 'TalkController@del_selected_user_talk');
 Route::get('interdict_idiom_reg', 'IdiomController@index');
 Route::post('save_interdict_idiom', 'IdiomController@save_interdict_idiom');
 Route::post('del_selected_idiom', 'IdiomController@del_selected_idiom');
+
+//notice manage
+Route::get('notice_mgr', 'NoticeController@index');
+
+//cash_question manage
+Route::get('cash_question', 'CashQuestionController@index');
+
+//withdraw manage
+Route::get('withdraw', 'WithdrawController@index');

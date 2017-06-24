@@ -32,6 +32,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css')}}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/select2/select2.css')}}"/>
     <link href="{{ asset('assets/global/plugins/fancybox/source/jquery.fancybox.css')}}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css')}}"/>
     <!-- END PAGE LEVEL STYLES -->
 
     <!-- BEGIN THEME STYLES -->
@@ -121,12 +124,16 @@
 <script type="text/javascript" src="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js')}}"></script>
 <script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
 <script type="text/javascript" src="{{ asset('assets/global/plugins/fancybox/source/jquery.fancybox.pack.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
 
 <script src="{{ asset('assets/global/scripts/metronic.js')}}" type="text/javascript"></script>
 <script src="{{ asset('assets/admin/layout/scripts/layout.js')}}" type="text/javascript"></script>
 <script src="{{ asset('assets/admin/layout/scripts/quick-sidebar.js')}}" type="text/javascript"></script>
 <script src="{{ asset('assets/admin/layout/scripts/demo.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/pages/scripts/components-pickers.js')}}"></script>
 
 <script>
     $(document).ready(function () {
@@ -134,6 +141,8 @@
         setTimeout(function () {
             $(".select2-search").remove();
         }, 100);
+        ComponentsPickers.init();
+
     })
 </script>
 

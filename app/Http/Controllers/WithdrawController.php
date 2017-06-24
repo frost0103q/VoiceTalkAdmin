@@ -56,14 +56,7 @@ class WithdrawController  extends BasicController
 
     public function index()
     {
-        $params = Request::all();
-
-        if(count($params) == 0) {
-            $params['rows'] = Config::get('config.itemsPerPage.default');
-            $params['page'] = 1;
-        }
-
-        return view('notifications.index', ["params"=>$params]);
+        return view('withdraw.index', ["menu_index"=>6]);
     }
 
 
