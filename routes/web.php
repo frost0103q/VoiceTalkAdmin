@@ -65,3 +65,6 @@ Route::get('cash_question', 'CashQuestionController@index');
 
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');
+
+//statistic manage 
+Route::get('statistic', 'StatisticController@index');

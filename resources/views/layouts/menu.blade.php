@@ -46,7 +46,7 @@
                 </a>
             </li>
             <li menu_index="7">
-                <a href="#">
+                <a href="statistic">
                     <i class="fa fa-line-chart"></i>
                     <span class="title">{{trans('lang.statistic_manage')}}</span>
                 </a>
