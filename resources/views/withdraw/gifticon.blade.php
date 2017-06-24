@@ -28,11 +28,11 @@
                     <input class="form-control" placeholder="" type="text" id="g_user_nickname" name="user_nickname">
                 </div>
                 <div class="col-md-1">
-                    <label class="control-label">관리번호</label>
+                    <label class="control-label">{{trans('lang.manage_number')}}</label>
                     <input class="form-control" placeholder="" type="text" id="g_mgr_number" name="mgr_number">
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">쿠폰번호</label>
+                    <label class="control-label">{{trans('lang.cupon_number')}}</label>
                     <input class="form-control" placeholder="" type="text" id="g_cupon_code" name="cupon_code">
                 </div>
                 <div class="col-md-1" style="padding-top: 7px">
@@ -43,20 +43,20 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500원</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_gifticon" style="width: 100%">
             <thead>
             <tr>
                 <th>{{trans('lang.number')}}</th>
-                <th>쿠폰번호</th>
-                <th>상품명</th>
+                <th>{{trans('lang.cupon_number')}}</th>
+                <th>{{trans('lang.product_name')}}</th>
                 <th>Nickname</th>
-                <th>정상가/도매</th>
-                <th>실판매가/이익</th>
+                <th>{{trans('lang.real_price')}}/{{trans('lang.sale_price')}}</th>
+                <th>{{trans('lang.cur_price')}}/{{trans('lang.benefit')}}</th>
                 <th>{{trans('lang.status')}}</th>
-                <th>발급일시</th>
+                <th>{{trans('lang.send_time')}}</th>
             </tr>
             </thead>
             <tbody>

@@ -25,7 +25,7 @@
                             <a href="#tab_4" data-toggle="tab">{{trans('lang.point_present_content')}}</a>
                         </li>
                         <li>
-                            <a href="#tab_5" data-toggle="tab">포인트랭킹</a>
+                            <a href="#tab_5" data-toggle="tab">{{trans('lang.point_rank')}}</a>
                         </li>
                     </ul>
                     <div class="tab-content">

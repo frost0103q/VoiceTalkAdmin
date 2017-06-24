@@ -30,14 +30,14 @@
             <tr>
                 <th>{{trans('lang.rank')}}</th>
                 <th>{{trans('lang.user_no')}}</th>
-                <th>사진</th>
-                <th>글쓴이/나이/포인트</th>
-                <th>최종접속/가입일</th>
-                <th>경고</th>
-                <th>취득P</th>
-                <th>출금P</th>
-                <th>선물받기</th>
-                <th>선물보냄</th>
+                <th>{{trans('lang.photo')}}</th>
+                <th>{{trans('lang.writer')}}/{{trans('lang.age')}}/{{trans('lang.point')}}</th>
+                <th>{{trans('lang.last_connect')}}/{{trans('lang.reg_time')}}</th>
+                <th>{{trans('lang.warn')}}</th>
+                <th>{{trans('lang.receive_point')}}</th>
+                <th>{{trans('lang.out_point')}}</th>
+                <th>{{trans('lang.receive_present')}}</th>
+                <th>{{trans('lang.send_present')}}</th>
             </tr>
             </thead>
             <tbody>
