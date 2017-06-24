@@ -241,4 +241,18 @@ return [
     'process_date'=>'처리일자',
     'period_sum'=>'지정기간 합계',
 
+    //admin notice manage
+    'opinion_share'=>'의견공유',
+    'manage_notice'=>'관리계시판',
+    'inquire'=>'조회',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    'process_date'=>'처리일자',
+    
 ];
