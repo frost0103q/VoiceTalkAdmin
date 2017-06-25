@@ -110,19 +110,29 @@ class UsersController extends BasicController
         $to = $results[0];
 
 
+        $ret = true;
         if($type == config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
-                $from->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), (-1)*$point);
-                $to->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), (-1)*$point);
+            if($ret == true) {
+                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+            }
         }
         else if($type == config('constants.POINT_HISTORY_TYPE_CHAT')) {
-            $from->addPoint($type, (-1) * $point);
-            $to->addPoint($type, $point);
+            $ret = $from->addPoint($type, (-1) * $point);
+            if($ret == true) {
+                $ret = $to->addPoint($type, $point);
+            }
         }
         else {
-            $from->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), (-1)*$point);
-            $to->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), $point);
+            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), (-1)*$point);
+            if($ret == true) {
+                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), $point);
+            }
         }
 
+        if($ret == false) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+        }
         return $response;
     }
 

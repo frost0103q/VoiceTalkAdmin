@@ -26,6 +26,12 @@ class AppUser extends Model
             $real_point = $min_point;
         }
 
+        $temp_point = $this->point + $real_point;
+
+        if($temp_point < 0) {
+            return false;
+        }
+
         $this->point += $real_point;
         $this->save();
 
@@ -36,5 +42,7 @@ class AppUser extends Model
         $point_history->user_no = $this->no;
 
         $point_history->save();
+
+        return true;
     }
 }

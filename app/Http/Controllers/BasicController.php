@@ -186,7 +186,10 @@ class BasicController extends Controller
         $notification->save();
 
         if($need_point == true) {
-            $from_user_obj->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'));
+           $ret =  $from_user_obj->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'));
+            if($ret == false) {
+                $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+            }
         }
 
         $response['no'] = $notification->no;
