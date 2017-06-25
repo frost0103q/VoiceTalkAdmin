@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Client;
-use Fabiang\Xmpp\Protocol\Roster;
-use Fabiang\Xmpp\Protocol\Presence;
-use Fabiang\Xmpp\Protocol\Message;
-
-use App\Models\Notification;
 use App\Models\AppUser;
-use App\Models\UserRelation;
+use App\Models\Notification;
 use App\Models\ServerFile;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\UserRelation;
+use Config;
 use DB;
+use Fabiang\Xmpp\Client;
+use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Protocol\Message;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Routing\Controller as Controller;
 use Redirect;
 use Request;
-use URL;
 use Session;
 use Socialite;
-use Config;
+use URL;
 
 class BasicController extends Controller
 {

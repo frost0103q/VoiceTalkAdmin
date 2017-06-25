@@ -42,4 +42,33 @@ return [
         'CHATMESSAGE_TYPE_SEND_PRESENT'  =>6,
 
         'CHECK_ROLL_POINT'   => 30,
+
+		'INVALID_EMAIL'   => 1,
+		'INVALID_PASSWORD'   => 2,
+
+		'SUCCESS'   => 'success',
+		'FAIL'   => 'fail',
+
+		'WAIT'   => 2,
+		'AGREE'   => 1,
+		'DISAGREE'   => 0,
+		
+		'TALK_POSSIBLE' => 0,
+		'AWAY'	=> 1,
+		'TALKING'	=> 2,
+
+		'MALE'	=> 0,
+		'FEMALE'	=> 1,
+
+		'UNVERIFIED' => 0,
+		'VERIFIED' => 1,
+
+		'ANDROID' => 0,
+		'IOS'	=> 1,
+
+		'DB_USER' => 'root',
+		'DB_PW'	=> 'root',
+		'DB_NAME' => 'voicetalk',
+		'DB_HOST'	=> 'localhost',
+	
 ];

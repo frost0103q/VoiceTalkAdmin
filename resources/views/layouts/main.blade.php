@@ -1,281 +1,156 @@
 <!DOCTYPE html>
+
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
 <html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="csrf-token" content="{{ csrf_token() }}" />
-<link rel="icon" type="image/png"
-	href="{!! asset('/images/logo.png')!!}">
-<title>{!!env('APP_NAME')!!}</title>
+    <meta charset="utf-8"/>
+    <title>Voice Talk</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/uniform/css/uniform.default.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')}}" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/bootstrap-toastr/toastr.min.css')}}"/>
+    <link href="{{ asset('assets/admin/pages/css/profile.css')}}" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/select2/select2.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/global/plugins/select2/select2.css')}}"/>
+
+    <!-- END PAGE LEVEL STYLES -->
+
+    <!-- BEGIN THEME STYLES -->
+    <link href="{{ asset('assets/global/css/components.css')}}" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/global/css/plugins.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/admin/layout/css/layout.css')}}" rel="stylesheet" type="text/css"/>
+    <link id="style_color" href="{{ asset('assets/admin/layout/css/themes/darkblue.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/admin/layout/css/custom.css')}}" rel="stylesheet" type="text/css"/>
+    <!-- END THEME STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <script src="{{ asset('assets/global/plugins/jquery.min.js')}}" type="text/javascript"></script>
 
 
-<!-- basic styles -->
-
-<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/font-awesome.min.css')}}" />
-
-
-<!-- page specific plugin styles -->
-
-<link rel="stylesheet" href="{{ asset('css/jquery-ui-1.10.3.full.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/datepicker.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ui.jqgrid.css')}}" />
-
-<!-- fonts  -->
-
-<link rel="stylesheet" href="{{ asset('css/ace-fonts.css')}}" />
-
-<!-- ace styles -->
-
-<link rel="stylesheet" href="{{ asset('css/ace.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ace-rtl.min.css')}}" />
-<link rel="stylesheet" href="{{ asset('css/ace-skins.min.css')}}" />
-
-
-<!-- ace settings handler -->
-
-<script src="{{ asset('js/ace-extra.min.js')}}"></script>
-
-<script src="{{ asset('js/jquery-2.0.3.min.js')}}"></script>
-<script src="{{ asset('js/jquery.validate.min.js')}}"></script>
-<script src="{{ asset('js/jquery.form.js')}}"></script>
-
-
-
-<script src="{{ asset('js/jquery.mobile.custom.min.js')}}"></script>
-<script src="{{ asset('js/bootstrap.min.js')}}"></script>
-<script src="{{ asset('js/typeahead-bs2.min.js')}}"></script>
-
-<script src="{{ asset('js/jqGrid/jquery.jqGrid.min.js')}}"></script>
-<script src="{{ asset('js/jqGrid/i18n/grid.locale-en.js')}}"></script>
-
-<script src="{{ asset('js/excanvas.min.js')}}"></script>
-<script src="{{ asset('js/jquery-ui-1.10.3.custom.min.js')}}"></script>
-<script src="{{ asset('js/jquery.slimscroll.min.js')}}"></script>
-<script src="{{ asset('js/ace-elements.min.js')}}"></script>
-<script src="{{ asset('js/ace.min.js')}}"></script>
-
-<script type="text/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-</script>
-	
-</head>
-<body ng-app='MyApp'>
-
-	@if (env('APP_DEBUG') == true)
-        <div class="alert alert-danger text-center no-mg-b">
-            You are on the development server! If you are here by mistake, please
-            let me know at <strong>admin@gmail.com</strong>
-        </div>
-	@endif
-
-	<div class="navbar navbar-default" id="navbar">
-		<script type="text/javascript">
-        try {
-            ace.settings.check('navbar', 'fixed')
-        } catch (e) {
-        }
-    	</script>
-
-		<div class="navbar-container" id="navbar-container">
-			<div class="navbar-header pull-left">
-				<a href="./main.php" class="navbar-brand"> <small> <img
-						src="{{ asset('images/logo.png')}}"
-						style="display: inline; width: 18px; height: 18px;" />
-						{!!config('app.name')!!}
-				</small>
-				</a>
-				<!-- /.brand -->
-			</div>
-			<!-- /.navbar-header -->
-
-			<div class="navbar-header pull-right" role="navigation">
-				<ul class="nav ace-nav">
-
-					<li class="light-blue"><a data-toggle="dropdown" href="#"
-						class="dropdown-toggle"> <img class="nav-user-photo"
-							src="{{ asset('avatars/avatar2.png')}}" alt="Admin's Photo" /> <span
-							class="user-info"> <small>Welcome,</small> Admin
-						</span> <i class="icon-caret-down"></i>
-					</a>
-
-						<ul
-							class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-
-							<li><a href="/logout"> <i class="icon-off"></i> Logout
-							</a></li>
-
-						</ul></li>
-				</ul>
-				<!-- /.ace-nav -->
-			</div>
-			<!-- /.navbar-header -->
-		</div>
-		<!-- /.container -->
-	</div>
-
-	<div class="main-container" id="main-container">
-		<script type="text/javascript">
-        try {
-            ace.settings.check('main-container', 'fixed')
-        } catch (e) {
-        }
+    <script>
+        jQuery(document).ready(function () {
+            Metronic.init(); // init metronic core components
+            Layout.init(); // init current layout
+            QuickSidebar.init(); // init quick sidebar
+            Demo.init(); // init demo features
+        });
     </script>
 
-		<div class="main-container-inner">
-			<a class="menu-toggler" id="menu-toggler" href="#"> <span
-				class="menu-text"></span>
-			</a>
+    <style>
+        .page-content{
+            background-color: #F1F3FA;
+        }
 
-			<div class="sidebar" id="sidebar">
-				<script type="text/javascript">
-                try {
-                    ace.settings.check('sidebar', 'fixed')
-                } catch (e) {
-                }
-            </script>
+        .portlet > .portlet-title > .caption {
+            float: left;
+            display: inline-block;
+            font-size: 16px;
+            line-height: 21px;
+            padding: 10px 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-header-fixed page-quick-sidebar-over-content">
+<!-- BEGIN HEADER -->
+@include('layouts.header')
+<!-- END HEADER -->
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    @include('layouts.menu')
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN PAGE CONTENT-->
+            @yield('content')
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+@include('layouts.footer')
+<!-- END FOOTER -->
+<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="{{ asset('assets/global/plugins/respond.min.js')}}"></script>
+<script src="{{ asset('assets/global/plugins/excanvas.min.js')}}"></script>
+<![endif]-->
+<script src="{{ asset('assets/global/plugins/jquery-migrate.min.js')}}" type="text/javascript"></script>
+<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+<script src="{{ asset('assets/global/plugins/jquery-ui/jquery-ui.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery.blockui.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery.cokie.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/uniform/jquery.uniform.min.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
 
-				<div class="sidebar-shortcuts" id="sidebar-shortcuts">
-					<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="{{ asset('assets/global/plugins/bootstrap-toastr/toastr.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/datatables/media/js/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js')}}"></script>
+<script type="text/javascript" src="{{ asset('assets/global/plugins/select2/select2.min.js')}}"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
 
-					</div>
+<script src="{{ asset('assets/global/scripts/metronic.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/layout/scripts/layout.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/layout/scripts/quick-sidebar.js')}}" type="text/javascript"></script>
+<script src="{{ asset('assets/admin/layout/scripts/demo.js')}}" type="text/javascript"></script>
 
-					<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
-						<span class="btn btn-success"></span> <span class="btn btn-info"></span>
+<script>
+    $(document).ready(function () {
+        $('select').select2();
+        setTimeout(function () {
+            $(".select2-search").remove();
+        }, 100);
+    })
+</script>
 
-						<span class="btn btn-warning"></span> <span class="btn btn-danger"></span>
-					</div>
-				</div>
-				<!-- #sidebar-shortcuts -->
-
-				<ul class="nav nav-list">
-					<li><a href="/home"> <i class="icon-list"></i> <span
-							class="menu-text"> User List </span>
-					</a></li>
-
-					<li><a href="/rants"> <i class="icon-flag"></i> <span
-							class="menu-text"> Rant List </span>
-					</a></li>
-					
-					<li><a href="/rantcomments"> <i class="icon-heart"></i> <span
-							class="menu-text"> Comment List </span>
-					</a></li>
-					
-					<li><a href="/notifications"> <i class="icon-music"></i> <span
-							class="menu-text"> Notification List </span>
-					</a></li>
-					
-					<li><a href="/setting"> <i class="icon-cogs"></i> <span
-							class="menu-text"> Setting </span>
-					</a></li>
-
-
-				</ul>
-				<!-- /.nav-list -->
-
-				<div class="sidebar-collapse" id="sidebar-collapse">
-					<i class="icon-double-angle-left"
-						data-icon1="icon-double-angle-left"
-						data-icon2="icon-double-angle-right"></i>
-				</div>
-
-				<script type="text/javascript">
-                try {
-                    ace.settings.check('sidebar', 'collapsed')
-                } catch (e) {
-                }
-            </script>
-			</div>
-
-			@yield('content')
-
-			<div class="ace-settings-container" id="ace-settings-container">
-				<div class="btn btn-app btn-xs btn-warning ace-settings-btn"
-					id="ace-settings-btn">
-					<i class="icon-cog bigger-150"></i>
-				</div>
-
-				<div class="ace-settings-box" id="ace-settings-box">
-					<div>
-						<div class="pull-left">
-							<select id="skin-colorpicker" class="hide">
-								<option data-skin="default" value="#438EB9">#438EB9</option>
-								<option data-skin="skin-1" value="#222A2D">#222A2D</option>
-								<option data-skin="skin-2" value="#C6487E">#C6487E</option>
-								<option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
-							</select>
-						</div>
-						<span>&nbsp; Choose Skin</span>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-navbar" /> <label class="lbl"
-							for="ace-settings-navbar"> Fixed Navbar</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-sidebar" /> <label class="lbl"
-							for="ace-settings-sidebar"> Fixed Sidebar</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-breadcrumbs" /> <label class="lbl"
-							for="ace-settings-breadcrumbs"> Fixed Breadcrumbs</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-rtl" /> <label class="lbl"
-							for="ace-settings-rtl"> Right To Left (rtl)</label>
-					</div>
-
-					<div>
-						<input type="checkbox" class="ace ace-checkbox-2"
-							id="ace-settings-add-container" /> <label class="lbl"
-							for="ace-settings-add-container"> Inside <b>.container</b>
-						</label>
-					</div>
-				</div>
-			</div>
-			<!-- /#ace-settings-container -->
-		</div>
-		<!-- /.main-container-inner -->
-
-		<a href="#" id="btn-scroll-up"
-			class="btn-scroll-up btn btn-sm btn-inverse"> <i
-			class="icon-double-angle-up icon-only bigger-110"></i>
-		</a>
-	</div>
-	<!-- /.main-container -->
-
-	<!-- 
-	<script src="{{ asset('js/jquery-2.0.3.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.validate.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.form.js')}}"></script>
-	
-	
-	
-	<script src="{{ asset('js/jquery.mobile.custom.min.js')}}"></script>
-	<script src="{{ asset('js/bootstrap.min.js')}}"></script>
-	<script src="{{ asset('js/typeahead-bs2.min.js')}}"></script>
-	
-	<script src="{{ asset('js/jqGrid/jquery.jqGrid.min.js')}}"></script>
-	<script src="{{ asset('js/jqGrid/i18n/grid.locale-en.js')}}"></script>
-	
-	<script src="{{ asset('js/excanvas.min.js')}}"></script>
-	<script src="{{ asset('js/jquery-ui-1.10.3.custom.min.js')}}"></script>
-	<script src="{{ asset('js/jquery.slimscroll.min.js')}}"></script>
-	<script src="{{ asset('js/ace-elements.min.js')}}"></script>
-	<script src="{{ asset('js/ace.min.js')}}"></script>
-	 -->
-	@yield('scripts')
+<?php
+if(isset($menu_index)){
+    for($i = 1; $i <= 10;$i++){
+        if ($i == $menu_index){
+        ?>
+        <script>
+            $("li[menu_index='<?=$i?>']").addClass('active').addClass("open");
+            $("li[menu_index='<?=$i?>'] a").append('<span class="selected" style="border-right: 12px solid #f1f3fa;"></span>');
+        </script>
+        <?php
+        }
+    }
+}
+?>
+<!-- END JAVASCRIPTS -->
 </body>
+<!-- END BODY -->
 </html>

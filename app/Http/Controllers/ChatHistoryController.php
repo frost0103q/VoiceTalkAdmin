@@ -8,19 +8,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
 use App\Models\ChatHistory;
-use App\Models\AppUser;
-use App\Models\ServerFile;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 use Redirect;
 use Request;
-use URL;
 use Session;
 use Socialite;
-use Config;
+use URL;
 
 class ChatHistoryController extends BasicController
 {

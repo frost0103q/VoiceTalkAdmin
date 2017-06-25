@@ -49,3 +49,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 3. Mysql install db.sql (navicat로 해야 default string이 제대로 들어간다.)
 
+

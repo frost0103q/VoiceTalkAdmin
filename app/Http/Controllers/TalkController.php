@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
 use App\Models\AppUser;
-use App\Models\Talk;
 use App\Models\ServerFile;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
-
+use App\Models\SSP;
+use App\Models\Talk;
+use App\Models\TalkReview;
+use App\Models\User;
 use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
+use Session;
 
 class TalkController extends BasicController
 {
@@ -38,7 +38,13 @@ class TalkController extends BasicController
 
     public function index()
     {
-        return view('welcome');
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
+
+        return view('talk_user_mgr.index',['menu_index'=>4]);
     }
 
     /**
@@ -327,5 +333,112 @@ class TalkController extends BasicController
         $talk->voice_type_string = $arr_voice_type[$talk->voice_type];
 
         return $talk;
+    }
+
+    public function ajax_talk_table(){
+        $table = 'v_talk';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sex=$_POST['sex'];
+        $user_no=$_POST['user_no'];
+        $nickname=$_POST['nickname'];
+        $phone_number=$_POST['phone_number'];
+        $email=$_POST['email'];
+        $chat_content=$_POST['chat_content'];
+
+        if($sex!="")
+            $custom_where.=" and talk_user_sex=$sex";
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%'";
+        if($nickname!="")
+            $custom_where.=" and user_nickname like '%".$nickname."%'";
+        if($phone_number!="")
+            $custom_where.=" and phone_number like '%".$phone_number."%'";
+        if($email!="")
+            $custom_where.=" and email like '%".$email."%'";
+        if($chat_content!=""){
+            $custom_where.=" and greeting like '%".$chat_content."%'";
+        }
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0,
+                'formatter'=>function($d,$row){
+                    return '<input type="checkbox" class="talk_no" user_no="'.$row['user_no'].'" value="'.$d.'">';
+                }
+            ),
+            array('db' => 'user_no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null){
+                        $verified=$results['verified'];
+                        if($verified=='1')
+                            return $d.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                        else
+                            return $d;
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'talk_img_path', 'dt' => 2),
+            array('db' => 'user_nickname', 'dt' => 3),
+            array('db' => 'greeting', 'dt' => 4),
+            array('db' => 'talk_edit_time', 'dt' => 5),
+            array('db' => 'no', 'dt' => 6),
+            array('db' => 'profile_img_path', 'dt' => 7)
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function del_selected_talk_img(){
+
+        $selected_talk_str=$_POST['selected_talk_str'];
+        $selected_talk_str_array=explode(',',$selected_talk_str);
+
+        for($i=0;$i<count($selected_talk_str_array);$i++){
+
+            $result=DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_talk_str_array[$i]]);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function del_selected_user_talk(){
+        
+        $selected_user_str=$_POST['selected_user_str'];
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $user_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$user_array))
+                array_push($user_array,$item);
+        }
+
+        for($i=0;$i<count($user_array);$i++){
+
+            $result=DB::delete('delete from t_talk where user_no = ?',[$user_array[$i]]);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
     }
 }

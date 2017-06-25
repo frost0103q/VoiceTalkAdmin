@@ -1,0 +1,9 @@
+
+********자료기지수정리력**********
+
+-2017-06-21일 
+	새테불추가
+		t_interdict_idiom (no int 11,content longtext,created_at datetime,updated_at datetime) //금지어등록테불
+		t_warning (no int 11,user_no int 11,created_at datetime) 	//경고테불
+	View테불작성
+		v_declare,v_profile_file,v_talk,v_talk_file작성				 
