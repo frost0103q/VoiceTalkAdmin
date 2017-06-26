@@ -172,4 +172,49 @@ class AdminNoticeController extends BasicController
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
     }
+
+    public function save_manage_notice(){
+        $params = Request::all();
+        $no = $params['no'];
+
+        $writer = Session::get('u_no');
+
+
+        if($no==""){
+            $data['title'] = $params['title'];
+            $data['content'] = $params['content'];
+            $data['file_url'] = $params['file_url'];
+            $data['writer'] = $writer;
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $data['read_cnt'] = 0;
+
+            $result=ManageNotice::insert($data);
+            if($result)
+                return config('constants.SUCCESS');
+            else
+                return config('constants.FAIL');
+        }
+        else{
+            $data['title'] = $params['title'];
+            $data['content'] = $params['content'];
+            $data['file_url'] = $params['file_url'];
+            $data['writer'] = $writer;
+            $data['updated_at'] = date('Y-m-d H:i:s');
+
+            $result=ManageNotice::where('no',$no)->update($data);
+            if($result)
+                return config('constants.SUCCESS');
+            else
+                return config('constants.FAIL');
+        }
+    }
+
+    public function delete_manage_notice(){
+        $manage_notice_no=$_POST['manage_notice_no'];
+        $result=ManageNotice::where('no',$manage_notice_no)->delete();
+        if($result)
+            return config('constants.SUCCESS');
+        else
+            return config('constants.FAIL');
+    }
 }

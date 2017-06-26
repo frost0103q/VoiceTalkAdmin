@@ -8,7 +8,7 @@
             <tr>
                 <th>{{trans('lang.number')}}</th>
                 <th>{{trans('lang.title')}}</th>
-                <th>첨부파일</th>
+                <th>{{trans('lang.ref_file')}}</th>
                 <th>{{trans('lang.writer')}}</th>
                 <th>{{trans('lang.date')}}</th>
                 <th>{{trans('lang.inquire')}}</th>
@@ -55,8 +55,19 @@
                                     <a class="btn blue start" id="btn_manage_notice_file_upload">
                                         <i class="fa fa-upload"></i>
 								        <span>
-								        파일업로드 </span>
+								        {{trans('lang.file_upload')}} </span>
                                     </a>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="input-group" style="text-align:left">
+                                        <input type="text" class="form-control" name="file_url"
+                                               id="manage_notice_file_url" disabled style="background: white">
+												<span class="input-group-btn">
+												<a onclick="remove_manage_notice_file_url(this)" class="btn green"
+                                                   id="username1_checker">
+                                                    <i class="fa fa-times"></i> {{trans('lang.cancel')}} </a>
+												</span>
+                                    </div>
                                 </div>
                             </div>
                             <input type="hidden" id="manage_notice_no">
@@ -75,6 +86,30 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+
+<button class="hidden" role="button" data-toggle="modal" data-target="#delete_manage_notice_modal"
+        id="btn_delete_manage_notice_modal"></button>
+<div class="modal fade" id="delete_manage_notice_modal" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">{{trans('lang.notice')}}</h4>
+            </div>
+            <div class="modal-body">
+                {{trans('lang.really_delete')}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn default" data-dismiss="modal">{{trans('lang.cancel')}}</button>
+                <button type="button" class="btn blue" id="btn_delete_manage_notice">{{trans('lang.delete')}}</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<input type="hidden" id="delete_manage_notice_no">
 
 <script>
     var tbl_manage_notice;
@@ -107,10 +142,10 @@
             },
             "createdRow": function (row, data, dataIndex) {
                 $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                if(data[2]!="" || data[2]!=null)
-                    $('td:eq(2)',row).html(data[2]+' &nbsp;<a onclick="file_download(\''+data[2]+'\')"><i class="fa fa-download"></i></a>');
+                if (data[2] != "" && data[2] != null)
+                    $('td:eq(2)', row).html(data[2] + ' &nbsp;<a onclick="file_download(\'' + data[2] + '\')"><i class="fa fa-download"></i></a>');
                 var option_html = '<a><i class="fa fa-edit" onclick="manage_notice_edit(' + data[0] + ',\'' + data[1] + '\',\'' + data[2] + '\',\'' + data[7] + '\')"></i>' +
-                        ' <i class="fa fa-remove" onclick="manage_notice_delete(' + data[5] + ')"></i></a>';
+                        ' <i class="fa fa-remove" onclick="manage_notice_delete(' + data[0] + ')"></i></a>';
                 $('td:eq(6)', row).html(option_html);
             },
             "columnDefs": [{
@@ -139,12 +174,16 @@
         try {
             new AjaxUpload($("#btn_manage_notice_file_upload"), {
                 action: "ajax_upload",
+                data: {
+                    _token: "{{csrf_token()}}"
+                },
                 name: 'uploadfile',
                 onComplete: function (file, response) {
-                    if (response == "error") {
-
-                    } else {
-
+                    if (response == '{{config('constants.FAIL')}}')
+                        toastr["error"]("{{trans('lang.file_upload_fail')}}", "{{trans('lang.notice')}}");
+                    else {
+                        var jsonData = JSON.parse(response);
+                        $("#manage_notice_file_url").val(jsonData.filename);
                     }
                 }
             })
@@ -156,21 +195,94 @@
     $("#btn_add_manage_notice").click(function () {
         $("#manage_notice_modal_title").html('<i class="fa fa-plus"></i> {{trans('lang.add')}}');
 
+        $("#manage_notice_no").val('');
         $("#manage_notice_title").val('');
         $("#manage_notice_content").val('');
-
+        $("#manage_notice_file_url").val('');
         $("#btn_manage_notice_modal").trigger('click');
     });
 
-    function manage_notice_edit(no, title, file_url, content) {
+    function manage_notice_edit(no, title, file_name, content) {
+        $("#manage_notice_modal_title").html('<i class="fa fa-edit"></i> {{trans('lang.edit')}}');
 
+        $("#manage_notice_no").val(no);
+        $("#manage_notice_title").val(title);
+        $("#manage_notice_content").val(content);
+
+        if (file_name != 'null')
+            $("#manage_notice_file_url").val(file_name);
+        else
+            $("#manage_notice_file_url").val('');
+        $("#btn_manage_notice_modal").trigger('click');
     }
 
     function manage_notice_delete(no) {
-
+        $("#delete_manage_notice_no").val(no);
+        $("#btn_delete_manage_notice_modal").trigger('click');
     }
 
-    function file_download(file_url) {
-        alert(file_url);
+    $("#btn_delete_manage_notice").click(function () {
+        $.ajax({
+            url: "delete_manage_notice",
+            type: "post",
+            data: {
+                manage_notice_no: $("#delete_manage_notice_no").val(),
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == '{{config('constants.FAIL')}}')
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                if (result == '{{config('constants.SUCCESS')}}') {
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                    tbl_manage_notice.draw(false);
+                }
+
+                $("button[data-dismiss='modal']").trigger('click');
+            }
+        });
+    });
+
+    function file_download(file_name) {
+        window.location.href = 'file_download?file_name=' + file_name;
     }
+
+    function remove_manage_notice_file_url(obj) {
+        $(obj).closest('div').find('input').val('');
+    }
+
+    $("#btn_manage_notice_save").click(function () {
+        if ($("#manage_notice_title").val() == '') {
+            toastr["error"]("{{trans('lang.input_title')}}", "{{trans('lang.notice')}}");
+            $("#manage_notice_title").focus();
+            return;
+        }
+        if ($("#manage_notice_content").val() == '') {
+            toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
+            $("#manage_notice_content").focus();
+            return;
+        }
+
+        $.ajax({
+            url: "save_manage_notice",
+            type: "post",
+            data: {
+                no: $("#manage_notice_no").val(),
+                title: $("#manage_notice_title").val(),
+                content: $("#manage_notice_content").val(),
+                file_url: $("#manage_notice_file_url").val(),
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == '{{config('constants.FAIL')}}')
+                    toastr["error"]("{{trans('lang.save_fail')}}", "{{trans('lang.notice')}}");
+                if (result == '{{config('constants.SUCCESS')}}') {
+                    toastr["success"]("{{trans('lang.save_success')}}", "{{trans('lang.notice')}}");
+                    tbl_manage_notice.draw(false);
+                }
+
+                $("button[data-dismiss='modal']").trigger('click');
+            }
+        });
+
+    })
 </script>

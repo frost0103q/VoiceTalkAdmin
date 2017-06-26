@@ -76,4 +76,5 @@ return [
 		'PUSH_SEND_MAIN' => 1,
 		'PUSH_SEND_NOTICE' => 2,
 		'PUSH_SEND_EVENT' => 3,
+
 ];

@@ -255,5 +255,8 @@ return [
     'edit'=>'편집',
     'input_title'=>'제목을 입력하세요.',
     'input_content'=>'내용을 입력하세요.',
+    'ref_file'=>'첨부파일',
+    'file_upload'=>'파일업로드',
+    'file_upload_fail'=>'파일업로드가 실패하였습니다.',
 
 ];

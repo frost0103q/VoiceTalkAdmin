@@ -146,4 +146,42 @@ class BasicController extends Controller
         $response['no'] = $notification->no;
         return $response;
     }
+
+    public function ajax_upload(){
+
+        if (!empty($_FILES["uploadfile"])) {
+            $filename = $_FILES['uploadfile']['name'];
+            $file_extension = pathinfo($_FILES['uploadfile']['name'], PATHINFO_EXTENSION);
+
+            $uploaddir =dirname(__DIR__) . "/../../public/uploads/";
+            $file = $uploaddir . "/" . $filename;
+
+            if (move_uploaded_file($_FILES['uploadfile']['tmp_name'], $file)) {
+                if (file_exists($file)) {
+                    die(json_encode(array('filename' => $filename, 'fileurl' => asset('uploads/'.$filename), 'result' => config('constants.SUCCESS'))));
+                }
+            } else {
+                return config('constants.FAIL');
+            }
+        }
+        return config('constants.SUCCESS');
+    }
+
+    public function file_download(){
+        $file_name=$_GET['file_name'];
+
+        $uploaddir =dirname(__DIR__) . "/../../public/uploads/";
+        $file = $uploaddir . "/" . $file_name;
+
+        $fp = fopen( $file, "r" );
+        $cont = fread( $fp, filesize($file) );
+        fclose( $fp );
+
+        header('Pragma: ');
+        header('Cache-Control: cache');
+        header ( "Content-Disposition: attachment; filename=\"".$file_name."\"" );
+        header ( "Content-Type: application/octet-stream; filename=\"".$file_name."\"" );
+
+        echo $cont;
+    }
 }
