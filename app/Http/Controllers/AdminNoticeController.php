@@ -9,6 +9,10 @@ use Illuminate\Http\Response;
 use DB;
 use Request;
 use Session;
+use App\Models\SSP;
+use App\Models\Admin;
+use App\Models\AdminNotice;
+use App\Models\Opinion;
 use App\Models\ServerFile;
 
 class AdminNoticeController extends BasicController
@@ -42,5 +46,89 @@ class AdminNoticeController extends BasicController
         }
 
         return view('admin_notice.index',['menu_index'=>8]);
+    }
+
+    public function ajax_opinion_table(){
+
+        $table = 't_opinion';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'title', 'dt' => 1),
+            array('db' => 'writer', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = Admin::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'created_at', 'dt' => 3),
+            array('db' => 'read_cnt', 'dt' => 4),
+            array('db' => 'no', 'dt' => 5),
+            array('db' => 'content', 'dt' => 6)
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function save_opinion(){
+        $params = Request::all();
+        $no = $params['opinion_no'];
+
+        $writer = Session::get('u_no');
+
+
+        if($no==""){
+            $data['title'] = $params['opinion_title'];
+            $data['content'] = $params['opinion_content'];
+            $data['writer'] = $writer;
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $data['read_cnt'] = 0;
+
+            $result=Opinion::insert($data);
+            if($result)
+                return config('constants.SUCCESS');
+            else
+                return config('constants.FAIL');
+        }
+        else{
+            $data['title'] = $params['opinion_title'];
+            $data['content'] = $params['opinion_content'];
+            $data['writer'] = $writer;
+            $data['updated_at'] = date('Y-m-d H:i:s');
+
+            $result=Opinion::where('no',$no)->update($data);
+            if($result)
+                return config('constants.SUCCESS');
+            else
+                return config('constants.FAIL');
+        }
+    }
+
+    public function delete_opinion(){
+        $opinion_no=$_POST['opinion_no'];
+        $result=Opinion::where('no',$opinion_no)->delete();
+        if($result)
+            return config('constants.SUCCESS');
+        else
+            return config('constants.FAIL');
     }
 }
