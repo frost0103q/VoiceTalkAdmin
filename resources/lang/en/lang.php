@@ -170,6 +170,8 @@ return [
     'no_passbook_guide'=>'무통장 안내',
     'lost_pw'=>'비밀번호 분실',
     'declare_recep'=>'신고접수',
+    'function'=>'기능',
+    'add'=>'추가',
     
     //Cash question manage
     'no'=>'순번',
@@ -245,7 +247,6 @@ return [
     'opinion_share'=>'의견공유',
     'manage_notice'=>'관리계시판',
     'inquire'=>'조회',
-    'add'=>'추가',
     'option'=>'기능',
     'save'=>'저장',
     'really_delete'=>'정말삭제하시겠습니까?',

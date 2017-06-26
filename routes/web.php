@@ -59,6 +59,15 @@ Route::post('del_selected_idiom', 'IdiomController@del_selected_idiom');
 
 //notice manage
 Route::get('notice_mgr', 'NoticeController@index');
+Route::post('ajax_push_table', 'NoticeController@ajax_push_table');
+Route::post('add_push', 'NoticeController@add_push');
+Route::post('get_push_content', 'NoticeController@get_push_content');
+Route::post('remove_push', 'NoticeController@remove_push');
+
+Route::post('ajax_banner_table', 'NoticeController@ajax_banner_table');
+Route::post('add_banner', 'NoticeController@add_banner');
+Route::post('get_banner_content', 'NoticeController@get_banner_content');
+Route::post('remove_banner', 'NoticeController@remove_banner');
 
 //cash_question manage
 Route::get('cash_question', 'CashQuestionController@index');
