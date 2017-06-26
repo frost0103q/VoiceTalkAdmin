@@ -197,5 +197,6 @@ return [
     'req_withdraw'=>'출금신청관리',
     'gifticon_buy'=>'Gifticon 구매',
     'point_present_content'=>'포인트선물내역',
-
+    'function'=>'기능',
+    'add'=>'추가',
 ];

@@ -69,5 +69,11 @@ return [
 		'DB_PW'	=> 'root',
 		'DB_NAME' => 'voicetalk',
 		'DB_HOST'	=> 'localhost',
-	
+
+		'SAVE_FLAG_ADD' => 1,
+		'SAVE_FLAG_EDIT' => 2,
+
+		'PUSH_SEND_MAIN' => 1,
+		'PUSH_SEND_NOTICE' => 2,
+		'PUSH_SEND_EVENT' => 3,
 ];
