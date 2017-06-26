@@ -28,11 +28,11 @@
                     <input class="form-control" placeholder="" type="text" id="c_user_nickname" name="user_nickname">
                 </div>
                 <div class="col-md-1">
-                    <label class="control-label">주문번호</label>
+                    <label class="control-label">{{trans('lang.order_number')}}</label>
                     <input class="form-control" placeholder="" type="text" id="c_order_number" name="order_number">
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">결제코드</label>
+                    <label class="control-label">{{trans('lang.cash_code')}}</label>
                     <input class="form-control" placeholder="" type="text" id="c_cash_code" name="cach_code">
                 </div>
                 <div class="col-md-1" style="padding-top: 7px">
@@ -43,19 +43,19 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500원</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_cash" style="width: 100%">
             <thead>
             <tr>
                 <th>{{trans('lang.number')}}</th>
-                <th>주문번호</th>
+                <th>{{trans('lang.order_number')}}</th>
                 <th>Nickname</th>
-                <th>실시간포인트</th>
-                <th>날짜</th>
+                <th>{{trans('lang.realtime_point')}}</th>
+                <th>{{trans('lang.date')}}</th>
                 <th>{{trans('lang.status')}}</th>
-                <th>루적결제</th>
+                <th>{{trans('lang.total_cash')}}</th>
             </tr>
             </thead>
             <tbody>

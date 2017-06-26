@@ -46,13 +46,13 @@
                 </a>
             </li>
             <li menu_index="7">
-                <a href="#">
+                <a href="statistic">
                     <i class="fa fa-line-chart"></i>
                     <span class="title">{{trans('lang.statistic_manage')}}</span>
                 </a>
             </li>
             <li menu_index="8">
-                <a href="#">
+                <a href="admin_notice">
                     <i class="fa fa-file-text-o"></i>
                     <span class="title">{{trans('lang.admin_notice')}}</span>
                 </a>

@@ -18,15 +18,15 @@
                     <input class="form-control" placeholder="" type="text" id="pp_user_nickname" name="user_nickname">
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">전화번호</label>
+                    <label class="control-label">{{trans('lang.telnum')}}</label>
                     <input class="form-control" placeholder="" type="text" id="pp_phone_number" name="phone_number">
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">이메일</label>
+                    <label class="control-label">{{trans('lang.email')}}</label>
                     <input class="form-control" placeholder="" type="text" id="pp_email" name="email">
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">채팅내용</label>
+                    <label class="control-label">{{trans('lang.chat_content')}}</label>
                     <input class="form-control" placeholder="" type="text" id="pp_chat_content" name="chat_content">
                 </div>
                 <div class="col-md-1" style="padding-top: 7px">
@@ -42,13 +42,13 @@
             <thead>
             <tr>
                 <th>{{trans('lang.number')}}</th>
-                <th>쿠폰번호</th>
-                <th>상품명</th>
+                <th>{{trans('lang.cupon_number')}}</th>
+                <th>{{trans('lang.product_name')}}</th>
                 <th>Nickname</th>
-                <th>정상가/도매</th>
-                <th>실판매가/이익</th>
+                <th>{{trans('lang.real_price')}}/{{trans('lang.sale_price')}}</th>
+                <th>{{trans('lang.cur_price')}}/{{trans('lang.benefit')}}</th>
                 <th>{{trans('lang.status')}}</th>
-                <th>발급일시</th>
+                <th>{{trans('lang.send_time')}}</th>
             </tr>
             </thead>
             <tbody>
