@@ -69,6 +69,11 @@ Route::post('add_banner', 'NoticeController@add_banner');
 Route::post('get_banner_content', 'NoticeController@get_banner_content');
 Route::post('remove_banner', 'NoticeController@remove_banner');
 
+Route::post('ajax_talk_notice_table', 'NoticeController@ajax_talk_notice_table');
+Route::post('add_talk', 'NoticeController@add_talk');
+Route::post('get_talk_content', 'NoticeController@get_talk_content');
+Route::post('remove_talk', 'NoticeController@remove_talk');
+
 //cash_question manage
 Route::get('cash_question', 'CashQuestionController@index');
 

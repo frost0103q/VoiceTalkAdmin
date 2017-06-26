@@ -172,6 +172,8 @@ return [
     'declare_recep'=>'신고접수',
     'function'=>'기능',
     'add'=>'추가',
+    'really_delete'=>'정말로 삭제하시겠습니까?',
+    'cancel'=>'취소',
     
     //Cash question manage
     'no'=>'순번',

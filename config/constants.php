@@ -76,4 +76,7 @@ return [
 		'PUSH_SEND_MAIN' => 1,
 		'PUSH_SEND_NOTICE' => 2,
 		'PUSH_SEND_EVENT' => 3,
+
+		'TALK_ADMIN' => 1,
+		'TALK_POLICE' => 2,
 ];

@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use App\Models\SSP;
 use App\Models\Push;
 use App\Models\Banner;
+use App\Models\TalkNotice;
 use DB;
 use Request;
 use Session;
@@ -137,6 +138,17 @@ class NoticeController extends BasicController
         return $response;
     }
 
+    public function remove_push(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = Push::where('no', $no)->delete();
+        if (!$response)
+            return config('constants.FAIL');
+        return config('constants.SUCCESS');
+    }
+
     //banner
 
     public function ajax_banner_table(HttpRequest $request){
@@ -213,5 +225,109 @@ class NoticeController extends BasicController
             return config('constants.FAIL');
         $response = Banner::where('no', $no)->first();
         return $response;
+    }
+
+    public function remove_banner(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = Banner::where('no', $no)->delete();
+        if (!$response)
+            return config('constants.FAIL');
+        return config('constants.SUCCESS');
+    }
+
+    //banner
+
+    public function ajax_talk_notice_table(HttpRequest $request){
+        $table = 't_talk_notice';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sender_type = $request->input('$sender_type_search');
+        if ($sender_type)
+            $custom_where .= " and sender_type like '%$sender_type%'";
+        $content = $request->input('content_search');
+        if ($content != "")
+            $custom_where .= " and content like '%$content%'";
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'created_at', 'dt' => 1),
+            array('db' => 'sender_type', 'dt' => 2,
+                'formatter' => function ($d, $row) {
+                    if ($d == config('constants.TALK_ADMIN'))
+                        return trans('lang.admin');
+                    else if ($d == config('constants.TALK_POLICE'))
+                        return trans('lang.talk_policy');
+                }),
+            array('db' => 'content', 'dt' => 3),
+            array('db' => 'no', 'dt' => 4,
+                'formatter' => function ($d, $row) {
+                    $str = "<a title=".trans('lang.edit')." onclick='talk_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=".trans('lang.remove')." onclick='talk_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    return $str;
+                }),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function add_talk(HttpRequest $request)
+    {
+        $flag = $request->input('talk_flag');
+        if (!isset($flag))
+            return config('constants.FAIL');
+        $data["content"] = $request->input('talk_content');
+        $data["sender_type"] = $request->input('talk_send_type');
+
+        if ($flag == config('constants.SAVE_FLAG_ADD')) {
+            $data["created_at"] = date("Y-m-d H:i:s");
+            $result = TalkNotice::insert($data);
+            if (!$result)
+                return config('constants.FAIL');
+        } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
+            $data["updated_at"] = date("Y-m-d H:i:s");
+            $edit_id = $request->input('talk_edit_id');
+            $result = TalkNotice::where('no',$edit_id)->update($data);
+            if (!$result)
+                return config('constants.FAIL');
+        }
+        return config('constants.SUCCESS');
+    }
+
+    public function get_talk_content(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = TalkNotice::where('no', $no)->first();
+        return $response;
+    }
+
+    public function remove_talk(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = TalkNotice::where('no', $no)->delete();
+        if (!$response)
+            return config('constants.FAIL');
+        return config('constants.SUCCESS');
     }
 }

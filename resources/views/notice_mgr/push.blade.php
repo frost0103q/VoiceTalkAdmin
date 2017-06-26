@@ -105,6 +105,27 @@
     <!-- /.modal-dialog -->
 </div>
 
+<button class="hidden" role="button" data-toggle="modal" data-target="#push_del_modal" id="btn_push_del_modal"></button>
+<div class="modal fade in" id="push_del_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title"><strong>{{trans('lang.notice')}}</strong></h4>
+            </div>
+            <div class="modal-body">
+                {{trans('lang.really_delete')}}
+            </div>
+            <div class="modal-footer">
+                <a class="btn blue" id="btn_push_del_confirm">&nbsp;{{trans('lang.confirm')}}</a>
+                <a class="btn default" data-dismiss="modal" id="btn_push_del_cancel">&nbsp;{{trans('lang.cancel')}}</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 <script>
     var tbl_push;
     $(document).ready(function () {
@@ -187,6 +208,32 @@
             }
         })
     }
+
+    function push_del(no) {
+        $("#push_edit_id").val(no);
+        $("#btn_push_del_modal").trigger('click');
+    }
+
+    $("#btn_push_del_confirm").click(function () {
+        $.ajax({
+            url: "remove_push",
+            type: "POST",
+            data: {
+                no: $("#push_edit_id").val(),
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == "{{config('constants.SUCCESS')}}") {
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                    $("#btn_push_del_cancel").trigger('click');
+                    tbl_push.draw();
+                }
+                else {
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        })
+    })
 
     $("#btn_push_add").click (function () {
         $("#push_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");

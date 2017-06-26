@@ -45,7 +45,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title"><strong>{{trans('lang.banner_sending')}}</strong></h4>
+                <h4 class="modal-title"><strong>{{trans('lang.banner_reg')}}</strong></h4>
             </div>
             <div class="modal-body">
                 <form id="banner_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">
@@ -78,6 +78,27 @@
             <div class="modal-footer">
                 <a class="btn blue" id="btn_banner_save"><i class="fa fa-floppy-o"></i>&nbsp;{{trans('lang.edit_finish')}}</a>
                 <a class="btn default" data-dismiss="modal" id="btn_banner_cancel"><i class="fa fa-rotate-left"></i>&nbsp;{{trans('lang.close')}}</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<button class="hidden" role="button" data-toggle="modal" data-target="#banner_del_modal" id="btn_banner_del_modal"></button>
+<div class="modal fade in" id="banner_del_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title"><strong>{{trans('lang.notice')}}</strong></h4>
+            </div>
+            <div class="modal-body">
+                {{trans('lang.really_delete')}}
+            </div>
+            <div class="modal-footer">
+                <a class="btn blue" id="btn_banner_del_confirm">&nbsp;{{trans('lang.confirm')}}</a>
+                <a class="btn default" data-dismiss="modal" id="btn_banner_del_cancel">&nbsp;{{trans('lang.cancel')}}</a>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -166,6 +187,32 @@
             }
         })
     }
+
+    function banner_del(no) {
+        $("#banner_edit_id").val(no);
+        $("#btn_banner_del_modal").trigger('click');
+    }
+
+    $("#btn_banner_del_confirm").click(function () {
+        $.ajax({
+            url: "remove_banner",
+            type: "POST",
+            data: {
+                no: $("#banner_edit_id").val(),
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == "{{config('constants.SUCCESS')}}") {
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                    $("#btn_banner_del_cancel").trigger('click');
+                    tbl_banner.draw();
+                }
+                else {
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        })
+    })
 
     $("#btn_banner_add").click (function () {
         $("#banner_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");
