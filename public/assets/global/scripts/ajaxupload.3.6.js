@@ -309,17 +309,7 @@
 				if(self._settings.onChange.call(self, file,filesize, getExt(file)) == false){
 					return;
 				}
-
-				//확장자가 png,jpeg만 업로드가능
-				if(getExt(file)!='jpg' && getExt(file)!='png'){
-					return;
-				}
-
-				//파일용량5MB이상인 파일은 업로드 할수없다.
-				if (filesize > 5242880) {
-					return;
-				}
-
+				
 				// Submit form when value is changed
 				if (self._settings.autoSubmit){
 					self.submit();
