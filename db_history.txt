@@ -14,3 +14,9 @@
 		t_push(no int 11, send_type int 11,title varchar 255,content longtext,created_at datetime,updated_at datetime)	
 		t_message(no,sendtype,receive_type,user_id,sentence_type,content,created_at,updated_at)
 		t_sms(no,receive_number,conent,created_at,upadted_at)
+-2017-06-26
+	새테불추가
+		t_opinion(no,title,content,writer,created_at,updated_at,read_cnt)
+		t_admin_notice(no,title,content,file_url,created_at,updated_at,read_cnt)
+	테불변경
+		t_admin테불에 nickname(varchar 255)마당추가
