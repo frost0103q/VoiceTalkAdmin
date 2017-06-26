@@ -83,3 +83,4 @@ Route::get('admin_notice', 'AdminNoticeController@index');
 Route::post('ajax_opinion_table', 'AdminNoticeController@ajax_opinion_table');
 Route::post('save_opinion', 'AdminNoticeController@save_opinion');
 Route::post('delete_opinion', 'AdminNoticeController@delete_opinion');
+Route::post('ajax_manage_notice_table', 'AdminNoticeController@ajax_manage_notice_table');

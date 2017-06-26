@@ -11,7 +11,7 @@ use Request;
 use Session;
 use App\Models\SSP;
 use App\Models\Admin;
-use App\Models\AdminNotice;
+use App\Models\ManageNotice;
 use App\Models\Opinion;
 use App\Models\ServerFile;
 
@@ -130,5 +130,46 @@ class AdminNoticeController extends BasicController
             return config('constants.SUCCESS');
         else
             return config('constants.FAIL');
+    }
+
+    public function ajax_manage_notice_table(){
+        $table = 't_manage_notice';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'title', 'dt' => 1),
+            array('db' => 'file_url', 'dt' => 2),
+            array('db' => 'writer', 'dt' => 3,
+                'formatter'=>function($d,$row){
+                    $results = Admin::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'created_at', 'dt' => 4),
+            array('db' => 'read_cnt', 'dt' => 5),
+            array('db' => 'no', 'dt' => 6),
+            array('db' => 'content', 'dt' => 7)
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
     }
 }
