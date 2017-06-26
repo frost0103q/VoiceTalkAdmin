@@ -5,6 +5,7 @@
             <tr>
                 <th>{{trans('lang.number')}}</th>
                 <th>{{trans('lang.title')}}</th>
+                <th>첨부파일</th>
                 <th>{{trans('lang.writer')}}</th>
                 <th>{{trans('lang.date')}}</th>
                 <th>{{trans('lang.inquire')}}</th>
