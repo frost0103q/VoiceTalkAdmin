@@ -11,6 +11,7 @@ use App\Models\Push;
 use App\Models\Banner;
 use App\Models\TalkNotice;
 use App\Models\Message;
+use App\Models\SMS;
 use DB;
 use Request;
 use Session;
@@ -427,13 +428,13 @@ class NoticeController extends BasicController
 
         if ($flag == config('constants.SAVE_FLAG_ADD')) {
             $data["created_at"] = date("Y-m-d H:i:s");
-            $result = message::insert($data);
+            $result = Message::insert($data);
             if (!$result)
                 return config('constants.FAIL');
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('message_edit_id');
-            $result = message::where('no',$edit_id)->update($data);
+            $result = Message::where('no',$edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -445,7 +446,7 @@ class NoticeController extends BasicController
         $no = $request->input('no');
         if (!isset($no))
             return config('constants.FAIL');
-        $response = message::where('no', $no)->first();
+        $response = Message::where('no', $no)->first();
         return $response;
     }
 
@@ -454,7 +455,95 @@ class NoticeController extends BasicController
         $no = $request->input('no');
         if (!isset($no))
             return config('constants.FAIL');
-        $response = message::where('no', $no)->delete();
+        $response = Message::where('no', $no)->delete();
+        if (!$response)
+            return config('constants.FAIL');
+        return config('constants.SUCCESS');
+    }
+
+    //sms
+
+    public function ajax_sms_table(HttpRequest $request){
+        $table = 't_sms';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $receive_number = $request->input('receive_number_search');
+        if ($receive_number != "")
+            $custom_where .= " and receive_number like '%$receive_number%'";
+        $content = $request->input('content_search');
+        if ($content != "")
+            $custom_where .= " and content like '%$content%'";
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'created_at', 'dt' => 1),
+            array('db' => 'receive_number', 'dt' => 2),
+            array('db' => 'content', 'dt' => 3),
+            array('db' => 'no', 'dt' => 4,
+                'formatter' => function ($d, $row) {
+                    $str = "<a title=".trans('lang.edit')." onclick='sms_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=".trans('lang.remove')." onclick='sms_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    return $str;
+                }),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function add_sms(HttpRequest $request)
+    {
+        $flag = $request->input('sms_flag');
+        if (!isset($flag))
+            return config('constants.FAIL');
+        $data["receive_number"] = $request->input('sms_receive_number');
+        $data["content"] = $request->input('sms_content');
+
+        if ($flag == config('constants.SAVE_FLAG_ADD')) {
+            $data["no"] = SMS::max('no') + 1;
+            $data["created_at"] = date("Y-m-d H:i:s");
+            $result = SMS::insert($data);
+            if (!$result)
+                return config('constants.FAIL');
+        } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
+            $data["updated_at"] = date("Y-m-d H:i:s");
+            $edit_id = $request->input('sms_edit_id');
+            $result = SMS::where('no',$edit_id)->update($data);
+            if (!$result)
+                return config('constants.FAIL');
+        }
+        return config('constants.SUCCESS');
+    }
+
+    public function get_sms_content(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = SMS::where('no', $no)->first();
+        return $response;
+    }
+
+    public function remove_sms(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = SMS::where('no', $no)->delete();
         if (!$response)
             return config('constants.FAIL');
         return config('constants.SUCCESS');
