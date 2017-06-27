@@ -69,6 +69,21 @@ Route::post('add_banner', 'NoticeController@add_banner');
 Route::post('get_banner_content', 'NoticeController@get_banner_content');
 Route::post('remove_banner', 'NoticeController@remove_banner');
 
+Route::post('ajax_talk_notice_table', 'NoticeController@ajax_talk_notice_table');
+Route::post('add_talk', 'NoticeController@add_talk');
+Route::post('get_talk_content', 'NoticeController@get_talk_content');
+Route::post('remove_talk', 'NoticeController@remove_talk');
+
+Route::post('ajax_message_table', 'NoticeController@ajax_message_table');
+Route::post('add_message', 'NoticeController@add_message');
+Route::post('get_message_content', 'NoticeController@get_message_content');
+Route::post('remove_message', 'NoticeController@remove_message');
+
+Route::post('ajax_sms_table', 'NoticeController@ajax_sms_table');
+Route::post('add_sms', 'NoticeController@add_sms');
+Route::post('get_sms_content', 'NoticeController@get_sms_content');
+Route::post('remove_sms', 'NoticeController@remove_sms');
+
 //cash_question manage
 Route::get('cash_question', 'CashQuestionController@index');
 Route::post('ajax_cash_question_table', 'CashQuestionController@ajax_cash_question_table');

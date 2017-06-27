@@ -82,12 +82,23 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-2">{{trans('lang.img_url')}}</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" placeholder="" id="push_img_url" name="push_img_url">
+                        <div class="col-md-offset-2 col-md-2">
+                            <a class="btn blue start" id="btn_push_img_upload">
+                                <i class="fa fa-upload"></i>
+								        <span>
+								        {{trans('lang.file_upload')}} </span>
+                            </a>
                         </div>
-                        <div class="col-md-2">
-                            <a class="btn blue" onclick="push_image_reg(this)">{{trans('lang.img_reg')}}</a>
+                        <div class="col-md-7">
+                            <div class="input-group" style="text-align:left">
+                                <input type="text" class="form-control" name="push_img_url"
+                                       id="push_img_url" readonly style="background: white">
+												<span class="input-group-btn">
+												<a onclick="remove_push_img_url(this)" class="btn green"
+                                                   id="username1_checker">
+                                                    <i class="fa fa-times"></i> {{trans('lang.cancel')}} </a>
+												</span>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="push_flag" id="push_flag">
@@ -98,6 +109,27 @@
             <div class="modal-footer">
                 <a class="btn blue" id="btn_push_save"><i class="fa fa-floppy-o"></i>&nbsp;{{trans('lang.edit_finish')}}</a>
                 <a class="btn default" data-dismiss="modal" id="btn_push_cancel"><i class="fa fa-rotate-left"></i>&nbsp;{{trans('lang.close')}}</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<button class="hidden" role="button" data-toggle="modal" data-target="#push_del_modal" id="btn_push_del_modal"></button>
+<div class="modal fade in" id="push_del_modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title"><strong>{{trans('lang.notice')}}</strong></h4>
+            </div>
+            <div class="modal-body">
+                {{trans('lang.really_delete')}}
+            </div>
+            <div class="modal-footer">
+                <a class="btn blue" id="btn_push_del_confirm">&nbsp;{{trans('lang.confirm')}}</a>
+                <a class="btn default" data-dismiss="modal" id="btn_push_del_cancel">&nbsp;{{trans('lang.cancel')}}</a>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -117,6 +149,7 @@
                 "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
                 "infoFiltered": "",
                 "sInfoEmpty": "",
+                "zeroRecords": "{{trans('lang.no_display_data')}}",
                 "paginate": {
                     "previous": "Prev",
                     "next": "Next",
@@ -188,6 +221,32 @@
         })
     }
 
+    function push_del(no) {
+        $("#push_edit_id").val(no);
+        $("#btn_push_del_modal").trigger('click');
+    }
+
+    $("#btn_push_del_confirm").click(function () {
+        $.ajax({
+            url: "remove_push",
+            type: "POST",
+            data: {
+                no: $("#push_edit_id").val(),
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == "{{config('constants.SUCCESS')}}") {
+                    toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                    $("#btn_push_del_cancel").trigger('click');
+                    tbl_push.draw();
+                }
+                else {
+                    toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        })
+    })
+
     $("#btn_push_add").click (function () {
         $("#push_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");
         $("#push_title").val("");
@@ -198,6 +257,22 @@
     })
 
     $("#btn_push_save").click(function () {
+        if ($("#push_send_type").val() == '') {
+            toastr["error"]("{{trans('lang.input_send_type')}}", "{{trans('lang.notice')}}");
+            $("#push_send_type").focus();
+            return;
+        }
+        if ($("#push_title").val() == '') {
+            toastr["error"]("{{trans('lang.input_title')}}", "{{trans('lang.notice')}}");
+            $("#push_title").focus();
+            return;
+        }
+        if ($("#push_content").val() == '') {
+            toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
+            $("#push_content").focus();
+            return;
+        }
+
         $.ajax({
             url: "add_push",
             type: "POST",
@@ -218,4 +293,35 @@
     $("#btn_push_search").click(function () {
         tbl_push.draw();
     })
+
+    function file_download(file_name) {
+        window.location.href = 'file_download?file_name=' + file_name;
+    }
+
+    function remove_push_img_url(obj) {
+        $(obj).closest('div').find('input').val('');
+    }
+
+    $(function () {
+        try {
+            new AjaxUpload($("#btn_push_img_upload"), {
+                action: "ajax_upload",
+                data: {
+                    _token: "{{csrf_token()}}"
+                },
+                name: 'uploadfile',
+                onComplete: function (file, response) {
+                    if (response == '{{config('constants.FAIL')}}')
+                        toastr["error"]("{{trans('lang.file_upload_fail')}}", "{{trans('lang.notice')}}");
+                    else {
+                        var jsonData = JSON.parse(response);
+                        $("#push_img_url").val(jsonData.filename);
+                    }
+                }
+            })
+        } catch (e) {
+            alert(e);
+        }
+    });
+
 </script>
