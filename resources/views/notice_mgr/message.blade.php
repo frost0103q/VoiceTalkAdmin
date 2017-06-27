@@ -278,6 +278,31 @@
     })
 
     $("#btn_message_save").click(function () {
+        if ($("#message_sender_type").val() == '') {
+            toastr["error"]("{{trans('lang.input_sender_type')}}", "{{trans('lang.notice')}}");
+            $("#message_sender_type").focus();
+            return;
+        }
+        if ($("#message_receiver_type").val() == '') {
+            toastr["error"]("{{trans('lang.input_receiver_type')}}", "{{trans('lang.notice')}}");
+            $("#message_receiver_type").focus();
+            return;
+        }
+        if ($("#message_user_id").val() == '') {
+            toastr["error"]("{{trans('lang.input_user_id')}}", "{{trans('lang.notice')}}");
+            $("#message_user_id").focus();
+            return;
+        }
+        if ($("#message_sentence_type").val() == '') {
+            toastr["error"]("{{trans('lang.input_sentence_type')}}", "{{trans('lang.notice')}}");
+            $("#message_sentence_type").focus();
+            return;
+        }
+        if ($("#message_content").val() == '') {
+            toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
+            $("#message_content").focus();
+            return;
+        }
         $.ajax({
             url: "add_message",
             type: "POST",

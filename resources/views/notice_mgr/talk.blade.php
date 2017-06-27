@@ -2,7 +2,7 @@
     <div class="col-md-12" style="margin-top: 30px;margin-bottom: 20px">
         <div class="col-md-2">
             <label class="control-label">{{trans('lang.sender_mgr')}}</label>
-            <select class="form-control select2me" id="talk_send_type_search" name="talk_send_type_search">
+            <select class="form-control select2me" id="talk_sender_type_search" name="talk_sender_type_search">
                 <option value="0">{{trans('lang.all')}}</option>
                 <option value="1">{{trans('lang.admin')}}</option>
                 <option value="2">{{trans('lang.talk_policy')}}</option>
@@ -55,7 +55,7 @@
                     <div class="form-group" style="margin-top: 30px;">
                         <label class="control-label col-md-2">{{trans('lang.sender_mgr')}}</label>
                         <div class="col-md-2">
-                            <select class="form-control select2me" id="talk_send_type" name="talk_send_type">
+                            <select class="form-control select2me" id="talk_sender_type" name="talk_sender_type">
                                 <option value="1">{{trans('lang.admin')}}</option>
                                 <option value="2">{{trans('lang.talk_policy')}}</option>
                             </select>
@@ -132,7 +132,7 @@
                 "data":   function ( d ) {
                     start_index=d.start;
                     d._token= "{{csrf_token()}}";
-                    d.send_type_search = $("#talk_send_type_search").val();
+                    d.sender_type_search = $("#talk_sender_type_search").val();
                     d.content_search = $("#talk_content_search").val();
                 }
             },
@@ -177,7 +177,7 @@
                 }
                 else {
                     $("#talk_content").val(result.content);
-                    $("#talk_send_type").val(result.sender_type);
+                    $("#talk_sender_type").val(result.sender_type);
                     $("#btn_talk_open_modal").trigger('click');
                 }
             }
@@ -213,11 +213,22 @@
     $("#btn_talk_add").click (function () {
         $("#talk_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");
         $("#talk_content").val("");
-        $("#talk_send_type").val("1");
+        $("#talk_sender_type").val("1");
         $("#btn_talk_open_modal").trigger('click');
     })
 
     $("#btn_talk_save").click(function () {
+        if ($("#talk_sender_type").val() == '') {
+            toastr["error"]("{{trans('lang.input_sender_type')}}", "{{trans('lang.notice')}}");
+            $("#talk_sender_type").focus();
+            return;
+        }
+        if ($("#talk_content").val() == '') {
+            toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
+            $("#push_content").focus();
+            return;
+        }
+
         $.ajax({
             url: "add_talk",
             type: "POST",

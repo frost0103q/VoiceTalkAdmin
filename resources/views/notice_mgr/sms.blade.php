@@ -215,6 +215,17 @@
     })
 
     $("#btn_sms_save").click(function () {
+        if ($("#sms_receive_number").val() == '') {
+            toastr["error"]("{{trans('lang.input_receive_number')}}", "{{trans('lang.notice')}}");
+            $("#sms_receive_number").focus();
+            return;
+        }
+        if ($("#sms_content").val() == '') {
+            toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
+            $("#sms_content").focus();
+            return;
+        }
+
         $.ajax({
             url: "add_sms",
             type: "POST",

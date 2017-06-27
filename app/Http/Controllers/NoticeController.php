@@ -84,7 +84,13 @@ class NoticeController extends BasicController
                         return trans('lang.event');
                 }),
             array('db' => 'content', 'dt' => 4),
-            array('db' => 'img_url', 'dt' => 5),
+            array('db' => 'img_url', 'dt' => 5,
+                'formatter' => function ($d, $row) {
+                    if ($d == "")
+                        return $d;
+                    $str = "<a onclick='file_download(\"$d\")'><i class='fa fa-download'></i></a>";
+                    return $d."&nbsp;&nbsp;".$str;
+                }),
             array('db' => 'no', 'dt' => 6,
                 'formatter' => function ($d, $row) {
                     $str = "<a title=".trans('lang.edit')." onclick='push_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
@@ -174,7 +180,13 @@ class NoticeController extends BasicController
             array('db' => 'created_at', 'dt' => 1),
             array('db' => 'title', 'dt' => 2),
             array('db' => 'content', 'dt' => 3),
-            array('db' => 'img_url', 'dt' => 4),
+            array('db' => 'img_url', 'dt' => 4,
+                'formatter' => function ($d, $row) {
+                    if ($d == "")
+                        return $d;
+                    $str = "<a onclick='file_download(\"$d\")'><i class='fa fa-download'></i></a>";
+                    return $d."&nbsp;&nbsp;".$str;
+                }),
             array('db' => 'no', 'dt' => 5,
                 'formatter' => function ($d, $row) {
                     $str = "<a title=".trans('lang.edit')." onclick='banner_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
@@ -250,7 +262,7 @@ class NoticeController extends BasicController
         // Table's primary key
         $primaryKey = 'no';
 
-        $sender_type = $request->input('$sender_type_search');
+        $sender_type = $request->input('sender_type_search');
         if ($sender_type)
             $custom_where .= " and sender_type like '%$sender_type%'";
         $content = $request->input('content_search');
@@ -296,7 +308,7 @@ class NoticeController extends BasicController
         if (!isset($flag))
             return config('constants.FAIL');
         $data["content"] = $request->input('talk_content');
-        $data["sender_type"] = $request->input('talk_send_type');
+        $data["sender_type"] = $request->input('talk_sender_type');
 
         if ($flag == config('constants.SAVE_FLAG_ADD')) {
             $data["created_at"] = date("Y-m-d H:i:s");

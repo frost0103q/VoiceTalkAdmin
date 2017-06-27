@@ -174,6 +174,12 @@ return [
     'add'=>'추가',
     'really_delete'=>'정말로 삭제하시겠습니까?',
     'cancel'=>'취소',
+    'input_send_type'=>'발송형태를 선택하세요.',
+    'input_sender_type'=>'발송관리자를 선택하세요.',
+    'input_receive_type'=>'발송대상을 선택하세요.',
+    'input_user_id'=>'회원아이디를 입력하세요.',
+    'input_sentence_type'=>'대응문장을 선택하세요.',
+    'input_receive_number'=>'수신번호를 입력하세요.',
     
     //Cash question manage
     'no'=>'순번',
@@ -251,8 +257,6 @@ return [
     'inquire'=>'조회',
     'option'=>'기능',
     'save'=>'저장',
-    'really_delete'=>'정말삭제하시겠습니까?',
-    'cancel'=>'취소',
     'delete'=>'삭제',
     'edit'=>'편집',
     'input_title'=>'제목을 입력하세요.',
