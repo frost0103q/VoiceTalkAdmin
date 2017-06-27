@@ -21,10 +21,10 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
-                            @include('cash_question.question')
+                            @include('cash_question.cash_question')
                         </div>
                         <div class="tab-pane fade" id="tab_2">
-                            @include('cash_question.declare')
+                            @include('cash_question.cash_declare')
                         </div>
                     </div>
                 </div>

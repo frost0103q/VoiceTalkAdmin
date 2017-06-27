@@ -178,6 +178,13 @@ return [
     'confirm'=>'확인',
     'do_cash_question'=>'결제문의하기',
     'do_declare'=>'신고하기',
+    'question_content'=>'문의 내용',
+    'answer_status'=>'답변상태',
+    'answer'=>'답변',
+    'uncertain'=>'미결',
+    'answer_content'=>'답변내용',
+    'input_answer_content'=>'답변내용을 입력하세요.',
+    'do_answer'=>'답변하기',
     
     //Withdraw manage
     'period_search'=>'기간검색',

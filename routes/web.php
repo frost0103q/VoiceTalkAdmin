@@ -71,6 +71,9 @@ Route::post('remove_banner', 'NoticeController@remove_banner');
 
 //cash_question manage
 Route::get('cash_question', 'CashQuestionController@index');
+Route::post('ajax_cash_question_table', 'CashQuestionController@ajax_cash_question_table');
+Route::post('save_cash_question_opinion', 'CashQuestionController@save_cash_question_opinion');
+Route::post('delete_cash_questin', 'CashQuestionController@delete_cash_questin');
 
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');
