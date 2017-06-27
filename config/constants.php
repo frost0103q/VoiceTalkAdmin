@@ -79,4 +79,13 @@ return [
 
 		'TALK_ADMIN' => 1,
 		'TALK_POLICE' => 2,
+
+		'SPECIAL_USER' => 1,
+		'COMMON_USER' => 2,
+		'TALK_USER' => 3,
+		'ALL_USER' => 4,
+
+		'NO_PASSBOOK_GUIDE' => 1,
+		'LOST_PW' => 2,
+		'DECLARE_RECEP' => 3,
 ];

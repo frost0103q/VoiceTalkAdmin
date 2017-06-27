@@ -10,6 +10,7 @@ use App\Models\SSP;
 use App\Models\Push;
 use App\Models\Banner;
 use App\Models\TalkNotice;
+use App\Models\Message;
 use DB;
 use Request;
 use Session;
@@ -238,7 +239,7 @@ class NoticeController extends BasicController
         return config('constants.SUCCESS');
     }
 
-    //banner
+    //talk
 
     public function ajax_talk_notice_table(HttpRequest $request){
         $table = 't_talk_notice';
@@ -326,6 +327,134 @@ class NoticeController extends BasicController
         if (!isset($no))
             return config('constants.FAIL');
         $response = TalkNotice::where('no', $no)->delete();
+        if (!$response)
+            return config('constants.FAIL');
+        return config('constants.SUCCESS');
+    }
+
+    //message
+    public function ajax_message_table(HttpRequest $request){
+        $table = 't_message';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sender_type = $request->input('sender_type_search');
+        if ($sender_type)
+            $custom_where .= " and sender_type = $sender_type";
+        $receive_type = $request->input('receive_type_search');
+        if ($receive_type)
+            $custom_where .= " and receive_type like '%$receive_type%'";
+        $user_id = $request->input('user_id_search');
+        if ($user_id != "")
+            $custom_where .= " and user_id like '%$user_id%'";
+        $sentence_type = $request->input('sentence_type_search');
+        if ($sentence_type)
+            $custom_where .= " and sentence_type like '%$sentence_type%'";
+        $content = $request->input('content_search_search');
+        if ($content != "")
+            $custom_where .= " and content like '%$content%'";
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'created_at', 'dt' => 1),
+            array('db' => 'sender_type', 'dt' => 2,
+                'formatter' => function ($d, $row) {
+                    if ($d == config('constants.TALK_ADMIN'))
+                        return trans('lang.admin');
+                    else if ($d == config('constants.TALK_POLICE'))
+                        return trans('lang.talk_policy');
+                }),
+            array('db' => 'receive_type', 'dt' => 3,
+                'formatter' => function ($d, $row) {
+                    if ($d == config('constants.SPECIAL_USER'))
+                        return trans('lang.special_user');
+                    else if ($d == config('constants.COMMON_USER'))
+                        return trans('lang.common_user');
+                    else if ($d == config('constants.TALK_USER'))
+                        return trans('lang.talk_user');
+                    else if ($d == config('constants.ALL_USER'))
+                        return trans('lang.all_user');
+                }),
+            array('db' => 'user_id', 'dt' => 4,
+                'formatter' => function ($d, $row) {
+                    return $d;
+                }),
+            array('db' => 'sentence_type', 'dt' => 5,
+                'formatter' => function ($d, $row) {
+                    if ($d == config('constants.NO_PASSBOOK_GUIDE'))
+                        return trans('lang.no_passbook_guide');
+                    else if ($d == config('constants.LOST_PW'))
+                        return trans('lang.lost_pw');
+                    else if ($d == config('constants.DECLARE_RECEP'))
+                        return trans('lang.declare_recep');
+                }),
+            array('db' => 'content', 'dt' => 6),
+            array('db' => 'no', 'dt' => 7,
+                'formatter' => function ($d, $row) {
+                    $str = "<a title=".trans('lang.edit')." onclick='message_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=".trans('lang.remove')." onclick='message_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    return $str;
+                }),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function add_message(HttpRequest $request)
+    {
+        $flag = $request->input('message_flag');
+        if (!isset($flag))
+            return config('constants.FAIL');
+        $data["sender_type"] = $request->input('message_sender_type');
+        $data["receive_type"] = $request->input('message_receive_type');
+        $data["user_id"] = $request->input('message_user_id');
+        $data["sentence_type"] = $request->input('message_sentence_type');
+        $data["content"] = $request->input('message_content');
+
+        if ($flag == config('constants.SAVE_FLAG_ADD')) {
+            $data["created_at"] = date("Y-m-d H:i:s");
+            $result = message::insert($data);
+            if (!$result)
+                return config('constants.FAIL');
+        } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
+            $data["updated_at"] = date("Y-m-d H:i:s");
+            $edit_id = $request->input('message_edit_id');
+            $result = message::where('no',$edit_id)->update($data);
+            if (!$result)
+                return config('constants.FAIL');
+        }
+        return config('constants.SUCCESS');
+    }
+
+    public function get_message_content(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = message::where('no', $no)->first();
+        return $response;
+    }
+
+    public function remove_message(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = message::where('no', $no)->delete();
         if (!$response)
             return config('constants.FAIL');
         return config('constants.SUCCESS');

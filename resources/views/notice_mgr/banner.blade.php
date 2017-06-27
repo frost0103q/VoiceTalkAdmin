@@ -118,6 +118,7 @@
                 "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
                 "infoFiltered": "",
                 "sInfoEmpty": "",
+                "zeroRecords": "{{trans('lang.no_display_data')}}",
                 "paginate": {
                     "previous": "Prev",
                     "next": "Next",

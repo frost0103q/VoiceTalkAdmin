@@ -27,7 +27,7 @@
             <tr>
                 <th>{{trans('lang.number')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
-                <th>{{trans('lang.send_type')}}</th>
+                <th>{{trans('lang.sender_mgr')}}</th>
                 <th>{{trans('lang.content')}}</th>
                 <th>{{trans('lang.function')}}</th>
             </tr>
@@ -115,6 +115,7 @@
                 "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
                 "infoFiltered": "",
                 "sInfoEmpty": "",
+                "zeroRecords": "{{trans('lang.no_display_data')}}",
                 "paginate": {
                     "previous": "Prev",
                     "next": "Next",
