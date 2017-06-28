@@ -401,9 +401,8 @@ class TalkController extends BasicController
             $custom_where.=" and phone_number like '%".$phone_number."%'";
         if($email!="")
             $custom_where.=" and email like '%".$email."%'";
-        if($chat_content!=""){
-            $custom_where.=" and greeting like '%".$chat_content."%'";
-        }
+        if($chat_content!="")
+            $custom_where.=" and user_no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
@@ -429,7 +428,17 @@ class TalkController extends BasicController
             array('db' => 'user_nickname', 'dt' => 3),
             array('db' => 'greeting', 'dt' => 4),
             array('db' => 'talk_edit_time', 'dt' => 5),
-            array('db' => 'no', 'dt' => 6),
+            array('db' => 'user_no', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null)
+                        $reg_time=$user_model->created_at;
+                    else
+                        $reg_time='';
+                    $last_login_time = DB::table('t_login_history')->where('user_no', $d)->max('created_at');
+                    return $reg_time."/".$last_login_time;
+                }
+            ),
             array('db' => 'profile_img_path', 'dt' => 7)
         );
 

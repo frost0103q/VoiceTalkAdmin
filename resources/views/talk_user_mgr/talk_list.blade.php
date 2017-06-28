@@ -54,7 +54,7 @@
     <div class="col-md-12"  style="padding-top: 30px">
         <div class=" col-md-4">
             <a class="btn blue" id="btn_warning_user_talk">{{trans('lang.warning')}}</a>
-            <a class="btn blue" id="btn_stop_user">{{trans('lang.force_stop')}}</a>
+            <a class="btn blue" id="btn_stop_user_talk">{{trans('lang.force_stop')}}</a>
             <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_talk_img')}}</a>
         </div>
         <div class="col-md-2">
@@ -203,6 +203,39 @@
                 else {
                     tbl_talk.draw(false);
                     toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
+
+    $("#btn_stop_user_talk").click(function () {
+        var selected_user_str='';
+        $("#tbl_talk .talk_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).attr('user_no')+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'user_force_stop',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.force_stop_failed')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
             }
         });

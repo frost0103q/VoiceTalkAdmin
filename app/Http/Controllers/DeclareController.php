@@ -66,7 +66,7 @@ class DeclareController extends BasicController
         if($email!="")
             $custom_where.=" and from_user_email like '%".$email."%'";
         if($chat_content!=""){
-            $custom_where.=" and content like '%".$chat_content."%'";
+            $custom_where.=" and from_user_no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
         }
 
         $columns = array(
@@ -103,12 +103,7 @@ class DeclareController extends BasicController
             array('db' => 'to_user_profile_img_path', 'dt' => 4),
             array('db' => 'content', 'dt' => 5),
             array('db' => 'created_at', 'dt' => 6),
-            array('db' => 'updated_at', 'dt' => 7),
-            array('db' => 'no', 'dt' => 8,
-                'formatter'=>function($d,$row){
-                    return '<input type="checkbox" value="'.$d.'">';
-                }
-            )
+            array('db' => 'updated_at', 'dt' => 7)
         );
 
         // SQL server connection information

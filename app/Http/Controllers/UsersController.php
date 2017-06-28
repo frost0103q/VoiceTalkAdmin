@@ -750,10 +750,9 @@ class UsersController extends BasicController
         if($phone_number!="")
             $custom_where.=" and phone_number like '%".$phone_number."%'";
         if($email!="")
-            $custom_where.=" and email like '%".$email."'%";
-        if($chat_content!=""){
-            $custom_where.=" and subject like '%".$chat_content."%'";
-        }
+            $custom_where.=" and email like '%".$email."%'";
+        if($chat_content!="")
+            $custom_where.=" and no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
@@ -851,6 +850,27 @@ class UsersController extends BasicController
                  'created_at' => date('Y-m-d H:i:s')]
             );
 
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function user_force_stop(){
+        $selected_user_str=$_POST['selected_user_str'];
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $new_selected_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+
+        for($i=0;$i<count($new_selected_array);$i++){
+            $update_data['stop_flag']=1;
+            $result=User::where('no', $new_selected_array[$i])->update($update_data);
             if(!$result)
                 return config('constants.FAIL');
         }

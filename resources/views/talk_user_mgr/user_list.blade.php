@@ -25,7 +25,7 @@
             <input class="form-control" placeholder="" type="text" id="user_email">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.content')}}</label>
+            <label class="control-label">{{trans('lang.chat_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">
@@ -41,7 +41,7 @@
                 <th>{{trans('lang.user_no')}}</th>
                 <th>{{trans('lang.photo')}}</th>
                 <th>Nickname</th>
-                <th>{{trans('lang.content')}}</th>
+                <th>{{trans('lang.subject')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
                 <th>{{trans('lang.warn')}}</th>
             </tr>
@@ -51,7 +51,7 @@
         </table>
     </div>
     <div class="col-md-12"  style="padding-top: 30px">
-        <div class=" col-md-2">
+        <div class=" col-md-3">
             <a class="btn blue" id="btn_warning_user">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_del_user_photo">{{trans('lang.del_only_photo')}}</a>
         </div>

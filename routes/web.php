@@ -51,6 +51,7 @@ Route::post('del_selected_profile', 'UsersController@del_selected_profile');
 Route::post('del_selected_warning', 'UsersController@del_selected_warning');
 Route::post('del_selected_talk_img', 'TalkController@del_selected_talk_img');
 Route::post('del_selected_user_talk', 'TalkController@del_selected_user_talk');
+Route::post('user_force_stop', 'UsersController@user_force_stop');
 
 //Interdict Idiom Manage
 Route::get('interdict_idiom_reg', 'IdiomController@index');

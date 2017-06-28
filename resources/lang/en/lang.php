@@ -114,6 +114,7 @@ return [
     'fail_warning'=>'경고가 실패하였습니다.',
     'select_talk_img_to_delete'=>'삭제하시려는 Talk이미지를 선택하세요.',
     'del_only_talk_img'=>'Talk사진만 삭제',
+    'force_stop_failed'=>'강퇴차단이 실패하였습니다.',
 
     //Setting
     'change_password'=>'비밀번호변경',
