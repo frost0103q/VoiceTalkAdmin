@@ -81,5 +81,42 @@ return [
 		'DB_PW'	=> 'root',
 		'DB_NAME' => 'voicetalk',
 		'DB_HOST'	=> 'localhost',
-	
+
+		'SAVE_FLAG_ADD' => 1,
+		'SAVE_FLAG_EDIT' => 2,
+
+		'PUSH_SEND_MAIN' => 1,
+		'PUSH_SEND_NOTICE' => 2,
+		'PUSH_SEND_EVENT' => 3,
+
+		'TALK_ADMIN' => 1,
+		'TALK_POLICE' => 2,
+
+		'SPECIAL_USER' => 1,
+		'COMMON_USER' => 2,
+		'TALK_USER' => 3,
+		'ALL_USER' => 4,
+
+		'NO_PASSBOOK_GUIDE' => 1,
+		'LOST_PW' => 2,
+		'DECLARE_RECEP' => 3,
+
+		//warning sentences type
+		'SALE_SCREEN'=>'1',
+		'SALE_SEX'=>'2',
+		'HONGBO_TARGET'=>'3',
+		'ABUSIBE'=>'4',
+		'OUTER_PICTURE'=>'5',
+		'OTHER_USER_CALUMNY'=>'6',
+		'POINT_LEAD'=>'7',
+		'PHOTO_STEAL'=>'8',
+		'UNLAWFULNESS_TRADE'=>'9',
+		'LIE_THING'=>'10',
+		'LIE_DECLARE'=>'11',
+		'USER_REPRESENT'=>'12',
+		'AD_OTHER_APP'=>'13',
+		'OTHER'=>'14',
+		'WRONG_WORD'=>'15',
+		'SEX_BANTER'=>'16',
+		'THREAT'=>'17',
 ];

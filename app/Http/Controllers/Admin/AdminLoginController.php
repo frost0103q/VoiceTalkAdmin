@@ -75,6 +75,8 @@ class AdminLoginController extends BasicController
 		}
 		
 		Session::put('u_email', $email);
+		Session::put('u_no', $results[0]->no);
+		Session::put('u_nickname', $results[0]->nickname);
 		
 		return redirect('/agree_photo');
 	}

@@ -25,7 +25,7 @@
             <input class="form-control" placeholder="" type="text" id="user_email">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.content')}}</label>
+            <label class="control-label">{{trans('lang.chat_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">
@@ -41,9 +41,11 @@
                 <th>{{trans('lang.user_no')}}</th>
                 <th>{{trans('lang.photo')}}</th>
                 <th>Nickname</th>
-                <th>{{trans('lang.content')}}</th>
+                <th>{{trans('lang.subject')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
                 <th>{{trans('lang.warn')}}</th>
+                <th>{{trans('lang.force_stop')}}</th>
+                <th>{{trans('lang.stop_use_app')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -51,20 +53,36 @@
         </table>
     </div>
     <div class="col-md-12"  style="padding-top: 30px">
-        <div class=" col-md-2">
+        <div class=" col-md-3">
             <a class="btn blue" id="btn_warning_user">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_del_user_photo">{{trans('lang.del_only_photo')}}</a>
         </div>
+        <label class="control-label col-md-1" style="text-align: right;padding-top: 7px">{{trans('lang.warning_sentence')}}</label>
         <div class="col-md-2">
-            <select class="form-control select2me" id="user_sex">
-                <option value="">{{trans('lang.all')}}</option>
-                <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
-                <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
+            <select class="form-control select2me" id="warning_reason_user">
+                <option value=""></option>
+                <option value="{{config('constants.SALE_SCREEN')}}">{{trans('lang.sale_screen')}}</option>
+                <option value="{{config('constants.SALE_SEX')}}">{{trans('lang.sale_sex')}}</option>
+                <option value="{{config('constants.HONGBO_TARGET')}}">{{trans('lang.hongbo_target')}}</option>
+                <option value="{{config('constants.ABUSIBE')}}">{{trans('lang.abusive')}}</option>
+                <option value="{{config('constants.OUTER_PICTURE')}}">{{trans('lang.outer_picture')}}</option>
+                <option value="{{config('constants.OTHER_USER_CALUMNY')}}">{{trans('lang.other_user_calumny')}}</option>
+                <option value="{{config('constants.POINT_LEAD')}}">{{trans('lang.point_lead')}}</option>
+                <option value="{{config('constants.PHOTO_STEAL')}}">{{trans('lang.photo_steal')}}</option>
+                <option value="{{config('constants.UNLAWFULNESS_TRADE')}}">{{trans('lang.unlawfulness_trade')}}</option>
+                <option value="{{config('constants.LIE_THING')}}">{{trans('lang.lie_thing')}}</option>
+                <option value="{{config('constants.LIE_DECLARE')}}">{{trans('lang.lie_declare')}}</option>
+                <option value="{{config('constants.USER_REPRESENT')}}">{{trans('lang.user_represent')}}</option>
+                <option value="{{config('constants.AD_OTHER_APP')}}">{{trans('lang.ad_other_app')}}</option>
+                <option value="{{config('constants.OTHER')}}">{{trans('lang.other')}}</option>
+                <option value="{{config('constants.WRONG_WORD')}}">{{trans('lang.wrong_word')}}</option>
+                <option value="{{config('constants.SEX_BANTER')}}">{{trans('lang.sex_banter')}}</option>
+                <option value="{{config('constants.THREAT')}}">{{trans('lang.threat')}}</option>
             </select>
         </div>
-        <label class="control-label col-md-1" for="admin_memo" style="text-align: right">{{trans('lang.admin_memo')}}</label>
+        <label class="control-label col-md-1" for="admin_memo" style="text-align: right;padding-top: 7px">{{trans('lang.admin_memo')}}</label>
         <div class="col-md-3">
-            <input class="form-control" placeholder="" type="text" id="admin_memo">
+            <input class="form-control" placeholder="" type="text" id="admin_memo_user">
         </div>
     </div>
 </div>
@@ -106,7 +124,8 @@
                 }
             },
             "createdRow": function (row, data, dataIndex) {
-                $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                if(data[2]!=null)
+                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
             },
             "lengthMenu": [
                 [5, 10, 20, -1],
@@ -117,7 +136,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,1,2,3,4,6]
+                'targets': [0,1,2,3,4,6,7,8]
             },
                 {  // set default column settings
                     'orderable': true,
@@ -184,13 +203,28 @@
             return;
         }
 
+        var warning_reason=$("#warning_reason_user").val();
+        if(warning_reason==''){
+            toastr["error"]("{{trans('lang.input_warning_sentence')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var admin_memo=$("#admin_memo_user").val();
+        if(admin_memo==''){
+            toastr["error"]("{{trans('lang.input_admin_memo')}}", "{{trans('lang.notice')}}");
+            $("#admin_memo_user").focus();
+            return;
+        }
+
         $.ajax({
             type: "POST",
             data: {
                 selected_user_str: selected_user_str,
+                warning_reason:warning_reason,
+                admin_memo:admin_memo,
                 _token: "{{csrf_token()}}"
             },
-            url: 'del_selected_warning',
+            url: 'selected_user_warning',
             success: function (result) {
                 if(result=='{{config('constants.FAIL')}}'){
                     toastr["error"]("{{trans('lang.fail_warning')}}", "{{trans('lang.notice')}}");

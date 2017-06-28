@@ -22,7 +22,7 @@
                 </a>
             </li>
             <li menu_index="3">
-                <a href="#">
+                <a href="cash_question">
                     <i class="fa fa-credit-card"></i>
                     <span class="title">{{trans('lang.cash_question')}}</span>
                 </a>
@@ -34,25 +34,25 @@
                 </a>
             </li>
             <li menu_index="5">
-                <a href="#">
+                <a href="notice_mgr">
                     <i class="fa fa-edit"></i>
                     <span class="title">{{trans('lang.notice_manage')}}</span>
                 </a>
             </li>
             <li menu_index="6">
-                <a href="#">
+                <a href="withdraw">
                     <i class="fa fa-bank"></i>
                     <span class="title">{{trans('lang.cach_manage')}}</span>
                 </a>
             </li>
             <li menu_index="7">
-                <a href="#">
+                <a href="statistic">
                     <i class="fa fa-line-chart"></i>
                     <span class="title">{{trans('lang.statistic_manage')}}</span>
                 </a>
             </li>
             <li menu_index="8">
-                <a href="#">
+                <a href="admin_notice">
                     <i class="fa fa-file-text-o"></i>
                     <span class="title">{{trans('lang.admin_notice')}}</span>
                 </a>

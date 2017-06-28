@@ -58,7 +58,7 @@ class DeclareController extends BasicController
         if($email!="")
             $custom_where.=" and from_user_email like '%".$email."%'";
         if($chat_content!=""){
-            $custom_where.=" and content like '%".$chat_content."%'";
+            $custom_where.=" and from_user_no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
         }
 
         $columns = array(
@@ -84,9 +84,13 @@ class DeclareController extends BasicController
             array('db' => 'from_user_profile_img_path', 'dt' => 2),
             array('db' => 'to_user_no', 'dt' => 3,
                 'formatter'=>function($d,$row){
-                    $results = User::where('no', $d)->first();
-                    if($results!=null){
-                        return $results['nickname'].'<br>'.'<p style="color:#3598dc">P '.$results['point'].'</p>';
+                    $user_model = User::where('no', $d)->first();
+                    if($user_model!=null){
+                        $return_str = $user_model['nickname'];
+                        if($user_model->force_stop_flag=='1'){
+                            $return_str.='&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                        }
+                        return $return_str.'<br>'.'<p style="color:#3598dc">P '.$user_model['point'].'</p>';
                     }
                     else
                         return '';
@@ -95,12 +99,7 @@ class DeclareController extends BasicController
             array('db' => 'to_user_profile_img_path', 'dt' => 4),
             array('db' => 'content', 'dt' => 5),
             array('db' => 'created_at', 'dt' => 6),
-            array('db' => 'updated_at', 'dt' => 7),
-            array('db' => 'no', 'dt' => 8,
-                'formatter'=>function($d,$row){
-                    return '<input type="checkbox" value="'.$d.'">';
-                }
-            )
+            array('db' => 'updated_at', 'dt' => 7)
         );
 
         // SQL server connection information

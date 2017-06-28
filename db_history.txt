@@ -6,4 +6,37 @@
 		t_interdict_idiom (no int 11,content longtext,created_at datetime,updated_at datetime) //금지어등록테불
 		t_warning (no int 11,user_no int 11,created_at datetime) 	//경고테불
 	View테불작성
-		v_declare,v_profile_file,v_talk,v_talk_file작성				 
+		v_declare,v_profile_file,v_talk,v_talk_file작성	
+-2017-06-23
+	새테불추가
+		t_banner(no int 11, title varchar 255,content longtext,img_url varchar 255,created_at datetime,updated_at datetime)	
+		t_talk_notice(no int 11, sender_type int 11,content longtext,created_at datetime,updated_at datetime)	
+		t_push(no int 11, send_type int 11,title varchar 255,content longtext,created_at datetime,updated_at datetime)	
+		t_message(no,sendtype,receive_type,user_id,sentence_type,content,created_at,updated_at)
+		t_sms(no,receive_number,conent,created_at,upadted_at)
+-2017-06-26
+	새테불추가
+		t_opinion(no,title,content,writer,created_at,updated_at,read_cnt)
+		t_admin_notice(no,title,content,file_url,created_at,updated_at,read_cnt)
+	테불변경
+		t_admin테불에 nickname(varchar 255)마당추가
+-2017-06-28
+	테불변경
+		t_file테불의 'checked'마당에대한 comment수정
+		t_user테불에 다음마당추가
+			 `enable_alarm` int(1) NOT NULL DEFAULT '1',
+			  `force_stop_flag` int(11) DEFAULT NULL COMMENT '강퇴기발 1:강퇴차단,기타:차단아님',
+			  `app_stop_flag` int(11) DEFAULT NULL COMMENT 'App 사용금지기발(1:금지,기타:금지아님)',
+			  `app_stop_from_date` datetime DEFAULT NULL COMMENT '앱사용금지시작일',
+			  `app_stop_to_date` datetime DEFAULT NULL COMMENT '앱사용금지마감일',
+		t_warning테불에 다음마당 추가
+			 `warning_reason` varchar(255) DEFAULT NULL COMMENT '경고문구',
+			  `admin_memo` varchar(255) DEFAULT NULL COMMENT '관리자메모',
+	새테불추가
+		t_cash_declare(no,user_no,content,answer,created_at,updated_at)
+		t_cash_question(no,user_no,content,answer,created_at,updated_at)
+		t_chathistory(no,from_user_no,to_user_no,content,created_at,updated_at)
+		t_login_history(no,user_no,created_at)
+		t_manage_notice(no,title,content,file_url,writer,created_at,updated_at,read_cnt)
+		
+		
