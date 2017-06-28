@@ -252,6 +252,10 @@
                     return;
                 }
                 else {
+                    tbl_talk.draw(false);
+                    tbl_user.draw(false);
+                    tbl_declare.draw(false);
+
                     toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
             }

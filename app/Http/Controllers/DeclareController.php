@@ -92,9 +92,13 @@ class DeclareController extends BasicController
             array('db' => 'from_user_profile_img_path', 'dt' => 2),
             array('db' => 'to_user_no', 'dt' => 3,
                 'formatter'=>function($d,$row){
-                    $results = User::where('no', $d)->first();
-                    if($results!=null){
-                        return $results['nickname'].'<br>'.'<p style="color:#3598dc">P '.$results['point'].'</p>';
+                    $user_model = User::where('no', $d)->first();
+                    if($user_model!=null){
+                        $return_str = $user_model['nickname'];
+                        if($user_model->force_stop_flag=='1'){
+                            $return_str.='&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                        }
+                        return $return_str.'<br>'.'<p style="color:#3598dc">P '.$user_model['point'].'</p>';
                     }
                     else
                         return '';

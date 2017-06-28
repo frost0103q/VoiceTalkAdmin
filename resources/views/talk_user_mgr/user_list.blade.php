@@ -44,6 +44,8 @@
                 <th>{{trans('lang.subject')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
                 <th>{{trans('lang.warn')}}</th>
+                <th>{{trans('lang.force_stop')}}</th>
+                <th>{{trans('lang.stop_use_app')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -134,7 +136,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,1,2,3,4,6]
+                'targets': [0,1,2,3,4,6,7,8]
             },
                 {  // set default column settings
                     'orderable': true,

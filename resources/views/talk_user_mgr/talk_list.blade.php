@@ -45,6 +45,8 @@
                 <th>{{trans('lang.talk_reg_time')}}</th>
                 <th>{{trans('lang.reg_time').'/'.trans('lang.recent_connect')}}</th>
                 <th>{{trans('lang.profile_photo')}}</th>
+                <th>{{trans('lang.force_stop')}}</th>
+                <th>{{trans('lang.stop_use_app')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -144,7 +146,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0, 1, 2, 3, 4, 6, 7]
+                'targets': [0, 1, 2, 3, 4, 6, 7,8,9]
             },
                 {  // set default column settings
                     'orderable': true,
@@ -272,6 +274,10 @@
                     return;
                 }
                 else {
+                    tbl_talk.draw(false);
+                    tbl_user.draw(false);
+                    tbl_declare.draw(false);
+
                     toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
             }
@@ -313,6 +319,8 @@
                     return;
                 }
                 else {
+                    tbl_talk.draw(false);
+                    tbl_user.draw(false);
                     toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
             }

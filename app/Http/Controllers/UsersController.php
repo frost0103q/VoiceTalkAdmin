@@ -791,6 +791,30 @@ class UsersController extends BasicController
                     $results = Warning::where('user_no', $d)->get();
                     return count($results);
                 }
+            ),
+            array('db' => 'no', 'dt' => 7,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null){
+                        if($user_model->force_stop_flag=='1'){
+                            return '<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                        }
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 8,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null){
+                        if($user_model->app_stop_flag=='1'){
+                            return $user_model->app_stop_from_date.'~'.$user_model->app_stop_to_date;
+                        }
+                    }
+                    else
+                        return '';
+                }
             )
         );
 

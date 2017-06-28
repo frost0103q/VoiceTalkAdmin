@@ -439,7 +439,31 @@ class TalkController extends BasicController
                     return $reg_time."/".$last_login_time;
                 }
             ),
-            array('db' => 'profile_img_path', 'dt' => 7)
+            array('db' => 'profile_img_path', 'dt' => 7),
+            array('db' => 'user_no', 'dt' => 8,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null){
+                        if($user_model->force_stop_flag=='1'){
+                            return '<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                        }
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'user_no', 'dt' => 9,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null){
+                        if($user_model->app_stop_flag=='1'){
+                            return $user_model->app_stop_from_date.'~'.$user_model->app_stop_to_date;
+                        }
+                    }
+                    else
+                        return '';
+                }
+            )
         );
 
         // SQL server connection information
