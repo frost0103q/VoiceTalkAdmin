@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppUser;
 use App\Models\Notification;
 use App\Models\ServerFile;
+use App\Models\UserRelation;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
@@ -122,9 +123,11 @@ class NotificationsController extends BasicController
             if($notification->from_user_no == $user_no){
                 $response[$i]->unread_count =  0;
                 $user = AppUser::where('no', $notification->to_user_no)->first();
+                $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->to_user_no)->first();
             }
             else {
                 $user = AppUser::where('no', $notification->from_user_no)->first();
+                $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->from_user_no)->first();
             }
 
             if($user != null) {
@@ -139,6 +142,7 @@ class NotificationsController extends BasicController
             }
 
             $response[$i]->user = $user;
+            $response[$i]->user_relation = $user_relation;
         }
 
 		return response()->json($response);

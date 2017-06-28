@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppUser;
 use App\Models\AuthCode;
 use App\Models\ConsultingReview;
+use App\Models\InAppPurchaseHistory;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Models\UserDeclare;
 use App\Models\Warning;
 use App\Providers\AuthServiceProvider;
+use App\Providers\AppServiceProvider;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
@@ -251,6 +253,8 @@ class UsersController extends BasicController
         // send Auth Number
         $cert_code = AuthServiceProvider::generateRandomString(6);
         $sms_message = "VoiceTalk인증코드는 ".$cert_code." 입니다.";
+        $phone_number = str_replace("-","", $phone_number);
+
         SMS::send($sms_message, null, function($sms) use ($phone_number) {
             $debug = config('app.debug');
             $testmode = Config::get('config.testmode');
@@ -774,6 +778,108 @@ class UsersController extends BasicController
 
         return response()->json($response);
     }
+
+    public function buyPoint(HttpRequest $request) {
+        $from_user_no  = $request->input('user_no');
+        $purchase_data = AppServiceProvider::url_decord($request->input('purchase_data'));
+        $data_signature = AppServiceProvider::url_decord($request->input('data_signature'));
+
+        if($from_user_no == null || $purchase_data == null || $data_signature == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $from_user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $from_user = $results[0];
+
+
+        //
+        // 구매내역 검증.
+        //
+        // Decrypt($p_data_signature, 공개키) == SHA1($p_purchase_data)
+        //
+        $google_key = Config::get('config.google')['google_iab_public_key'];
+        $w_base64EncodedPublicKeyFromGoogle = $google_key;
+        $w_openSslFriendlyKey = "-----BEGIN PUBLIC KEY-----\n".chunk_split($w_base64EncodedPublicKeyFromGoogle, 64, "\n")."-----END PUBLIC KEY-----";
+        $w_publicKeyId = openssl_get_publickey($w_openSslFriendlyKey);
+        $w_verifyResult = openssl_verify($purchase_data, base64_decode($data_signature), $w_publicKeyId);
+
+        if ($w_verifyResult != 1) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        //
+        // 거래 유일성 체크.
+        //
+        $w_jsonPurchaseData = json_decode($purchase_data, true);
+        $w_order_id = $w_jsonPurchaseData['orderId'];
+        $results = InAppPurchaseHistory::where('order_id', $w_order_id)->get();
+        if ($results != null && count($results) > 0) {
+            $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+            return response()->json($response);
+        }
+
+
+        //
+        // 포인트 증가.
+        //
+        $w_purchase_item = $w_jsonPurchaseData['productId'];
+        $w_purchase_point = 0;
+        $w_purchase_price = 0;
+        //
+        // [2014/12/17 17:46]새 아이템 적용.
+        //
+        $arr_items = config('constants.INAPP_ITEMS');
+        $w_purchase_point = 0;
+        $w_purchase_price = 0;
+        for($i = 0; $i  < count($arr_items); $i++) {
+            $item = $arr_items[$i];
+            if($item['name'] == $w_purchase_item) {
+                $w_purchase_point = $item['value'];
+                $w_purchase_price = $item['price'];
+            }
+        }
+
+        $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_INAPP'), $w_purchase_point);
+
+        //
+        // 아이피주소 체크.
+        //
+        $ip = "unknown";
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+
+        //
+        // 구매내역 보관.
+        //
+        $inapp_history = new InAppPurchaseHistory();
+        $inapp_history->user_no = $from_user->no;
+        $inapp_history->order_id = $w_order_id;
+        $inapp_history->purchase_data = $purchase_data;
+        $inapp_history->data_signature = $data_signature;
+        $inapp_history->ip = $ip;
+        $inapp_history->price = $w_purchase_price;
+        $inapp_history->save();
+
+        $response['current_point'] = $from_user->point;
+        $response['purchased_point'] = $w_purchase_point;
+        return response()->json($response);
+    }
+
 
 
     public function ajax_user_table(){
