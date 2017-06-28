@@ -887,7 +887,7 @@ class UsersController extends BasicController
 
     public function stop_app_use(){
         $selected_user_str=$_POST['selected_user_str'];
-        $admin_memo=$_POST['stop_days'];
+        $stop_days=$_POST['stop_days'];
 
         $selected_user_array=explode(',',$selected_user_str);
 
@@ -901,11 +901,24 @@ class UsersController extends BasicController
         for($i=0;$i<count($new_selected_array);$i++){
             $update_data['app_stop_flag']=1;
             $update_data['app_stop_from_date']=date('Y-m-d H:i:s');
+            $update_data['app_stop_to_date']=$this->getChangeDate($update_data['app_stop_from_date'],$stop_days);
             $result=User::where('no', $new_selected_array[$i])->update($update_data);
             if(!$result)
                 return config('constants.FAIL');
         }
 
         return config('constants.SUCCESS');
+    }
+
+    public static function getChangeDate($date,$count){
+        $year = substr($date, 0, 4);
+        $month = substr($date, 5, 2);
+        $day = substr($date, 8,2);
+        $hour = substr($date, 11,2);
+        $minute = substr($date, 14,2);
+        $second = substr($date, 17,2);
+
+        $date = date("Y-m-d H:i:s", mktime($hour, $minute, $second, $month, $day + $count, $year));
+        return $date;
     }
 }
