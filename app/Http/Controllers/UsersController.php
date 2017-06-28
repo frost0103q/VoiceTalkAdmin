@@ -766,9 +766,9 @@ class UsersController extends BasicController
                     if($results!=null){
                         $verified=$results['verified'];
                         if($verified=='1')
-                            return $d.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                            return sprintf("%'.05d", $d).'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
                         else
-                            return $d;
+                            return sprintf("%'.05d", $d);
                     }
                     else
                         return '';
@@ -828,8 +828,11 @@ class UsersController extends BasicController
         return config('constants.SUCCESS');
     }
 
-    public function del_selected_warning(){
+    public function selected_user_warning(){
         $selected_user_str=$_POST['selected_user_str'];
+        $warning_reason=$_POST['warning_reason'];
+        $admin_memo=$_POST['admin_memo'];
+
         $selected_user_array=explode(',',$selected_user_str);
 
         $new_selected_array=array();
@@ -845,9 +848,13 @@ class UsersController extends BasicController
             if($no==null)
                 $no=0;
             $result=DB::table('t_warning')->insert(
-                ['no'=>($no+1),
+                [
+                    'no'=>($no+1),
                     'user_no' => $selected_user_array[$i],
-                 'created_at' => date('Y-m-d H:i:s')]
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'warning_reason' =>$warning_reason,
+                    'admin_memo' =>$admin_memo,
+                ]
             );
 
             if(!$result)
@@ -869,7 +876,31 @@ class UsersController extends BasicController
         }
 
         for($i=0;$i<count($new_selected_array);$i++){
-            $update_data['stop_flag']=1;
+            $update_data['force_stop_flag']=1;
+            $result=User::where('no', $new_selected_array[$i])->update($update_data);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function stop_app_use(){
+        $selected_user_str=$_POST['selected_user_str'];
+        $admin_memo=$_POST['stop_days'];
+
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $new_selected_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+
+        for($i=0;$i<count($new_selected_array);$i++){
+            $update_data['app_stop_flag']=1;
+            $update_data['app_stop_from_date']=date('Y-m-d H:i:s');
             $result=User::where('no', $new_selected_array[$i])->update($update_data);
             if(!$result)
                 return config('constants.FAIL');

@@ -71,13 +71,13 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.title')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <input type="text" class="form-control" placeholder="" id="push_title" name="push_title">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.content')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <textarea class="form-control" id="push_content" name="push_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>

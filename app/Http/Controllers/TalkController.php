@@ -416,9 +416,9 @@ class TalkController extends BasicController
                     if($results!=null){
                         $verified=$results['verified'];
                         if($verified=='1')
-                            return $d.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                            return sprintf("%'.05d", $d).'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
                         else
-                            return $d;
+                            return sprintf("%'.05d", $d);
                     }
                     else
                         return '';

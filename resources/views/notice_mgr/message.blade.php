@@ -97,8 +97,8 @@
                                 <option value="4">{{trans('lang.all_user')}}</option>
                             </select>
                         </div>
-                        <label class="control-label col-md-1">{{trans('lang.user_id')}}</label>
-                        <div class="col-md-2">
+                        <label class="control-label col-md-3">{{trans('lang.user_id')}}</label>
+                        <div class="col-md-4">
                             <input type="text" id="message_user_id" name="message_user_id" class="form-control">
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.content')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <textarea class="form-control" id="message_content" name="message_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>

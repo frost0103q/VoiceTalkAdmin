@@ -51,22 +51,44 @@
             </tbody>
         </table>
     </div>
-    <div class="col-md-12"  style="padding-top: 30px">
-        <div class=" col-md-4">
+    <div class="col-md-12" style="padding-top: 30px">
+        <div class=" col-md-5">
             <a class="btn blue" id="btn_warning_user_talk">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_stop_user_talk">{{trans('lang.force_stop')}}</a>
             <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_talk_img')}}</a>
+            <a class="btn blue" id="btn_stop_use_app">{{trans('lang.stop_use_app')}}</a>
         </div>
         <div class="col-md-2">
-            <select class="form-control select2me" id="user_sex">
-                <option value="">{{trans('lang.all')}}</option>
-                <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
-                <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
+            <select class="form-control select2me" id="select_stop_days">
+                <option value="">{{trans('lang.select_stop_app_days')}}</option>
+                <option value="1">{{trans('lang.stop_use_one_days')}}</option>
+                <option value="3">{{trans('lang.stop_use_three_days')}}</option>
             </select>
         </div>
-        <label class="control-label col-md-1" style="text-align: right">{{trans('lang.admin_memo')}}</label>
+        <div class="col-md-2">
+            <select class="form-control select2me" id="warning_reason_talk">
+                <option value="">{{trans('lang.select_warning_type')}}</option>
+                <option value="{{config('constants.SALE_SCREEN')}}">{{trans('lang.sale_screen')}}</option>
+                <option value="{{config('constants.SALE_SEX')}}">{{trans('lang.sale_sex')}}</option>
+                <option value="{{config('constants.HONGBO_TARGET')}}">{{trans('lang.hongbo_target')}}</option>
+                <option value="{{config('constants.ABUSIBE')}}">{{trans('lang.abusive')}}</option>
+                <option value="{{config('constants.OUTER_PICTURE')}}">{{trans('lang.outer_picture')}}</option>
+                <option value="{{config('constants.OTHER_USER_CALUMNY')}}">{{trans('lang.other_user_calumny')}}</option>
+                <option value="{{config('constants.POINT_LEAD')}}">{{trans('lang.point_lead')}}</option>
+                <option value="{{config('constants.PHOTO_STEAL')}}">{{trans('lang.photo_steal')}}</option>
+                <option value="{{config('constants.UNLAWFULNESS_TRADE')}}">{{trans('lang.unlawfulness_trade')}}</option>
+                <option value="{{config('constants.LIE_THING')}}">{{trans('lang.lie_thing')}}</option>
+                <option value="{{config('constants.LIE_DECLARE')}}">{{trans('lang.lie_declare')}}</option>
+                <option value="{{config('constants.USER_REPRESENT')}}">{{trans('lang.user_represent')}}</option>
+                <option value="{{config('constants.AD_OTHER_APP')}}">{{trans('lang.ad_other_app')}}</option>
+                <option value="{{config('constants.OTHER')}}">{{trans('lang.other')}}</option>
+                <option value="{{config('constants.WRONG_WORD')}}">{{trans('lang.wrong_word')}}</option>
+                <option value="{{config('constants.SEX_BANTER')}}">{{trans('lang.sex_banter')}}</option>
+                <option value="{{config('constants.THREAT')}}">{{trans('lang.threat')}}</option>
+            </select>
+        </div>
         <div class="col-md-3">
-            <input class="form-control" placeholder="" type="text" id="admin_memo_talk">
+            <input class="form-control" placeholder="{{trans('lang.admin_memo')}}" type="text" id="admin_memo_talk">
         </div>
     </div>
 </div>
@@ -75,7 +97,7 @@
     var tbl_talk;
     $(document).ready(function () {
         var start_index;
-        tbl_talk=$("#tbl_talk").DataTable({
+        tbl_talk = $("#tbl_talk").DataTable({
             "dom": '<"top"i><"toolbar pull-left">rtlp',
             "language": {
                 "emptyTable": "{{trans('lang.no_display_data')}}",
@@ -91,27 +113,27 @@
                 }
             },
             "autowidth": true,
-            "processing":false,
+            "processing": false,
             "serverSide": true,
             "ajax": {
-                "url": 	"ajax_talk_table",
-                "type":	"POST",
-                "data":   function ( d ) {
-                    start_index=d.start;
-                    d._token= "{{csrf_token()}}";
-                    d.sex=$("#talk_user_sex").val();
-                    d.user_no=$("#talk_user_no").val();
-                    d.nickname=$("#talk_user_nickname").val();
-                    d.phone_number=$("#talk_user_phone_number").val();
-                    d.email=$("#talk_user_email").val();
-                    d.chat_content=$("#talk_user_chat_content").val();
+                "url": "ajax_talk_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.sex = $("#talk_user_sex").val();
+                    d.user_no = $("#talk_user_no").val();
+                    d.nickname = $("#talk_user_nickname").val();
+                    d.phone_number = $("#talk_user_phone_number").val();
+                    d.email = $("#talk_user_email").val();
+                    d.chat_content = $("#talk_user_chat_content").val();
                 }
             },
             "createdRow": function (row, data, dataIndex) {
-                if(data[2]!=null)
-                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
-                if(data[7]!=null)
-                    $('td:eq(7)', row).html('<img src="'+data[7]+'" height="50px">');
+                if (data[2] != null)
+                    $('td:eq(2)', row).html('<img src="' + data[2] + '" height="50px">');
+                if (data[7] != null)
+                    $('td:eq(7)', row).html('<img src="' + data[7] + '" height="50px">');
             },
             "lengthMenu": [
                 [5, 10, 20, -1],
@@ -122,7 +144,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,1,2,3,4,6,7]
+                'targets': [0, 1, 2, 3, 4, 6, 7]
             },
                 {  // set default column settings
                     'orderable': true,
@@ -141,16 +163,29 @@
 
 
     $("#btn_warning_user_talk").click(function () {
-        var selected_user_str='';
+        var selected_user_str = '';
         $("#tbl_talk .talk_no").each(function () {
-            if($(this).is(':checked'))
-                selected_user_str+=$(this).attr('user_no')+',';
+            if ($(this).is(':checked'))
+                selected_user_str += $(this).attr('user_no') + ',';
         });
 
-        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+        selected_user_str = selected_user_str.substr(0, selected_user_str.length - 1);
 
-        if(selected_user_str==''){
+        if (selected_user_str == '') {
             toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var warning_reason = $("#warning_reason_talk").val();
+        if (warning_reason == '') {
+            toastr["error"]("{{trans('lang.input_warning_sentence')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var admin_memo = $("#admin_memo_talk").val();
+        if (admin_memo == '') {
+            toastr["error"]("{{trans('lang.input_admin_memo')}}", "{{trans('lang.notice')}}");
+            $("#admin_memo_talk").focus();
             return;
         }
 
@@ -158,11 +193,13 @@
             type: "POST",
             data: {
                 selected_user_str: selected_user_str,
+                warning_reason: warning_reason,
+                admin_memo: admin_memo,
                 _token: "{{csrf_token()}}"
             },
-            url: 'del_selected_warning',
+            url: 'selected_user_warning',
             success: function (result) {
-                if(result=='{{config('constants.FAIL')}}'){
+                if (result == '{{config('constants.FAIL')}}') {
                     toastr["error"]("{{trans('lang.fail_warning')}}", "{{trans('lang.notice')}}");
                     return;
                 }
@@ -175,15 +212,15 @@
     });
 
     $("#btn_del_user_photo_talk").click(function () {
-        var selected_talk_str='';
+        var selected_talk_str = '';
         $("#tbl_talk .talk_no").each(function () {
-            if($(this).is(':checked'))
-                selected_talk_str+=$(this).val()+',';
+            if ($(this).is(':checked'))
+                selected_talk_str += $(this).val() + ',';
         });
 
-        selected_talk_str=selected_talk_str.substr(0,selected_talk_str.length-1);
+        selected_talk_str = selected_talk_str.substr(0, selected_talk_str.length - 1);
 
-        if(selected_talk_str==''){
+        if (selected_talk_str == '') {
             toastr["error"]("{{trans('lang.select_talk_img_to_delete')}}", "{{trans('lang.notice')}}");
             return;
         }
@@ -196,7 +233,7 @@
             },
             url: 'del_selected_talk_img',
             success: function (result) {
-                if(result=='{{config('constants.FAIL')}}'){
+                if (result == '{{config('constants.FAIL')}}') {
                     toastr["error"]("{{trans('lang.delete_fail')}}", "{{trans('lang.notice')}}");
                     return;
                 }
@@ -209,16 +246,16 @@
     });
 
     $("#btn_stop_user_talk").click(function () {
-        var selected_user_str='';
+        var selected_user_str = '';
         $("#tbl_talk .talk_no").each(function () {
-            if($(this).is(':checked'))
-                selected_user_str+=$(this).attr('user_no')+',';
+            if ($(this).is(':checked'))
+                selected_user_str += $(this).attr('user_no') + ',';
         });
 
-        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+        selected_user_str = selected_user_str.substr(0, selected_user_str.length - 1);
 
-        if(selected_user_str==''){
-            toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+        if (selected_user_str == '') {
+            toastr["error"]("{{trans('lang.select_user_to_stop')}}", "{{trans('lang.notice')}}");
             return;
         }
 
@@ -230,7 +267,7 @@
             },
             url: 'user_force_stop',
             success: function (result) {
-                if(result=='{{config('constants.FAIL')}}'){
+                if (result == '{{config('constants.FAIL')}}') {
                     toastr["error"]("{{trans('lang.force_stop_failed')}}", "{{trans('lang.notice')}}");
                     return;
                 }
@@ -240,4 +277,45 @@
             }
         });
     });
+    
+    $("#btn_stop_use_app").click(function () {
+
+        var selected_user_str = '';
+        $("#tbl_talk .talk_no").each(function () {
+            if ($(this).is(':checked'))
+                selected_user_str += $(this).attr('user_no') + ',';
+        });
+
+        selected_user_str = selected_user_str.substr(0, selected_user_str.length - 1);
+
+        if (selected_user_str == '') {
+            toastr["error"]("{{trans('lang.select_users')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var days=$("#select_stop_days").val();
+        if(days==""){
+            toastr["error"]("{{trans('lang.select_app_stop_days')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                stop_days:days,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'stop_app_use',
+            success: function (result) {
+                if (result == '{{config('constants.FAIL')}}') {
+                    toastr["error"]("{{trans('lang.fail_operation')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    })
 </script>

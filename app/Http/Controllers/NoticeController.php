@@ -522,6 +522,8 @@ class NoticeController extends BasicController
         $flag = $request->input('sms_flag');
         if (!isset($flag))
             return config('constants.FAIL');
+
+        $data["sender_number"] = $request->input('sms_sender_number');
         $data["receive_number"] = $request->input('sms_receive_number');
         $data["content"] = $request->input('sms_content');
 

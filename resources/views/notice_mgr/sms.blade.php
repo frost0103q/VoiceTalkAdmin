@@ -50,7 +50,9 @@
                 <form id="sms_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.sender_number')}}</label>
-                        <label class="control-label col-md-2" style="text-align: left"><strong>070-123-580</strong></label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="" id="sms_sender_number" name="sms_sender_number">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.receive_number')}}</label>
@@ -60,7 +62,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.content')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <textarea class="form-control" id="sms_content" name="sms_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>
@@ -173,6 +175,7 @@
                     toastr["error"]("{{trans('lang.no_display_data')}}", "{{trans('lang.notice')}}");
                 }
                 else {
+                    $("#sms_sender_number").val(result.sender_number);
                     $("#sms_receive_number").val(result.receive_number);
                     $("#sms_content").val(result.content);
                     $("#btn_sms_open_modal").trigger('click');
@@ -210,6 +213,7 @@
     $("#btn_sms_add").click (function () {
         $("#sms_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");
         $("#sms_receive_number").val("");
+        $("#sms_sender_number").val("");
         $("#sms_content").val("");
         $("#btn_sms_open_modal").trigger('click');
     })

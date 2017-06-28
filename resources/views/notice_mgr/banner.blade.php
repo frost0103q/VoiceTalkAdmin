@@ -51,13 +51,13 @@
                 <form id="banner_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">
                     <div class="form-group" style="margin-top: 30px">
                         <label class="control-label col-md-2">{{trans('lang.title')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <input type="text" class="form-control" placeholder="" id="banner_title" name="banner_title">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.content')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <textarea class="form-control" id="banner_content" name="banner_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>

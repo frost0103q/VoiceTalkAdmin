@@ -63,7 +63,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-2">{{trans('lang.content')}}</label>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <textarea class="form-control" id="talk_content" name="talk_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>

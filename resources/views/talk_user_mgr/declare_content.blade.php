@@ -52,19 +52,36 @@
         </table>
     </div>
     <div class="col-md-12"  style="padding-top: 30px">
-        <div class=" col-md-4">
+        <div class=" col-md-5">
+            <a class="btn blue" id="btn_warning_user_declare">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_del_talk">{{trans('lang.del_talk')}}</a>
             <a class="btn blue" id="btn_stop_user_declare">{{trans('lang.force_stop')}}</a>
             <a class="btn blue" id="btn_del_user_photo_declare">{{trans('lang.del_only_photo')}}</a>
         </div>
+        <label class="control-label col-md-1" style="text-align: right;padding-top: 7px">{{trans('lang.warning_sentence')}}</label>
         <div class="col-md-2">
-            <select class="form-control select2me" id="user_sex">
-                <option value="">{{trans('lang.all')}}</option>
-                <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
-                <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
+            <select class="form-control select2me" id="warning_reason_declare">
+                <option value=""></option>
+                <option value="{{config('constants.SALE_SCREEN')}}">{{trans('lang.sale_screen')}}</option>
+                <option value="{{config('constants.SALE_SEX')}}">{{trans('lang.sale_sex')}}</option>
+                <option value="{{config('constants.HONGBO_TARGET')}}">{{trans('lang.hongbo_target')}}</option>
+                <option value="{{config('constants.ABUSIBE')}}">{{trans('lang.abusive')}}</option>
+                <option value="{{config('constants.OUTER_PICTURE')}}">{{trans('lang.outer_picture')}}</option>
+                <option value="{{config('constants.OTHER_USER_CALUMNY')}}">{{trans('lang.other_user_calumny')}}</option>
+                <option value="{{config('constants.POINT_LEAD')}}">{{trans('lang.point_lead')}}</option>
+                <option value="{{config('constants.PHOTO_STEAL')}}">{{trans('lang.photo_steal')}}</option>
+                <option value="{{config('constants.UNLAWFULNESS_TRADE')}}">{{trans('lang.unlawfulness_trade')}}</option>
+                <option value="{{config('constants.LIE_THING')}}">{{trans('lang.lie_thing')}}</option>
+                <option value="{{config('constants.LIE_DECLARE')}}">{{trans('lang.lie_declare')}}</option>
+                <option value="{{config('constants.USER_REPRESENT')}}">{{trans('lang.user_represent')}}</option>
+                <option value="{{config('constants.AD_OTHER_APP')}}">{{trans('lang.ad_other_app')}}</option>
+                <option value="{{config('constants.OTHER')}}">{{trans('lang.other')}}</option>
+                <option value="{{config('constants.WRONG_WORD')}}">{{trans('lang.wrong_word')}}</option>
+                <option value="{{config('constants.SEX_BANTER')}}">{{trans('lang.sex_banter')}}</option>
+                <option value="{{config('constants.THREAT')}}">{{trans('lang.threat')}}</option>
             </select>
         </div>
-        <label class="control-label col-md-1" style="text-align: right">{{trans('lang.admin_memo')}}</label>
+        <label class="control-label col-md-1" style="text-align: right;padding-top: 7px">{{trans('lang.admin_memo')}}</label>
         <div class="col-md-3">
             <input class="form-control" placeholder="" type="text" id="admin_memo_declare">
         </div>
@@ -218,7 +235,7 @@
         selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
 
         if(selected_user_str==''){
-            toastr["error"]("{{trans('lang.select_user_to_delete')}}", "{{trans('lang.notice')}}");
+            toastr["error"]("{{trans('lang.select_user_to_stop')}}", "{{trans('lang.notice')}}");
             return;
         }
 
@@ -235,6 +252,55 @@
                     return;
                 }
                 else {
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
+
+    $("#btn_warning_user_declare").click(function () {
+        var selected_user_str='';
+        $("#tbl_declare .declare_no").each(function () {
+            if($(this).is(':checked'))
+                selected_user_str+=$(this).attr('to_user_no')+',';
+        });
+
+        selected_user_str=selected_user_str.substr(0,selected_user_str.length-1);
+
+        if(selected_user_str==''){
+            toastr["error"]("{{trans('lang.select_user_to_declare')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var warning_reason=$("#warning_reason_declare").val();
+        if(warning_reason==''){
+            toastr["error"]("{{trans('lang.input_warning_sentence')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var admin_memo=$("#admin_memo_declare").val();
+        if(admin_memo==''){
+            toastr["error"]("{{trans('lang.input_admin_memo')}}", "{{trans('lang.notice')}}");
+            $("#admin_memo_talk").focus();
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                warning_reason:warning_reason,
+                admin_memo:admin_memo,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'selected_user_warning',
+            success: function (result) {
+                if(result=='{{config('constants.FAIL')}}'){
+                    toastr["error"]("{{trans('lang.fail_warning')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_user.draw(false);
                     toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
             }

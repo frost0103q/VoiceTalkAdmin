@@ -48,10 +48,11 @@ Route::post('ajax_user_table', 'UsersController@ajax_user_table');
 Route::post('ajax_talk_table', 'TalkController@ajax_talk_table');
 Route::post('ajax_declare_table', 'DeclareController@ajax_declare_table');
 Route::post('del_selected_profile', 'UsersController@del_selected_profile');
-Route::post('del_selected_warning', 'UsersController@del_selected_warning');
+Route::post('selected_user_warning', 'UsersController@selected_user_warning');
 Route::post('del_selected_talk_img', 'TalkController@del_selected_talk_img');
 Route::post('del_selected_user_talk', 'TalkController@del_selected_user_talk');
 Route::post('user_force_stop', 'UsersController@user_force_stop');
+Route::post('stop_app_use', 'UsersController@stop_app_use');
 
 //Interdict Idiom Manage
 Route::get('interdict_idiom_reg', 'IdiomController@index');
