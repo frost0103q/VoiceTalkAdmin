@@ -193,6 +193,7 @@ return [
     'answer_content'=>'답변내용',
     'input_answer_content'=>'답변내용을 입력하세요.',
     'do_answer'=>'답변하기',
+    'answer_date'=>'답변날짜',
     
     //Withdraw manage
     'period_search'=>'기간검색',

@@ -89,6 +89,9 @@ Route::get('cash_question', 'CashQuestionController@index');
 Route::post('ajax_cash_question_table', 'CashQuestionController@ajax_cash_question_table');
 Route::post('save_cash_question_opinion', 'CashQuestionController@save_cash_question_opinion');
 Route::post('delete_cash_questin', 'CashQuestionController@delete_cash_questin');
+Route::post('ajax_cash_declare_table', 'CashQuestionController@ajax_cash_declare_table');
+Route::post('save_cash_declare', 'CashQuestionController@save_cash_declare');
+Route::post('delete_cash_declare', 'CashQuestionController@delete_cash_declare');
 
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');

@@ -15,6 +15,7 @@ use App\Models\ManageNotice;
 use App\Models\Opinion;
 use App\Models\ServerFile;
 use App\Models\CashQuestion;
+use App\Models\CashDeclare;
 use App\Models\User;
 
 class CashQuestionController extends BasicController
@@ -51,12 +52,36 @@ class CashQuestionController extends BasicController
     }
     
     public function ajax_cash_question_table(){
+
+        $params = Request::all();
+        $user_sex = $params['user_sex'];
+        $user_no = $params['user_no'];
+        $user_nickname = $params['user_nickname'];
+        $user_phone_number = $params['user_phone_number'];
+        $user_email = $params['user_email'];
+        $user_chat_content = $params['user_chat_content'];
+
+        // Table's name
         $table = 't_cash_question';
+        // Table's primary key
+        $primaryKey = 'no';
+
         // Custom Where
         $custom_where = "1=1";
 
-        // Table's primary key
-        $primaryKey = 'no';
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%' ";
+        if($user_sex!="-1")
+            $custom_where.=" and user_no in (select no from t_user where sex='".$user_sex."') ";
+        if($user_nickname!="")
+            $custom_where.=" and user_no in (select no from t_user where nickname like '%".$user_nickname."%') ";
+        if($user_phone_number!="")
+            $custom_where.=" and user_no in (select no from t_user where phone_number like '%".$user_phone_number."%') ";
+        if($user_email!="")
+            $custom_where.=" and user_no in (select no from t_user where email like '%".$user_email."%') ";
+        if($user_chat_content!="")
+            $custom_where.=" and user_no in (select from_user_no from t_chathistory where content like '%".$user_chat_content."%') ";
+
 
 
         $columns = array(
@@ -83,7 +108,15 @@ class CashQuestionController extends BasicController
             array('db' => 'content', 'dt' => 4),
             array('db' => 'created_at', 'dt' => 5),
             array('db' => 'answer', 'dt' => 6),
-            array('db' => 'no', 'dt' => 7)
+            array('db' => 'updated_at', 'dt' => 7,
+                'formatter'=>function($d,$row){
+                    if($d!="" && $d!="0000-00-00 00:00:00" && $d!=null)
+                        return $d;
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 8)
         );
 
         // SQL server connection information
@@ -115,6 +148,99 @@ class CashQuestionController extends BasicController
     public function delete_cash_questin(){
         $no=$_POST['no'];
         $result=CashQuestion::where('no',$no)->delete();
+        if($result)
+            return config('constants.SUCCESS');
+        else
+            return config('constants.FAIL');
+    }
+
+    public function ajax_cash_declare_table(){
+        $params = Request::all();
+        $user_sex = $params['user_sex'];
+        $user_no = $params['user_no'];
+        $user_nickname = $params['user_nickname'];
+        $user_phone_number = $params['user_phone_number'];
+        $user_email = $params['user_email'];
+        $user_chat_content = $params['user_chat_content'];
+
+        // Table's name
+        $table = 't_cash_declare';
+        // Table's primary key
+        $primaryKey = 'no';
+
+        // Custom Where
+        $custom_where = "1=1";
+
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%' ";
+        if($user_sex!="-1")
+            $custom_where.=" and user_no in (select no from t_user where sex='".$user_sex."') ";
+        if($user_nickname!="")
+            $custom_where.=" and user_no in (select no from t_user where nickname like '%".$user_nickname."%') ";
+        if($user_phone_number!="")
+            $custom_where.=" and user_no in (select no from t_user where phone_number like '%".$user_phone_number."%') ";
+        if($user_email!="")
+            $custom_where.=" and user_no in (select no from t_user where email like '%".$user_email."%') ";
+        if($user_chat_content!="")
+            $custom_where.=" and user_no in (select from_user_no from t_chathistory where content like '%".$user_chat_content."%') ";
+
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'user_no', 'dt' => 1),
+            array('db' => 'user_no', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'content', 'dt' => 3),
+            array('db' => 'created_at', 'dt' => 4),
+            array('db' => 'answer', 'dt' => 5),
+            array('db' => 'updated_at', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    if($d!="" && $d!="0000-00-00 00:00:00" && $d!=null)
+                        return $d;
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 7)
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function save_cash_declare(){
+        $params = Request::all();
+        $no = $params['no'];
+        $data['answer'] = $params['answer'];
+        $data['updated_at'] = date('Y-m-d H:i:s');
+
+        $result=CashDeclare::where('no',$no)->update($data);
+        if($result)
+            return config('constants.SUCCESS');
+        else
+            return config('constants.FAIL');
+    }
+
+    public function delete_cash_declare(){
+        $no=$_POST['no'];
+        $result=CashDeclare::where('no',$no)->delete();
         if($result)
             return config('constants.SUCCESS');
         else

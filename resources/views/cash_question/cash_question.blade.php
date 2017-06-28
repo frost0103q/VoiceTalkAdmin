@@ -3,7 +3,7 @@
         <div class="col-md-1">
             <label class="control-label">{{trans('lang.sex')}}</label>
             <select class="form-control select2me" id="user_sex">
-                <option value="">{{trans('lang.all')}}</option>
+                <option value="-1">{{trans('lang.all')}}</option>
                 <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
                 <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
             </select>
@@ -44,6 +44,7 @@
                 <th>{{trans('lang.question_content')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
                 <th>{{trans('lang.answer_status')}}</th>
+                <th>{{trans('lang.answer_date')}}</th>
                 <th>{{trans('lang.option')}}</th>
             </tr>
             </thead>
@@ -150,6 +151,12 @@
                 "data": function (d) {
                     start_index = d.start;
                     d._token = "{{csrf_token()}}";
+                    d.user_sex=$("#user_sex").val();
+                    d.user_no=$("#user_no").val();
+                    d.user_nickname=$("#user_nickname").val();
+                    d.user_phone_number=$("#user_phone_number").val();
+                    d.user_email=$("#user_email").val();
+                    d.user_chat_content=$("#user_chat_content").val();
                 }
             },
             "createdRow": function (row, data, dataIndex) {
@@ -162,11 +169,11 @@
                     $('td:eq(6)', row).html('{{trans('lang.uncertain')}}');
                 var option_html = '<a><i class="fa fa-edit" onclick="cash_question_edit(' + data[0] + ',\'' + data[4] + '\',\'' + data[6] + '\')"></i>' +
                         ' <i class="fa fa-remove" onclick="cash_question_delete(' + data[0] + ')"></i></a>';
-                $('td:eq(7)', row).html(option_html);
+                $('td:eq(8)', row).html(option_html);
             },
             "columnDefs": [{
                 'orderable': false,
-                'targets': [0, 1, 2, 3, 4,6,7]
+                'targets': [0, 1, 2, 3, 4,6,7,8]
             },
                 {
                     'orderable': true,
@@ -242,4 +249,9 @@
             }
         });
     });
+
+    $("#btn_cash_question_search").click(function () {
+        tbl_cash_question.draw(false);
+    })
+
 </script>
