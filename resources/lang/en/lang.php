@@ -292,6 +292,13 @@ return [
     'process_date'=>'처리일자',
     'period_sum'=>'지정기간 합계',
     'total_cash_amount_by_condition'=>'조건에 맞는 총 결제금액',
+    'total_req_amount_by_condition'=>'조건에 맞는 총 신청금액',
+    'finish'=>'완료',
+    'error'=>'오류',
+    'withdraw_status'=>'출금상태',
+    'verify_status'=>'인증상태',
+    'is_verified'=>'인증',
+    'not_verified'=>'미인증',
 
     //admin notice manage
     'opinion_share'=>'의견공유',

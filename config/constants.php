@@ -110,5 +110,12 @@ return [
 
 		//Withdraw
 		'CASH_FINISH'=>'1',
-		'CASH_STOP'=>'2'
+		'CASH_STOP'=>'2',
+
+		'WITHDRAW_WAIT'=>'0',
+		'WITHDRAW_FINISH'=>'1',
+		'WITHDRAW_ERROR'=>'2',
+
+		'IS_VERIFIED'=>'1',
+		'NOT_VERIFIED'=>'0',
 ];

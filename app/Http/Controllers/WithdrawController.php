@@ -212,6 +212,13 @@ class WithdrawController  extends BasicController
         if($cash_code!="")
             $custom_where.=" and cash_code like '%".$cash_code."%'";
 
+        global $sum_cash_amount;
+        $total_money = DB::select('SELECT sum(cash_amount) as total from t_cash_history WHERE '.$custom_where);
+        if($total_money!=null)
+            $sum_cash_amount=$total_money[0]->total;
+        else
+            $sum_cash_amount=0;
+
         $columns = array(
             array('db' => 'no', 'dt' => 0),
             array('db' => 'order_number', 'dt' => 1),
@@ -256,8 +263,104 @@ class WithdrawController  extends BasicController
             ),
             array('db' => 'no', 'dt' => 7,
                 'formatter'=>function($d,$row){
-                    $point = CashHistory::sum('cash_amount');
-                    return $point;
+                    global $sum_cash_amount;
+                    return $sum_cash_amount;
+                }
+            )
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function ajax_withdraw_table(){
+        $table = 't_withdraw';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $start_dt=$_POST['start_dt'];
+        $end_dt=$_POST['end_dt'];
+        $status=$_POST['status'];
+        $user_no=$_POST['user_no'];
+        $account_name=$_POST['account_name'];
+        $bank_name=$_POST['bank_name'];
+
+        if($start_dt!="")
+            $custom_where.=" and created_at>='".$start_dt."'";
+        if($end_dt!="")
+            $custom_where.=" and created_at<='".$this->getChangeDate($end_dt,1)."'";
+        if($status!="-1")
+            $custom_where.=" and status ='".$status."'";
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%'";
+        if($account_name!="")
+            $custom_where.=" and account_name like '%".$account_name."%'";
+        if($bank_name!="")
+            $custom_where.=" and bank_name like '%".$bank_name."%'";
+
+
+        global  $sum_money;
+        $total_money = DB::select('SELECT sum(money) as total from t_withdraw WHERE '.$custom_where);
+        if($total_money!=null)
+            $sum_money=$total_money[0]->total;
+        else
+            $sum_money=0;
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'user_no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    return sprintf("%'.05d", $d);
+                }
+            ),
+            array('db' => 'user_no', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'money', 'dt' => 3),
+            array('db' => 'wait_money', 'dt' => 4),
+            array('db' => 'account_name', 'dt' => 5),
+            array('db' => 'account_birth', 'dt' => 6),
+            array('db' => 'status', 'dt' => 7,
+                'formatter'=>function($d,$row){
+                    if($d==config('constants.WITHDRAW_WAIT'))
+                        return trans('lang.wait');
+                    if($d==config('constants.WITHDRAW_FINISH'))
+                        return trans('lang.finish');
+                    if($d==config('constants.WITHDRAW_ERROR'))
+                        return trans('lang.error');
+                }
+            ),
+            array('db' => 'is_verified', 'dt' => 8,
+                'formatter'=>function($d,$row){
+                    if($d==config('constants.IS_VERIFIED'))
+                        return trans('lang.is_verified');
+                    if($d==config('constants.NOT_VERIFIED'))
+                        return trans('lang.not_verified');
+                }
+            ),
+            array('db' => 'created_at', 'dt' => 9),
+            array('db' => 'no', 'dt' => 10,
+                'formatter'=>function($d,$row){
+                    global  $sum_money;
+                    return $sum_money;
                 }
             )
         );
