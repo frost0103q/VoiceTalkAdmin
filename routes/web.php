@@ -97,6 +97,7 @@ Route::post('delete_cash_declare', 'CashQuestionController@delete_cash_declare')
 
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');
+Route::post('ajax_cash_table', 'WithdrawController@ajax_cash_table');
 
 //statistic manage 
 Route::get('statistic', 'StatisticController@index');

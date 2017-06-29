@@ -233,6 +233,8 @@ return [
     'no_payment'=>'미지급',
     'wait_payment'=>'지급대기',
     'no_auth'=>'미인증',
+    'cash_finish'=>'결제완료',
+    'cash_stop'=>'결제중단',
     'cash_owner'=>'례금주',
     'cash_account'=>'례금계좌',
     'total_cash_by_condition'=>'조건에 맞는 총매출',
@@ -289,6 +291,7 @@ return [
     'ad_name'=>'광고명',
     'process_date'=>'처리일자',
     'period_sum'=>'지정기간 합계',
+    'total_cash_amount_by_condition'=>'조건에 맞는 총 결제금액',
 
     //admin notice manage
     'opinion_share'=>'의견공유',

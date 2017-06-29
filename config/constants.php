@@ -107,4 +107,8 @@ return [
 		'WRONG_WORD'=>'15',
 		'SEX_BANTER'=>'16',
 		'THREAT'=>'17',
+
+		//Withdraw
+		'CASH_FINISH'=>'1',
+		'CASH_STOP'=>'2'
 ];

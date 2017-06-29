@@ -184,4 +184,12 @@ class BasicController extends Controller
 
         echo $cont;
     }
+
+    public static function getChangeDate($date,$count){
+        $year = substr($date, 0, 4);
+        $month = substr($date, 5, 2);
+        $day = substr($date, 8);
+        $date = date("Y-m-d", mktime(0, 0, 0, $month, $day + $count, $year));
+        return $date;
+    }
 }

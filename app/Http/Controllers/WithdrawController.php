@@ -14,6 +14,9 @@ use App\Models\Notification;
 use App\Models\Withdraw;
 use App\Models\AppUser;
 use App\Models\ServerFile;
+use App\Models\SSP;
+use App\Models\User;
+use App\Models\CashHistory;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
 use DB;
@@ -176,5 +179,99 @@ class WithdrawController  extends BasicController
         }
 
         return response()->json($response);
+    }
+
+    public function ajax_cash_table(){
+        $table = 't_cash_history';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $start_dt=$_POST['start_dt'];
+        $end_dt=$_POST['end_dt'];
+        $status=$_POST['status'];
+        $user_no=$_POST['user_no'];
+        $nickname=$_POST['nickname'];
+        $order_number=$_POST['order_number'];
+        $cash_code=$_POST['cash_code'];
+
+        if($start_dt!="")
+            $custom_where.=" and cash_date>='".$start_dt."'";
+        if($end_dt!="")
+            $custom_where.=" and cash_date<='".$this->getChangeDate($end_dt,1)."'";
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%'";
+        if($nickname!="")
+            $custom_where.=" and user_no in (select no from t_user where nickname like '%".$nickname."%') ";
+        if($status!="-1")
+            $custom_where.=" and status ='".$status."'";
+        if($order_number!="")
+            $custom_where.=" and order_number like '%".$order_number."%'";
+        if($cash_code!="")
+            $custom_where.=" and cash_code like '%".$cash_code."%'";
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'order_number', 'dt' => 1),
+            array('db' => 'user_no', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 3,
+                'formatter'=>function($d,$row){
+                    $results = CashHistory::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['cash_amount'].' / Point '.$results['point'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'cash_date', 'dt' => 4),
+            array('db' => 'status', 'dt' => 5,
+                'formatter'=>function($d,$row){
+                    if($d==config('constants.CASH_FINISH'))
+                        return trans('lang.cash_finish');
+                    if($d==config('constants.CASH_STOP'))
+                        return trans('lang.cash_stop');
+                }
+            ),
+            array('db' => 'user_no', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    $point = CashHistory::
+                        where('user_no', $d)
+                        ->sum('point');
+                    $cash_amount = CashHistory::
+                    where('user_no', $d)
+                        ->sum('cash_amount');
+
+                    return $cash_amount.' / Point '.$point;
+                }
+            ),
+            array('db' => 'no', 'dt' => 7,
+                'formatter'=>function($d,$row){
+                    $point = CashHistory::sum('cash_amount');
+                    return $point;
+                }
+            )
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
     }
 }
