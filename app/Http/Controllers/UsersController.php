@@ -12,8 +12,8 @@ use App\Models\SSP;
 use App\Models\User;
 use App\Models\UserDeclare;
 use App\Models\Warning;
-use App\Providers\AuthServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
@@ -23,6 +23,7 @@ use Session;
 use SMS;
 use Socialite;
 use URL;
+use Nexmo;
 
 class UsersController extends BasicController
 {
@@ -226,6 +227,39 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
+    function sendSMS($hpReceiver, $hpMesg) {
+        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
+        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
+        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
+        // $hpSender = "02-2009-3773";
+        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
+        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
+        //	$hpMesg = "";           		// 메시지
+
+        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
+        $hpMesg = iconv("UTF-8", "EUC-KR","$hpMesg");
+        /*  ---------------------------------------- */
+        $hpMesg = urlencode($hpMesg);
+        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
+
+        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
+
+        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
+        if(!$fp) echo "$errno : $errstr";
+
+        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
+        $flag = 0;
+        $out = "";
+        while(!feof($fp)){
+            $row = fgets($fp, 1024);
+
+            if($flag) $out .= $row;
+            if($row=="\r\n") $flag = 1;
+        }
+        fclose($fp);
+        return $out;
+    }
+
     public function requestAuthNumber(HttpRequest $request) {
         $no = $request->input('no');
         $phone_number = $request->input('phone');
@@ -255,18 +289,30 @@ class UsersController extends BasicController
         $sms_message = "VoiceTalk인증코드는 ".$cert_code." 입니다.";
         $phone_number = str_replace("-","", $phone_number);
 
-        SMS::send($sms_message, null, function($sms) use ($phone_number) {
+        if(true) {
             $debug = config('app.debug');
             $testmode = Config::get('config.testmode');
-            if($testmode == 0) {
-                $phone_number = '+86'.$phone_number; //'+8615699581631'
-                $sms->to($phone_number);
+            if ($testmode == 0) {
+                SMS::send($sms_message, null, function ($sms) use ($phone_number) {
+                    $phone_number = '+86' . $phone_number;
+                    $sms->from('+8615699581631');
+                    $sms->to($phone_number);
+                }
+                );
             }
             else {
-                $phone_number = '+82'.$phone_number;
-                $sms->to($phone_number);
+                $this->sendSMS($phone_number, $sms_message);
+                $phone_number = '+82' . $phone_number;
             }
-        });
+        }
+        else {
+            $phone_number = '+82' . $phone_number;
+            Nexmo::message()->send([
+                'to' => $phone_number,
+                'from' => '01028684884',
+                'text' => 'Using the facade to send a message.'
+            ]);
+        }
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;
@@ -277,6 +323,7 @@ class UsersController extends BasicController
         $authcode->save();
         $response['no'] = $authcode->no;
         $response['auth_code'] = $cert_code;
+        $response['phone_number'] = $phone_number;
 
         return response()->json($response);
     }
