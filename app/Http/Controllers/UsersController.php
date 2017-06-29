@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AppUser;
 use App\Models\AuthCode;
+use App\Models\CashDeclare;
+use App\Models\CashQuestion;
 use App\Models\ConsultingReview;
 use App\Models\InAppPurchaseHistory;
 use App\Models\Notification;
@@ -140,6 +142,10 @@ class UsersController extends BasicController
         return $response;
     }
 
+    private function deleteUserCompletely($user_no) {
+        AppUser::where('no', $user_no)->delete();
+    }
+
     /******************************************************************
      *
      * Public Functions
@@ -195,10 +201,27 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $this->addImageData($results, $results->img_no);
-        $result = array_merge ( $results->toArray(), $response);
+        $user = $results;
 
-        $response = Notification::select('unread_count')->where('unread_count', '>', 0)->where('to_user_no', $results->no)->sum('unread_count');;
+        // If it is a exit requested user,
+        if($user->request_exit_flag == 1) {
+            $cur_time = AppServiceProvider::getTimeInDefaultFormat();
+            $diff_time = AppServiceProvider::diffTime($cur_time, $user->request_exit_time);
+            if($diff_time > 60*60*24) { // 1 day
+                $this->deleteUserCompletely($user->no);
+
+                $response = config('constants.ERROR_NO_INFORMATION');
+                return response()->json($response);
+            }
+            else {
+                $response = config('constants.ERROR_REQUESTED_EXIT_USER');
+                return response()->json($response);
+            }
+        }
+
+        $this->addImageData($user, $user->img_no);
+        $result = array_merge ( $user->toArray(), $response);
+        $response = Notification::select('unread_count')->where('unread_count', '>', 0)->where('to_user_no', $user->no)->sum('unread_count');;
         $result['unread_notification_cnt'] = $response;
 
         return response()->json($result);
@@ -927,7 +950,28 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
+    public function requestExitUser(HttpRequest $request) {
+        $user_no  = $request->input('user_no');
 
+        if($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $user = $results[0];
+        $user->request_exit_flag = 1;
+        $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
+        $user->save();
+
+        return response()->json($response);
+    }
 
     public function ajax_user_table(){
         $table = 't_user';

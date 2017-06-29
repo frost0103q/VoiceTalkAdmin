@@ -10,6 +10,7 @@ return [
         'ERROR_NOT_ENOUGH_POINT' => ["error" => 7,'message' => 'Not Enough Point'],
         'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
         'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
+        'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
 
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,

@@ -36,6 +36,9 @@ Route::post('/sendAlarm', 'UsersController@sendAlarm');
 Route::post('/checkRoll', 'UsersController@checkRoll');
 Route::post('/logForVoiceChat', 'UsersController@logForVoiceChat');
 Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
+Route::post('/buyInAppItem', 'UsersController@buyPoint');
+Route::post('/requestExit', 'UsersController@requestExitUser');
+
 
 // user relation api
 Route::post('/addFriend', 'UserRelationController@addFriend');
