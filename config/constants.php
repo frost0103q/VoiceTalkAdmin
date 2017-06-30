@@ -118,4 +118,7 @@ return [
 
 		'IS_VERIFIED'=>'1',
 		'NOT_VERIFIED'=>'0',
+
+		'GIFTICON_NOMAL'=>'1',
+		'GIFTICON_CANCEL'=>'0',
 ];

@@ -377,4 +377,104 @@ class WithdrawController  extends BasicController
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
     }
+
+    public function ajax_gifticon_table(){
+        $table = 't_gifticon';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $start_dt=$_POST['start_dt'];
+        $end_dt=$_POST['end_dt'];
+        $status=$_POST['status'];
+        $user_no=$_POST['user_no'];
+        $nickname=$_POST['nickname'];
+        $mgr_number=$_POST['mgr_number'];
+        $cupon_number=$_POST['cupon_number'];
+
+        if($start_dt!="")
+            $custom_where.=" and created_at>='".$start_dt."'";
+        if($end_dt!="")
+            $custom_where.=" and created_at<='".$this->getChangeDate($end_dt,1)."'";
+        if($status!="-1")
+            $custom_where.=" and status ='".$status."'";
+        if($user_no!="")
+            $custom_where.=" and user_no like '%".$user_no."%'";
+        if($nickname!="")
+            $custom_where.=" and user_no in (select no from t_user where nickname like '%".$nickname."%') ";
+        if($mgr_number!="")
+            $custom_where.=" and mgr_number like '%".$mgr_number."%'";
+        if($cupon_number!="")
+            $custom_where.=" and cupon_number like '%".$cupon_number."%'";
+
+
+        global  $sum_nomal_price;
+        $total_money = DB::select('SELECT sum(nomal_price) as total from t_gifticon WHERE '.$custom_where);
+        if($total_money!=null)
+            $sum_nomal_price=$total_money[0]->total;
+        else
+            $sum_nomal_price=0;
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'cupon_number', 'dt' => 1),
+            array('db' => 'pdt_nm', 'dt' => 2),
+            array('db' => 'user_no', 'dt' => 3,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 4,
+                'formatter'=>function($d,$row){
+                    $results = DB::table('t_gifticon')->where('no', $d)->first();
+                    if($results!=null)
+                        return $results->nomal_price.'/'.$results->sale_price;
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 5,
+                'formatter'=>function($d,$row){
+                    $results = DB::table('t_gifticon')->where('no', $d)->first();
+                    if($results!=null)
+                        return $results->real_price.'/'.$results->benefit;
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'status', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    if($d==config('constants.GIFTICON_NOMAL'))
+                        return trans('lang.nomal');
+                    if($d==config('constants.GIFTICON_CANCEL'))
+                        return trans('lang.cancel');
+                }
+            ),
+            array('db' => 'created_at', 'dt' => 7),
+            array('db' => 'no', 'dt' => 8,
+                'formatter'=>function($d,$row){
+                    global  $sum_nomal_price;
+                    return $sum_nomal_price;
+                }
+            )
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
 }

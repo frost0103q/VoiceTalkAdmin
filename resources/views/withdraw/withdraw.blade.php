@@ -39,7 +39,7 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_req_amount_by_condition')}} : <span id="total_withdraw_amount">12,500</span>{{trans('lang.won')}}</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_req_amount_by_condition')}} : <span id="total_withdraw_amount"></span>{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_withdraw" style="width: 100%">
