@@ -42,7 +42,11 @@ class StatisticController extends BasicController
             return redirect("/login");
         }
 
-        return view('statistic.index',['menu_index'=>7]);
+        $data['menu_index']=7;
+        $data['end_dt']=date('Y-m-d');
+        $data['start_dt']=$this->getChangeDate(date('Y-m-d'),-6);
+
+        return view('statistic.index',$data);
     }
     
     public function ajax_edwards_table(){
@@ -133,5 +137,164 @@ class StatisticController extends BasicController
         return json_encode(
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
+    }
+
+    public function ajax_connect_table(){
+
+        $start_dt=$_POST['start_dt'];
+        $end_dt=$_POST['end_dt'];
+        $sex=$_POST['sex'];
+        $display_length=$_POST['display_length'];
+        $start_record=$_POST['start'];
+
+        global $custom_where;
+        $custom_where=" 1=1 ";
+        if($sex!="-1")
+            $custom_where .= " and user_no in (select no from t_user where sex='" . $sex . "') ";
+
+        if($end_dt=="")
+            $end_dt=date('Y-m-d');
+        if($start_dt=="")
+            $start_dt=$this->getChangeDate($end_dt,-6);
+
+        $total_cnt = $this->getDayCount($start_dt,$end_dt)+1;
+
+        $columns = array();
+        for ($i = 0;$i<$total_cnt;$i++){
+            $date = $this->getChangeDate($start_dt,$i);
+
+            $columns[] = array(
+                array( 'db' => $date, 'dt' => 0),
+                array( 'db' => $date,
+                    'dt' => 1,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                        global $custom_where;
+                        return $this->get_login_cnt_date($d,$custom_where);
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 2,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                        global $custom_where;
+                        return $this->get_cash_cnt_date($d,$custom_where);
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 3,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 4,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                        global $custom_where;
+                        return $this->get_ad_point_date($d,$custom_where);
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 5,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 6,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 7,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                        $male_cnt=$this->get_male_reg_cnt_date($d);
+                        $female_cnt=$this->get_female_reg_cnt_date($d);
+                        return $male_cnt.'+'.$female_cnt.'='.($male_cnt+$female_cnt);
+                    }
+                ),
+                array( 'db' => $date,
+                    'dt' => 8,
+                    'formatter' => function($d) {
+                        $d = $d[0];
+                        global $custom_where;
+                        return $this->get_present_point_date($d,$custom_where);
+                    }
+                )
+            );
+        }
+
+        echo json_encode(
+            SSP::simple1( $_POST, $columns, $total_cnt, $display_length, $start_record)
+        );
+    }
+
+    public function get_login_cnt_date($date,$custom_where){
+
+        $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE created_at like '%".$date."%' and " . $custom_where);
+
+        if ($result != null)
+            return $result[0]->cnt;
+        else
+            return 0;
+
+    }
+
+    public function get_cash_cnt_date($date,$custom_where){
+
+        $result = DB::select("SELECT COUNT(*) as cnt from t_cash_history WHERE cash_date like '%".$date."%' and " . $custom_where);
+
+        if ($result != null)
+            return $result[0]->cnt;
+        else
+            return 0;
+
+    }
+
+    public function get_present_point_date($date,$custom_where){
+
+        $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE type=2 AND created_at like '%".$date."%' and " . $custom_where);
+
+        if ($result != null)
+            return abs($result[0]->total);
+        else
+            return 0;
+
+    }
+
+    public function get_ad_point_date($date,$custom_where){
+
+        $result = DB::select("SELECT SUM(point) as total from t_edwards_ad WHERE  created_at like '%".$date."%' and " . $custom_where);
+
+        if ($result != null)
+            return abs($result[0]->total);
+        else
+            return 0;
+
+    }
+
+    public function get_male_reg_cnt_date($date){
+
+        $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%".$date."%' and sex='".config('constants.MALE')."'");
+
+        if ($result != null)
+            return $result[0]->cnt;
+        else
+            return 0;
+
+    }
+
+    public function get_female_reg_cnt_date($date){
+
+        $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%".$date."%' and sex='".config('constants.FEMALE')."'");
+
+        if ($result != null)
+            return $result[0]->cnt;
+        else
+            return 0;
+
     }
 }

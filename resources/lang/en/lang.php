@@ -261,7 +261,7 @@ return [
     'real_price'=>'정상가',
     'sale_price'=>'도매',
     'cur_price'=>'실판매가',
-    'benefit'=>'이익',
+    'benefit'=>'리익',
     'send_time'=>'발급일시',
     'writer'=>'글쓴이',
     'last_connect'=>'최종접속',

@@ -5,16 +5,17 @@
                 <label class="control-label col-md-1" style="text-align: right">{{trans('lang.period_search')}}</label>
                 <div class="col-md-3">
                     <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd">
-                        <input type="text" class="form-control" name="from_date" id="c_from_date">
+                        <input type="text" class="form-control" name="from_date" id="c_from_date" value="{{$start_dt}}">
                         <span class="input-group-addon"> to </span>
-                        <input type="text" class="form-control" name="to_date" id="c_to_date">
+                        <input type="text" class="form-control" name="to_date" id="c_to_date" value="{{$end_dt}}">
                     </div>
                 </div>
                 <label class="control-label col-md-1" style="text-align: right">{{trans('lang.sex')}}</label>
                 <div class="col-md-1">
                     <select class="form-control select2me" id="c_sex" name="sex">
-                        <option value="">{{trans('lang.man')}}</option>
-                        <option value="">{{trans('lang.woman')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
+                        <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
                     </select>
                 </div>
                 <div class="col-md-1">
@@ -34,7 +35,7 @@
                 <th>{{trans('lang.ad')}}(+)</th>
                 <th>{{trans('lang.cupon')}}(-)</th>
                 <th>{{trans('lang.benefit')}}</th>
-                <th>{{trans('lang.log_in')}}({{trans('lang.male')}}+{{trans('lang.female')}}-{{trans('lang.exit')}}={{trans('lang.sum')}})</th>
+                <th>{{trans('lang.log_in')}}({{trans('lang.male')}}+{{trans('lang.female')}}={{trans('lang.sum')}})</th>
                 <th>{{trans('lang.presnet')}}</th>
             </tr>
             </thead>
@@ -65,12 +66,44 @@
             },
             "autowidth": true,
             "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                [5, 10, 20],
+                [5, 10, 20] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_connect_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.start_dt=$("#c_from_date").val();
+                    d.end_dt=$("#c_to_date").val();
+                    d.sex=$("#c_sex").val();
+                    d.display_length=$("select[name='tbl_connect_length']").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [1, 2,3,4,5,6,7,8]
+            },
+                {
+                    'orderable': true,
+                    'targets': [0]
+                }],
+
+            "order": [
+                [0, "desc"]
+            ]
         });
     });
+
+    $("#btn_c_search").click(function () {
+        tbl_connect.draw(false);
+    })
 </script>
