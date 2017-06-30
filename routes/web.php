@@ -105,6 +105,8 @@ Route::post('ajax_point_rank_table', 'UsersController@ajax_point_rank_table');
 
 //statistic manage 
 Route::get('statistic', 'StatisticController@index');
+Route::post('ajax_edwards_table', 'StatisticController@ajax_edwards_table');
+
 
 //admin notice manage
 Route::get('admin_notice', 'AdminNoticeController@index');

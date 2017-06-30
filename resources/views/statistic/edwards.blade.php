@@ -2,7 +2,7 @@
     <div class="col-md-12" style="margin-top: 30px;margin-bottom: 20px">
         <form action="#" class="form-horizontal">
             <div class="form-group">
-                <div class="col-md-offset-1 col-md-3">
+                <div class="col-md-3">
                     <label class="control-label">{{trans('lang.period_search')}}</label>
                     <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd">
                         <input type="text" class="form-control" name="from_date" id="e_from_date">
@@ -13,8 +13,9 @@
                 <div class="col-md-1">
                     <label class="control-label">{{trans('lang.sex')}}</label>
                     <select class="form-control select2me" id="e_sex" name="sex">
-                        <option value="">{{trans('lang.man')}}</option>
-                        <option value="">{{trans('lang.woman')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
+                        <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -33,7 +34,7 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.period_sum')}} : 12,500{{trans('lang.won')}}</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.period_sum')}} : <span id="period_total_sum"></span>{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_edwards" style="width: 100%">
@@ -80,8 +81,45 @@
                 [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_edwards_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.start_dt=$("#e_from_date").val();
+                    d.end_dt=$("#e_to_date").val();
+                    d.sex=$("#e_sex").val();
+                    d.user_no=$("#e_user_no").val();
+                    d.nickname=$("#e_user_nickname").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+                $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                $("#period_total_sum").text(data[8]);
+                if (data[3] != null)
+                    $('td:eq(3)', row).html('<img src="' + data[3] + '" height="40px">');
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [0, 1, 2,3,4,5,6]
+            },
+                {
+                    'orderable': true,
+                    'targets': [7]
+                }],
+
+            "order": [
+                [7, "desc"]
+            ]
         });
     });
+
+    $("#btn_e_search").click(function () {
+        tbl_edwards.draw(false);
+    })
 </script>
