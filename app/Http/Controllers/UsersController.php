@@ -945,4 +945,158 @@ class UsersController extends BasicController
         $date = date("Y-m-d H:i:s", mktime($hour, $minute, $second, $month, $day + $count, $year));
         return $date;
     }
+
+    public function ajax_point_rank_table(){
+        $table = 't_user';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sex=$_POST['sex'];
+        $start_dt=$_POST['start_dt'];
+        $end_dt=$_POST['end_dt'];
+
+        if($sex!="-1")
+            $custom_where.=" and sex=$sex";
+        if ($start_dt != "")
+            $custom_where .= " and created_at>='" . $start_dt . "'";
+        if ($end_dt != "")
+            $custom_where .= " and created_at<'" . $this->getChangeDate($end_dt, 1) . "'";
+
+        $columns = array(
+            array('db' => 'point', 'dt' => 0,
+                'formatter'=>function($d,$row){
+                    return $this->get_point_rank($d);
+                }
+            ),
+            array('db' => 'no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    return sprintf("%'.05d", $d);
+                }
+            ),
+            array('db' => 'img_no', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    $results = ServerFile::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['path'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 3,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null){
+                        $html='<span class="primary-link">'.$user_model->nickname.'('.$user_model->age.')'.'</span><br><span>&nbsp;'.$user_model->point.'P</span>';
+                        return $html;
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'no', 'dt' => 4,
+                'formatter'=>function($d,$row){
+                    $user_model = DB::table('t_user')->where('no', $d)->first();
+                    if($user_model!=null)
+                        $reg_time=$user_model->created_at;
+                    else
+                        $reg_time='';
+                    $last_login_time = DB::table('t_login_history')->where('user_no', $d)->max('created_at');
+                    return $reg_time."/".$last_login_time;
+                }
+            ),
+            array('db' => 'no', 'dt' => 5,
+                'formatter'=>function($d,$row){
+                    return $this->get_declare_cnt($d);
+                }
+            ),
+            array('db' => 'no', 'dt' => 6,
+                'formatter'=>function($d,$row){
+                    return $this->get_earn_point($d);
+                }
+            ),
+            array('db' => 'no', 'dt' => 7,
+                'formatter'=>function($d,$row){
+                    return $this->get_withdraw_point($d);
+                }
+            ),
+            array('db' => 'no', 'dt' => 8,
+                'formatter'=>function($d,$row){
+                    return $this->get_receive_present_point($d);
+                }
+            ),
+            array('db' => 'no', 'dt' => 9,
+                'formatter'=>function($d,$row){
+                    return $this->get_send_present_point($d);
+                }
+            )
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function get_declare_cnt($user_no){
+        $cnt = DB::table('t_warning')
+            ->where('user_no', $user_no)
+            ->count('user_no');
+        return $cnt;
+    }
+
+    public function get_earn_point($user_no){
+        $point = DB::table('t_pointhistory')
+            ->where('point','>',0)
+            ->where('user_no',$user_no)
+            ->sum('point');
+        return $point;
+    }
+
+    public function get_withdraw_point($user_no){
+        $point = DB::table('t_pointhistory')
+            ->where('point','<',0)
+            ->where('user_no',$user_no)
+            ->sum('point');
+        return abs($point);
+    }
+
+    public function get_send_present_point($user_no){
+        $point = DB::table('t_pointhistory')
+            ->where('type',2)
+            ->where('user_no',$user_no)
+            ->sum('point');
+        return abs($point);
+    }
+
+    public function get_receive_present_point($user_no){
+        $point = DB::table('t_pointhistory')
+            ->where('type',3)
+            ->where('user_no',$user_no)
+            ->sum('point');
+        return $point;
+    }
+
+    public function get_point_rank($point){
+        $point_list = DB::table('t_user')->select('point')
+            ->orderBy('point', 'desc')
+            ->groupBy('point')
+            ->get();
+
+        for($i=1;$i<=count($point_list);$i++){
+            if($point_list[$i-1]->point==$point)
+                return $i;
+        }
+
+        return 1;
+    }
 }

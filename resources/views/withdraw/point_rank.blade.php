@@ -3,7 +3,7 @@
         <form action="#" class="form-horizontal">
             <div class="form-group">
                 <div class="col-md-3">
-                    <label class="control-label">{{trans('lang.period_search')}}</label>
+                    <label class="control-label">{{trans('lang.reg_time')}}</label>
                     <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd">
                         <input type="text" class="form-control" name="from_date" id="pr_from_date">
                         <span class="input-group-addon"> to </span>
@@ -13,13 +13,14 @@
                 <div class="col-md-1">
                     <label class="control-label">{{trans('lang.sex')}}</label>
                     <select class="form-control select2me" id="pr_sex" name="sex">
-                        <option value="">{{trans('lang.man')}}</option>
-                        <option value="">{{trans('lang.woman')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
+                        <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
                     </select>
                 </div>
                 <div class="col-md-1" style="padding-top: 7px">
                     <br>
-                    <a class="btn blue" id="btn_c_search"><i class="fa fa-search"></i> {{trans('lang.search')}}</a>
+                    <a class="btn blue" id="btn_pr_search"><i class="fa fa-search"></i> {{trans('lang.search')}}</a>
                 </div>
             </div>
         </form>
@@ -71,8 +72,41 @@
                 [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_point_rank_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.sex=$("#pr_sex").val();
+                    d.start_dt=$("#pr_from_date").val();
+                    d.end_dt=$("#pr_to_date").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+                if (data[2] != null)
+                    $('td:eq(2)', row).html('<img src="' + data[2] + '" height="40px">');
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [ 1,2,3,4,5,6,7,8,9]
+            },
+                {
+                    'orderable': true,
+                    'targets': [0]
+                }],
+
+            "order": [
+                [0, "desc"]
+            ]
         });
     });
+
+    $("#btn_pr_search").click(function () {
+        tbl_point_rank.draw(false);
+    })
 </script>
