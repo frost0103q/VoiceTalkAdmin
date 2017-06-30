@@ -39,4 +39,14 @@
 		t_login_history(no,user_no,created_at)
 		t_manage_notice(no,title,content,file_url,writer,created_at,updated_at,read_cnt)
 		
+-2017-06-30
+	새테불추가
+		t_cash_history(no,order_number,user_no,point,cash_amount,cash_code,cash_date,created_at,updated_at,status)
+		t_edwards_ad(no,user_no,point,jehu,ad_name,created_at,updated_at)
+		t_gifticon(no,cupon_number,mgr_number,pdt_nm,user_no,nomal_price,sale_price,real_price,benefit,status,created_at,updated_at)
+	테불변경
+		t_withdraw테불에 wait_money int(11) COMMENT '대기금액' 마당추가,account_birth마당의 자료형을 varchar로부터 date형으로 변경
+	View테불작성
+		v_point_present_history
+		
 		
