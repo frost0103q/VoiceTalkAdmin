@@ -48,7 +48,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title"><strong>{{trans('lang.sender_mgr')}}</strong></h4>
+                <h4 class="modal-title"><strong>{{trans('lang.talk_notice')}}</strong></h4>
             </div>
             <div class="modal-body">
                 <form id="talk_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">

@@ -5,8 +5,9 @@
                 <div class="col-md-1">
                     <label class="control-label">{{trans('lang.sex')}}</label>
                     <select class="form-control select2me" id="pp_sex" name="sex">
-                        <option value="">{{trans('lang.man')}}</option>
-                        <option value="">{{trans('lang.woman')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.MALE')}}">{{trans('lang.man')}}</option>
+                        <option value="{{config('constants.FEMALE')}}">{{trans('lang.woman')}}</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -42,13 +43,12 @@
             <thead>
             <tr>
                 <th>{{trans('lang.number')}}</th>
-                <th>{{trans('lang.cupon_number')}}</th>
-                <th>{{trans('lang.product_name')}}</th>
-                <th>Nickname</th>
-                <th>{{trans('lang.real_price')}}/{{trans('lang.sale_price')}}</th>
-                <th>{{trans('lang.cur_price')}}/{{trans('lang.benefit')}}</th>
-                <th>{{trans('lang.status')}}</th>
-                <th>{{trans('lang.send_time')}}</th>
+                <th>{{trans('lang.send_user')}}</th>
+                <th>{{trans('lang.send_point')}}</th>
+                <th>{{trans('lang.send_date')}}</th>
+                <th>{{trans('lang.received_user')}}</th>
+                <th>{{trans('lang.received_point')}}</th>
+                <th>{{trans('lang.received_date')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -82,8 +82,44 @@
                 [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_present_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.sex=$("#pp_sex").val();
+                    d.user_no=$("#pp_user_no").val();
+                    d.nickname=$("#pp_user_nickname").val();
+                    d.phone_number=$("#pp_phone_number").val();
+                    d.email=$("#pp_email").val();
+                    d.chat_content=$("#pp_chat_content").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+                $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                $("#total_withdraw_amount").text(data[10]);
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [0, 1, 2,4,5,6]
+            },
+                {
+                    'orderable': true,
+                    'targets': [3]
+                }],
+
+            "order": [
+                [3, "desc"]
+            ]
         });
     });
+
+    $("#btn_pp_search").click(function () {
+        tbl_point_present.draw(false);
+    })
 </script>

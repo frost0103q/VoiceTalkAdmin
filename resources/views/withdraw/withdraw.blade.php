@@ -11,12 +11,12 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <label class="control-label">{{trans('lang.status')}}</label>
+                    <label class="control-label">{{trans('lang.withdraw_status')}}</label>
                     <select class="form-control select2me" id="w_status" name="status">
-                        <option value="">{{trans('lang.payment_finish')}}</option>
-                        <option value="">{{trans('lang.no_payment')}}</option>
-                        <option value="">{{trans('lang.wait_payment')}}</option>
-                        <option value="">{{trans('lang.no_auth')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.WITHDRAW_WAIT')}}">{{trans('lang.wait')}}</option>
+                        <option value="{{config('constants.WITHDRAW_FINISH')}}">{{trans('lang.finish')}}</option>
+                        <option value="{{config('constants.WITHDRAW_ERROR')}}">{{trans('lang.error')}}</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -25,11 +25,11 @@
                 </div>
                 <div class="col-md-2">
                     <label class="control-label">{{trans('lang.cash_owner')}}</label>
-                    <input class="form-control" placeholder="" type="text" id="owner" name="owner">
+                    <input class="form-control" placeholder="" type="text" id="account_name" name="account_name">
                 </div>
                 <div class="col-md-2">
                     <label class="control-label">{{trans('lang.cash_account')}}</label>
-                    <input class="form-control" placeholder="" type="text" id="c_order_number" name="order_number">
+                    <input class="form-control" placeholder="" type="text" id="bank_name" name="bank_name">
                 </div>
                 <div class="col-md-1" style="padding-top: 7px">
                     <br>
@@ -39,7 +39,7 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500{{trans('lang.won')}}</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_req_amount_by_condition')}} : <span id="total_withdraw_amount"></span>{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_withdraw" style="width: 100%">
@@ -52,7 +52,8 @@
                 <th>{{trans('lang.wait_amount')}}</th>
                 <th>{{trans('lang.cash_owner')}}</th>
                 <th>{{trans('lang.birthday')}}</th>
-                <th>{{trans('lang.status')}}</th>
+                <th>{{trans('lang.withdraw_status')}}</th>
+                <th>{{trans('lang.verify_status')}}</th>
                 <th>{{trans('lang.req_date')}}</th>
             </tr>
             </thead>
@@ -87,8 +88,44 @@
                 [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_withdraw_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.start_dt=$("#w_from_date").val();
+                    d.end_dt=$("#w_to_date").val();
+                    d.status=$("#w_status").val();
+                    d.user_no=$("#w_user_no").val();
+                    d.account_name=$("#account_name").val();
+                    d.bank_name=$("#bank_name").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+                $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                $("#total_withdraw_amount").text(data[10]);
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [0, 1, 2,3,4,5,6,7,8]
+            },
+                {
+                    'orderable': true,
+                    'targets': [9]
+                }],
+
+            "order": [
+                [9, "desc"]
+            ]
         });
+    });
+
+    $("#btn_w_search").click(function () {
+       tbl_withdraw.draw(false);
     });
 </script>

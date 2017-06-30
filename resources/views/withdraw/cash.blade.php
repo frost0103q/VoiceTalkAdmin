@@ -13,10 +13,9 @@
                 <div class="col-md-2">
                     <label class="control-label">{{trans('lang.status')}}</label>
                     <select class="form-control select2me" id="c_status" name="status">
-                        <option value="">{{trans('lang.payment_finish')}}</option>
-                        <option value="">{{trans('lang.no_payment')}}</option>
-                        <option value="">{{trans('lang.wait_payment')}}</option>
-                        <option value="">{{trans('lang.no_auth')}}</option>
+                        <option value="-1">{{trans('lang.all')}}</option>
+                        <option value="{{config('constants.CASH_FINISH')}}">{{trans('lang.cash_finish')}}</option>
+                        <option value="{{config('constants.CASH_STOP')}}">{{trans('lang.cash_stop')}}</option>
                     </select>
                 </div>
                 <div class="col-md-1">
@@ -43,7 +42,7 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_by_condition')}} : 12,500{{trans('lang.won')}}</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_cash_amount_by_condition')}} : <span id="total_cash_amount"></span>{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_cash" style="width: 100%">
@@ -89,8 +88,45 @@
                 [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
             ],
             // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number"
+            "pageLength": 10,
+            "pagingType": "bootstrap_full_number",
+            "processing": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "ajax_cash_table",
+                "type": "POST",
+                "data": function (d) {
+                    start_index = d.start;
+                    d._token = "{{csrf_token()}}";
+                    d.start_dt=$("#c_from_date").val();
+                    d.end_dt=$("#c_to_date").val();
+                    d.status=$("#c_status").val();
+                    d.user_no=$("#c_user_no").val();
+                    d.nickname=$("#c_user_nickname").val();
+                    d.order_number=$("#c_order_number").val();
+                    d.cash_code=$("#c_cash_code").val();
+                }
+            },
+            "createdRow": function (row, data, dataIndex) {
+                $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                $("#total_cash_amount").text(data[7]);
+            },
+            "columnDefs": [{
+                'orderable': false,
+                'targets': [0, 1, 2, 3,5,6]
+            },
+                {
+                    'orderable': true,
+                    'targets': [4]
+                }],
+
+            "order": [
+                [4, "desc"]
+            ]
         });
     });
+
+    $("#btn_c_search").click(function () {
+        tbl_cash.draw(false);
+    })
 </script>

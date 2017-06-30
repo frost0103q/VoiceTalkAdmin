@@ -97,9 +97,16 @@ Route::post('delete_cash_declare', 'CashQuestionController@delete_cash_declare')
 
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');
+Route::post('ajax_cash_table', 'WithdrawController@ajax_cash_table');
+Route::post('ajax_withdraw_table', 'WithdrawController@ajax_withdraw_table');
+Route::post('ajax_gifticon_table', 'WithdrawController@ajax_gifticon_table');
+Route::post('ajax_present_table', 'WithdrawController@ajax_present_table');
+Route::post('ajax_point_rank_table', 'UsersController@ajax_point_rank_table');
 
 //statistic manage 
 Route::get('statistic', 'StatisticController@index');
+Route::post('ajax_edwards_table', 'StatisticController@ajax_edwards_table');
+Route::post('ajax_connect_table', 'StatisticController@ajax_connect_table');
 
 //admin notice manage
 Route::get('admin_notice', 'AdminNoticeController@index');

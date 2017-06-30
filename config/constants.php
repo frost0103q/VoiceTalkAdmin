@@ -120,4 +120,18 @@ return [
 		'WRONG_WORD'=>'15',
 		'SEX_BANTER'=>'16',
 		'THREAT'=>'17',
+
+		//Withdraw
+		'CASH_FINISH'=>'1',
+		'CASH_STOP'=>'2',
+
+		'WITHDRAW_WAIT'=>'0',
+		'WITHDRAW_FINISH'=>'1',
+		'WITHDRAW_ERROR'=>'2',
+
+		'IS_VERIFIED'=>'1',
+		'NOT_VERIFIED'=>'0',
+
+		'GIFTICON_NOMAL'=>'1',
+		'GIFTICON_CANCEL'=>'0',
 ];
