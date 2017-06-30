@@ -301,6 +301,12 @@ return [
     'is_verified'=>'인증',
     'not_verified'=>'미인증',
     'nomal'=>'정상',
+    'send_user'=>'보낸회원',
+    'send_point'=>'보낸 Point',
+    'send_date'=>'보낸 날짜',
+    'received_user'=>'받은회원',
+    'received_point'=>'받은 Point',
+    'received_date'=>'받은 날짜',
 
     //admin notice manage
     'opinion_share'=>'의견공유',
