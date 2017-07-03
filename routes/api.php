@@ -38,7 +38,8 @@ Route::post('/logForVoiceChat', 'UsersController@logForVoiceChat');
 Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
 Route::post('/buyInAppItem', 'UsersController@buyPoint');
 Route::post('/requestExit', 'UsersController@requestExitUser');
-
+Route::post('/registerDevice', 'UsersController@registerDevice');
+Route::post('/requestPresent', 'UsersController@requestPresent');
 
 // user relation api
 Route::post('/addFriend', 'UserRelationController@addFriend');
@@ -64,7 +65,9 @@ Route::post('/notification', 'NotificationsController@doNotification');
 Route::get('/notificationList', 'NotificationsController@notificationList');
 Route::post('/sendEnvelop', 'NotificationsController@sendEnvelop');
 Route::post('/sendGroupEnvelop', 'NotificationsController@sendGroupEnvelop');
-Route::post('/setAllEnvelopFlag', 'NotificationsController@setAllEnvelopFlag');
+Route::post('/readEnvelop', 'NotificationsController@readEnvelop');
+Route::post('/deleteEnvelop', 'NotificationsController@deleteEnvelop');
+Route::get('/getChatModelList', 'NotificationsController@getChatModelList');
 
 // withdraw api
 Route::post('/withdraw', 'WithdrawController@doWithdraw');

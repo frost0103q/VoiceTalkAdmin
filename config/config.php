@@ -29,5 +29,6 @@ return [
         'chatServerIp' => '175.126.38.49',
         'chatServerPort' => '5222',
         'chatAppPrefix' => 'voicetalk',
-        'testmode' => 1,        // 0:local, 1: global
+        'testmode' => 1,                // 0:local, 1: global
+        'pushmode' => 0,               // 0:FCM,   1:XMPP
 ];

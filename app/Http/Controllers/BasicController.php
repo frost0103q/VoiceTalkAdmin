@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppUser;
+use App\Models\Device;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\UserRelation;
@@ -16,11 +17,15 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Routing\Controller as Controller;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
 use Redirect;
 use Request;
 use Session;
 use Socialite;
 use URL;
+use App\Services\FCMHandler;
 
 class BasicController extends Controller
 {
@@ -56,7 +61,24 @@ class BasicController extends Controller
             }
         }
 
-        $this->sendXmppMessage($to_user_no, json_encode($message));
+        $testmode = Config::get('config.pushmode');
+
+        if($testmode == 0) {
+            $title = config('app.name');
+            if(array_key_exists('title', $message)) {
+                $title = $message['title'];
+            }
+
+            $notification_message =  config('app.name');
+            if(array_key_exists('content', $message)) {
+                $notification_message = $message['content'];
+            }
+
+            $this->sendFCMMessage($to_user, $title, $notification_message, $message);
+        }
+        else {
+            $this->sendXmppMessage($to_user_no, json_encode($message));
+        }
 
         $remove_point = true;
         if($type == config('constants.CHATMESSAGE_TYPE_SEND_PRESENT')) {
@@ -145,6 +167,26 @@ class BasicController extends Controller
         return response()->json($response);
     }
 
+    private function sendFCMMessage($user, $title, $str_message, $body) {
+        $optionBuilder = new OptionsBuilder();
+        $optionBuilder->setTimeToLive(60*20);
+
+        $to = $user->devices()->pluck('push_service_token')->toArray();
+
+        if (! empty($to)) {
+            $fcm = new FCMHandler();
+
+            // FCMHandler 덕분에 코드는 이렇게 한 줄로 간결해졌다.
+            // notification($title, $str_message) body에 포함되여 있음.
+            $response = $fcm->to($to)->data($body)->send();
+            if($response->numberFailure() > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function addNotification($type, $from_user, $to_user, $title, $content, $need_point = true) {
         if($from_user == null || $to_user == null || $content == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -162,21 +204,16 @@ class BasicController extends Controller
             return config('constants.ERROR_NO_INFORMATION');
         }
 
+        $notification = new Notification();
+        $notification->type = $type;
+        $notification->title = $title;
+        $notification->content = $content;
+        $notification->from_user_no = $from_user;
+        $notification->to_user_no = $to_user;
 
-        $results = Notification::where('type', $type)->where('title', $title)->where('content', $content)
-            ->where('from_user_no', $from_user)->where('to_user_no', $to_user)->get();
-
-        if ($results == null || count($results) == 0) {
-            $notification = new Notification();
-            $notification->type = $type;
-            $notification->title = $title;
-            $notification->content = $content;
-            $notification->from_user_no = $from_user;
-            $notification->to_user_no = $to_user;
-        }
-        else {
-            $notification = $results[0];
-            $notification->unread_count = $notification->unread_count + 1;
+        if($type == config('constants.CHATMESSAGE_TYPE_NORMAL')) {
+            $notification->content = json_decode($content)['content'];
+            $notification->data = $content;
         }
 
         $notification->save();

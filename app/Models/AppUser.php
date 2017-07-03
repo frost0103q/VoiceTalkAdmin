@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Device;
 
 class AppUser extends Model
 {
@@ -43,5 +44,13 @@ class AppUser extends Model
         $point_history->save();
 
         return true;
+    }
+
+    public function devices()
+    {
+        // return $this->hasMany('App\Models\Device');
+
+        $devices = Device::where('user_no', $this->no)->get();
+        return $devices;
     }
 }

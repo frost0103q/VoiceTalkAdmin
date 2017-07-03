@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AppUser;
 use App\Models\AuthCode;
-use App\Models\CashDeclare;
-use App\Models\CashQuestion;
 use App\Models\ConsultingReview;
+use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
 use App\Models\Notification;
 use App\Models\ServerFile;
@@ -19,13 +18,13 @@ use App\Providers\AuthServiceProvider;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
+use Nexmo;
 use Redirect;
 use Request;
 use Session;
 use SMS;
 use Socialite;
 use URL;
-use Nexmo;
 
 class UsersController extends BasicController
 {
@@ -185,8 +184,8 @@ class UsersController extends BasicController
 
 
     public function getInitInformation(HttpRequest $request) {
-        $type = $request->input('device_type');
-        $serial = $request->input('device_serial');
+        $type = $request->input('os_enum');
+        $serial = $request->input('device_id');
 
         if($type == null || $serial == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -194,13 +193,18 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('device_type', $type)->where('device_serial', $serial)->first();
+        $results = Device::where('os_enum', $type)->where('device_id', $serial)->first();
 
         if ($results == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
+        $results = User::where('no', $results->user_no)->first();
+        if ($results == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
         $user = $results;
 
         // If it is a exit requested user,
@@ -221,8 +225,9 @@ class UsersController extends BasicController
 
         $this->addImageData($user, $user->img_no);
         $result = array_merge ( $user->toArray(), $response);
-        $response = Notification::select('unread_count')->where('unread_count', '>', 0)->where('to_user_no', $user->no)->sum('unread_count');;
-        $result['unread_notification_cnt'] = $response;
+
+        $notification_controller = new NotificationsController();
+        $result['unread_notification_cnt'] = $notification_controller->getUserUnreadCnt($user->no);
 
         return response()->json($result);
     }
@@ -411,9 +416,6 @@ class UsersController extends BasicController
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
         $user_photo = $request->file('user_photo');
-        $device_type = $request->input('device_type');
-        $device_serial = $request->input('device_serial');
-        $device_token = $request->input('device_token');
         $status = $request->input('status');
 
 		if($oper == 'add') {	
@@ -451,9 +453,6 @@ class UsersController extends BasicController
 			$user->location_no = $location;
             $user->img_no = $user_photo_no;
             $user->subject = $subject;
-            $user->device_type = $device_type;
-            $user->device_serial = $device_serial;
-            $user->device_token = $device_token;
 
             if($latitude != null) {
                 $user->latitude = $latitude;
@@ -508,15 +507,6 @@ class UsersController extends BasicController
 
             if($subject != null) {
                 $update_data['subject'] = $subject;
-            }
-            if($device_type != null) {
-                $update_data['device_type'] = $device_type;
-            }
-            if($device_serial != null) {
-                $update_data['device_serial'] = $device_serial;
-            }
-            if($device_token != null) {
-                $update_data['device_token'] = $device_token;
             }
 
             if($status != null) {
@@ -610,6 +600,52 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
+    public function requestPresent(HttpRequest $request) {
+        $no = $request->input('no');
+        $friend_no = $request->input('to_user_no');
+        $point = $request->input('point');
+
+        if($no == null || $friend_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = AppUser::where('no', $no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $from_user =  $results[0];
+
+        $results = AppUser::where('no', $friend_no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $to_user =  $results[0];
+
+        $message = [];
+        $message['type'] = config('constants.CHATMESSAGE_TYPE_REQUEST_PRESENT');
+        $message['user_no'] = $no;
+        $message['user_name'] = $from_user->nickname;
+
+        $file = ServerFile::where('no', $from_user->img_no)->first();
+        if($file != null) {
+            $message['user_img_url'] = $file->path;
+        }
+        else {
+            $message['user_img_url'] = "";
+        }
+        $message['time'] = "";
+        $message['content'] = $to_user->nickname."님으로부터 ".$point."P 조르기가 들어왔습니다.";
+        $message['title'] = "선물 조르기";
+        $message['talk_no'] = "";
+        $message['talk_user_no'] = "";
+
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+
+        $response = config('constants.ERROR_NO');
+        return response()->json($response);
+    }
+
     public function declareUser(HttpRequest $request) {
         $from_user = $request->input('from_user_no');
         $to_user = $request->input('to_user_no');
@@ -646,12 +682,12 @@ class UsersController extends BasicController
     }
 
     public function updateLocation(HttpRequest $request) {
-        $device_serial = $request->input('device_serial');
+        $user_no = $request->input('user_no');
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('device_serial', $device_serial)->get();
+        $results = AppUser::where('no', $user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -969,6 +1005,48 @@ class UsersController extends BasicController
         $user->request_exit_flag = 1;
         $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
         $user->save();
+
+        return response()->json($response);
+    }
+
+    public function registerDevice(HttpRequest $request) {
+        $user_no  = $request->input('user_no');
+        $device_id  = $request->input('device_id');
+        $os_enum  = $request->input('os_enum');
+        $model  = $request->input('model');
+        $operator  = $request->input('operator');
+        $api_level  = $request->input('api_level');
+        $push_service_enum  = $request->input('push_service_enum');
+        $push_service_token  = $request->input('push_service_token');
+
+        if($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $device = Device::where('os_enum', $os_enum)->where('device_id', $device_id)->first();
+
+        if($device == null) {
+            $device = new Device();
+        }
+
+        $device->user_no = $user_no;
+        $device->device_id = $device_id;
+        $device->os_enum = $os_enum;
+        $device->model = $model;
+        $device->operator = $operator;
+        $device->api_level = $api_level;
+        $device->push_service_enum = $push_service_enum;
+        $device->push_service_token = $push_service_token;
+        $device->save();
 
         return response()->json($response);
     }

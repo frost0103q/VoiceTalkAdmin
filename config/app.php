@@ -182,7 +182,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         SimpleSoftwareIO\SMS\SMSServiceProvider::class,
-        Nexmo\Laravel\NexmoServiceProvider::class
+        Nexmo\Laravel\NexmoServiceProvider::class,
+        LaravelFCM\FCMServiceProvider::class,
     ],
 
     /*
