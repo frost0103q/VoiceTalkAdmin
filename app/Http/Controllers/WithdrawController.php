@@ -192,9 +192,9 @@ class WithdrawController extends BasicController
         $cash_code = $_POST['cash_code'];
 
         if ($start_dt != "")
-            $custom_where .= " and cash_date>='" . $start_dt . "'";
+            $custom_where .= " and created_at>='" . $start_dt . "'";
         if ($end_dt != "")
-            $custom_where .= " and cash_date<='" . $this->getChangeDate($end_dt, 1) . "'";
+            $custom_where .= " and created_at<='" . $this->getChangeDate($end_dt, 1) . "'";
         if ($user_no != "")
             $custom_where .= " and user_no like '%" . $user_no . "%'";
         if ($nickname != "")
@@ -234,7 +234,7 @@ class WithdrawController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'cash_date', 'dt' => 4),
+            array('db' => 'created_at', 'dt' => 4),
             array('db' => 'status', 'dt' => 5,
                 'formatter' => function ($d, $row) {
                     if ($d == config('constants.CASH_FINISH'))
