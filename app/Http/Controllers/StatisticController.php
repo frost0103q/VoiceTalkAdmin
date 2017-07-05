@@ -326,9 +326,9 @@ class StatisticController extends BasicController
     public function get_cash_cnt_date($date,$custom_where,$all_flag=false){
 
         if($all_flag)
-            $result = DB::select("SELECT COUNT(*) as cnt from t_cash_history WHERE  " . $custom_where);
+            $result = DB::select("SELECT COUNT(*) as cnt from t_inapp_purchase_history WHERE  " . $custom_where);
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_cash_history WHERE created_at like '%".$date."%' and " . $custom_where);
+            $result = DB::select("SELECT COUNT(*) as cnt from t_inapp_purchase_history WHERE created_at like '%".$date."%' and " . $custom_where);
 
         if ($result != null)
             return $result[0]->cnt;
