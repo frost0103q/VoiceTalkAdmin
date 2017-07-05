@@ -9,14 +9,12 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Controllers\BasicController;
-use App\Models\UserRelation;
 use App\Models\AppUser;
 use App\Models\ServerFile;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\UserRelation;
 use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 
 class UserRelationController  extends BasicController{
     /**
@@ -61,6 +59,12 @@ class UserRelationController  extends BasicController{
 
         $to_user = $results[0];
 
+        $relation = UserRelation::where('user_no', $friend_no)->where('relation_user_no', $no)->first();
+        if($relation != null && $relation->is_block_friend == 1) {
+            $response = config('constants.ERROR_BLOCKED_USER');
+            return response()->json($response);
+        }
+
         $results = UserRelation::where('user_no', $no)->where('relation_user_no', $friend_no)->first();
         if($results != null && $results->is_friend == 1) {
             $response = config('constants.ERROR_ALREADY_ADDED');
@@ -80,29 +84,25 @@ class UserRelationController  extends BasicController{
         $friend->save();
         $response['no'] = $friend->no;
 
-        if($to_user->enable_alarm_add_friend == 1) {
+        $message = [];
+        $message['type'] = config('constants.CHATMESSAGE_TYPE_ADD_FRIEND');
+        $message['user_no'] = $from_user->no;
+        $message['user_name'] = $from_user->nickname;
 
-            $message = [];
-            $message['type'] = config('constants.CHATMESSAGE_TYPE_ADD_FRIEND');
-            $message['user_no'] = $from_user->no;
-            $message['user_name'] = $from_user->nickname;
-
-            $file = ServerFile::where('no', $from_user->img_no)->first();
-            if($file != null) {
-                $message['user_img_url'] = $file->path;
-            }
-            else {
-                $message['user_img_url'] = "";
-            }
-            $message['time'] = "";
-            $message['content'] = $from_user->nickname."님이 당신을 친구추가했습니다.";
-            $message['title'] = "친구추가";
-            $message['talk_no'] = "";
-            $message['talk_user_no'] = "";
-
-            $this->sendAlarmMessage($to_user->no, json_encode($message));
-            $this->addNotification($message['type'],  $from_user->no, $to_user->no, $message['title'] ,$message['content']);
+        $file = ServerFile::where('no', $from_user->img_no)->first();
+        if($file != null) {
+            $message['user_img_url'] = $file->path;
         }
+        else {
+            $message['user_img_url'] = "";
+        }
+        $message['time'] = "";
+        $message['content'] = $from_user->nickname."님이 당신을 친구추가했습니다.";
+        $message['title'] = "친구추가";
+        $message['talk_no'] = "";
+        $message['talk_user_no'] = "";
+
+        $this->sendAlarmMessage($from_user->no, $to_user->no, $message);
 
         return response()->json($response);
     }
@@ -142,6 +142,7 @@ class UserRelationController  extends BasicController{
 
         $friend->user_no = $user_no;
         $friend->relation_user_no = $relation_user_no;
+        $friend->is_friend = 0;
 
         if($flag == config('constants.USER_RELATION_FLAG_BLOCK_FRIEND')) {
             $friend->is_block_friend = 1;
@@ -159,7 +160,6 @@ class UserRelationController  extends BasicController{
             $friend->is_alarm = 0;
         }
 
-        $friend->is_friend = 1;
         $friend->save();
         $response['no'] = $friend->no;
 

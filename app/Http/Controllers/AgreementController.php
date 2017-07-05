@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\ServerFile;
 use DB;
 use Request;
 use Session;
-use App\Models\ServerFile;
-
 
 
 class AgreementController extends BasicController

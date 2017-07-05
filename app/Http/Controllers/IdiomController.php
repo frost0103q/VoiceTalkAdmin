@@ -2,12 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
-use App\Models\InterdictIdiom;
-
 use Config;
 use DB;
 use Session;

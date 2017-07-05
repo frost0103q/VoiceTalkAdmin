@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PointHistory;
+use App\Models\Device;
 
 class AppUser extends Model
 {
@@ -16,7 +16,7 @@ class AppUser extends Model
         $real_point = $pointRule[$type];
 
         if($type ==  config('constants.POINT_HISTORY_TYPE_CHAT')) {
-            $real_point = $min_point * $real_point;
+            $real_point = $min_point;
         }
         else if($type ==  config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE') || $type ==  config('constants.POINT_HISTORY_TYPE_SIGN_UP')
             || $type ==  config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')) {
@@ -24,6 +24,12 @@ class AppUser extends Model
         }
         else {
             $real_point = $min_point;
+        }
+
+        $temp_point = $this->point + $real_point;
+
+        if($temp_point < 0) {
+            return false;
         }
 
         $this->point += $real_point;
@@ -36,5 +42,15 @@ class AppUser extends Model
         $point_history->user_no = $this->no;
 
         $point_history->save();
+
+        return true;
+    }
+
+    public function devices()
+    {
+        // return $this->hasMany('App\Models\Device');
+
+        $devices = Device::where('user_no', $this->no)->get();
+        return $devices;
     }
 }

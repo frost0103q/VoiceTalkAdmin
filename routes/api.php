@@ -35,6 +35,11 @@ Route::post('/setAlarmFlag', 'UsersController@setAlarmFlag');
 Route::post('/sendAlarm', 'UsersController@sendAlarm');
 Route::post('/checkRoll', 'UsersController@checkRoll');
 Route::post('/logForVoiceChat', 'UsersController@logForVoiceChat');
+Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
+Route::post('/buyInAppItem', 'UsersController@buyPoint');
+Route::post('/requestExit', 'UsersController@requestExitUser');
+Route::post('/registerDevice', 'UsersController@registerDevice');
+Route::post('/requestPresent', 'UsersController@requestPresent');
 
 // user relation api
 Route::post('/addFriend', 'UserRelationController@addFriend');
@@ -52,7 +57,6 @@ Route::post('/autoRemoveAuth', 'UsersController@autoRemoveAuth');
 Route::post('/talk', 'TalkController@doTalk');
 Route::get('/talk', 'TalkController@talk');
 Route::get('/talkList', 'TalkController@talkList');
-Route::post('/writeTalkReview', 'TalkController@writeReview');
 Route::get('/checkDuplicateTalk', 'TalkController@duplicateTalk');
 
 
@@ -61,15 +65,18 @@ Route::post('/notification', 'NotificationsController@doNotification');
 Route::get('/notificationList', 'NotificationsController@notificationList');
 Route::post('/sendEnvelop', 'NotificationsController@sendEnvelop');
 Route::post('/sendGroupEnvelop', 'NotificationsController@sendGroupEnvelop');
-Route::post('/setAllEnvelopFlag', 'NotificationsController@setAllEnvelopFlag');
+Route::post('/readEnvelop', 'NotificationsController@readEnvelop');
+Route::post('/deleteEnvelop', 'NotificationsController@deleteEnvelop');
+Route::get('/getChatModelList', 'NotificationsController@getChatModelList');
 
 // withdraw api
 Route::post('/withdraw', 'WithdrawController@doWithdraw');
 Route::get('/withdrawList', 'WithdrawController@withdrawList');
 
 // pointhistory api
-Route::post('/pointhistory', 'PointHistoryController@doPointHistory');
-Route::get('/pointhistoryList', 'PointHistoryController@pointHistoryList');
+Route::post('/pointHistory', 'PointHistoryController@doPointHistory');
+Route::get('/pointHistoryList', 'PointHistoryController@pointHistoryList');
 
 // xmpp history
-Route::get('/getXmppHistory', 'BasicController@getXmppHistory');
+Route::post('/chatHistory', 'ChatHistoryController@doChatHistory');
+Route::get('/chatHistoryList', 'ChatHistoryController@chatHistoryList');

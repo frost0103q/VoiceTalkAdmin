@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Seoul', //'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -182,6 +182,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         SimpleSoftwareIO\SMS\SMSServiceProvider::class,
+//        Nexmo\Laravel\NexmoServiceProvider::class,
+//        LaravelFCM\FCMServiceProvider::class,
     ],
 
     /*
@@ -232,7 +234,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
     	'Html' => Collective\Html\HtmlFacade::class,
     	'Form' => Collective\Html\FormFacade::class,
-        'SMS' => SimpleSoftwareIO\SMS\Facades\SMS::class
+        'SMS' => SimpleSoftwareIO\SMS\Facades\SMS::class,
+        'Nexmo' => \Nexmo\Laravel\Facade\Nexmo::class
     ],
 
 ];

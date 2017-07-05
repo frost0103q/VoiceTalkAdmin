@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
 class HomeController extends BasicController
 {
 	/*

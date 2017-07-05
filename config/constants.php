@@ -9,12 +9,14 @@ return [
         'ERROR_ALREADY_ADDED' => ["error" => 6,'message' => 'Already Added'],
         'ERROR_NOT_ENOUGH_POINT' => ["error" => 7,'message' => 'Not Enough Point'],
         'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
+        'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
+        'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
 
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
         'TALK_VOICE_TYPE' => ["일반 목소리", "귀여운 목소리", "중후한 목소리","통통목소리","애교목소리"],
 
-        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0],
+        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0],
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,
@@ -22,6 +24,17 @@ return [
         'POINT_HISTORY_TYPE_CHAT'=> 4,
         'POINT_HISTORY_TYPE_SIGN_UP'=> 5,
         'POINT_HISTORY_TYPE_NORMAL'=> 6,
+        'POINT_HISTORY_TYPE_INAPP'=> 7,
+
+        'INAPP_ITEMS' => [
+                            ["name" => 'point_1','price' => 700, 'value' => 700],
+                            ["name" => 'point_2','price' => 2100, 'value' => 2100],
+                            ["name" => 'point_3','price' => 3500, 'value' => 3500],
+                            ["name" => 'point_4','price' => 7000, 'value' => 7000],
+                            ["name" => 'point_5','price' => 21000, 'value' => 21000],
+                            ["name" => 'point_6','price' => 35000, 'value' => 35000],
+                            ["name" => 'point_7','price' => 70000, 'value' => 70000],
+                        ],
 
         'NOTI_TITLE_SEND_ENVELOPE'=> "쪽지전송",
         'NOTI_TYPE_SEND_ENVELOPE'=>0,

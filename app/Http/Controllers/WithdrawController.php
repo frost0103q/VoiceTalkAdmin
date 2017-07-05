@@ -8,24 +8,18 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\BasicController;
-use App\Models\Notification;
-use App\Models\Withdraw;
-use App\Models\AppUser;
-use App\Models\ServerFile;
+use App\Models\CashHistory;
 use App\Models\SSP;
 use App\Models\User;
-use App\Models\CashHistory;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\Withdraw;
+use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 use Redirect;
 use Request;
-use URL;
 use Session;
 use Socialite;
-use Config;
+use URL;
 
 
 class WithdrawController extends BasicController
@@ -514,33 +508,32 @@ class WithdrawController extends BasicController
             array('db' => 'from_user_no', 'dt' => 1,
                 'formatter' => function ($d, $row) {
                     $user_model = User::where('no', $d)->first();
-                    if ($user_model != null){
-                        $img_model= DB::table('t_file')->where('no', $user_model->img_no)->first();
-                        if($img_model!=null)
-                            $img_path=$img_model->path;
+                    if ($user_model != null) {
+                        $img_model = DB::table('t_file')->where('no', $user_model->img_no)->first();
+                        if ($img_model != null)
+                            $img_path = $img_model->path;
                         else
-                            $img_path='';
+                            $img_path = '';
 
-                        if($user_model->sex==config('constants.MALE'))
-                            $sex='[M]';
+                        if ($user_model->sex == config('constants.MALE'))
+                            $sex = '[M]';
                         else
-                            $sex='[F]';
+                            $sex = '[F]';
 
                         $html =
                             '<div class="">
                                 <div class="item">
                                     <div class="item-head">
                                         <div class="item-details">
-                                            <img class="img-circle" src="'.$img_path.'" height="40">
-                                            <a class="item-name primary-link">'.$user_model->nickname.' '.$sex.'</a>
-                                            <span class="item-label">&nbsp; '.sprintf("%'.05d", $user_model->no).'</span>
+                                            <img class="img-circle" src="' . $img_path . '" height="40">
+                                            <a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                                            <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	
                                 </div>
                             </div>';
-                        return $html;    
-                    }                        
-                    else
+                        return $html;
+                    } else
                         return '';
                 }
             ),
@@ -553,33 +546,32 @@ class WithdrawController extends BasicController
             array('db' => 'to_user_no', 'dt' => 4,
                 'formatter' => function ($d, $row) {
                     $user_model = User::where('no', $d)->first();
-                    if ($user_model != null){
-                        $img_model= DB::table('t_file')->where('no', $user_model->img_no)->first();
-                        if($img_model!=null)
-                            $img_path=$img_model->path;
+                    if ($user_model != null) {
+                        $img_model = DB::table('t_file')->where('no', $user_model->img_no)->first();
+                        if ($img_model != null)
+                            $img_path = $img_model->path;
                         else
-                            $img_path='';
+                            $img_path = '';
 
-                        if($user_model->sex==config('constants.MALE'))
-                            $sex='[M]';
+                        if ($user_model->sex == config('constants.MALE'))
+                            $sex = '[M]';
                         else
-                            $sex='[F]';
+                            $sex = '[F]';
 
                         $html =
                             '<div class="">
                                 <div class="item">
                                     <div class="item-head">
                                         <div class="item-details">
-                                            <img class="img-circle" src="'.$img_path.'" height="40">
-                                            <a class="item-name primary-link">'.$user_model->nickname.' '.$sex.'</a>
-                                            <span class="item-label">&nbsp; '.sprintf("%'.05d", $user_model->no).'</span>
+                                            <img class="img-circle" src="' . $img_path . '" height="40">
+                                            <a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                                            <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	
                                 </div>
                             </div>';
                         return $html;
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),

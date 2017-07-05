@@ -3,13 +3,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BasicController;
 use App\Models\Admin;
-use Request;
+use Config;
 use DB;
 use Redirect;
-use URL;
+use Request;
 use Session;
 use Socialite;
-use Config;
+use URL;
 
 class AdminSettingController extends BasicController
 {

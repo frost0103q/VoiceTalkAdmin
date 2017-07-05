@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
 use App\Models\AppUser;
 use App\Models\AuthCode;
+use App\Models\ConsultingReview;
+use App\Models\Device;
+use App\Models\InAppPurchaseHistory;
 use App\Models\Notification;
 use App\Models\ServerFile;
-use App\Models\UserDeclare;
 use App\Models\SSP;
 use App\Models\User;
+use App\Models\UserDeclare;
 use App\Models\Warning;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Providers\AppServiceProvider;
 use App\Providers\AuthServiceProvider;
+use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
+use Nexmo;
 use Redirect;
 use Request;
-use URL;
 use Session;
-use Socialite;
-use Config;
 use SMS;
+use Socialite;
+use URL;
 
 class UsersController extends BasicController
 {
@@ -69,18 +72,6 @@ class UsersController extends BasicController
      * Private Functions
      *
     ******************************************************************/
-    private function addImageData($results, $image_no) {
-        $file = ServerFile::where('no', $image_no)->first();
-
-        if($file != null) {
-            $results->img_checked = $file->checked;
-            $results->img_url = $file->path;
-        }
-        else {
-            $results->img_checked = 0;
-            $results->img_url = "";
-        }
-    }
 
     private function getUserInfo($user_no) {
         $response = config('constants.ERROR_NO');
@@ -123,16 +114,35 @@ class UsersController extends BasicController
         }
         $to = $results[0];
 
-        if($type >= config('constants.POINT_HISTORY_TYPE_ROLL_CHECK') && $type <= config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
-            $from->addPoint($type, (-1)*$point);
-            $to->addPoint($type, $point);
+
+        $ret = true;
+        if($type == config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
+            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), (-1)*$point);
+            if($ret == true) {
+                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+            }
+        }
+        else if($type == config('constants.POINT_HISTORY_TYPE_CHAT')) {
+            $ret = $from->addPoint($type, (-1) * $point);
+            if($ret == true) {
+                $ret = $to->addPoint($type, $point);
+            }
         }
         else {
-            $from->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), (-1)*$point);
-            $to->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), $point);
+            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), (-1)*$point);
+            if($ret == true) {
+                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), $point);
+            }
         }
 
+        if($ret == false) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+        }
         return $response;
+    }
+
+    private function deleteUserCompletely($user_no) {
+        AppUser::where('no', $user_no)->delete();
     }
 
     /******************************************************************
@@ -174,8 +184,8 @@ class UsersController extends BasicController
 
 
     public function getInitInformation(HttpRequest $request) {
-        $type = $request->input('device_type');
-        $serial = $request->input('device_serial');
+        $type = $request->input('os_enum');
+        $serial = $request->input('device_id');
 
         if($type == null || $serial == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -183,18 +193,41 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('device_type', $type)->where('device_serial', $serial)->first();
+        $results = Device::where('os_enum', $type)->where('device_id', $serial)->first();
 
         if ($results == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
-        $this->addImageData($results, $results->img_no);
-        $result = array_merge ( $results->toArray(), $response);
+        $results = User::where('no', $results->user_no)->first();
+        if ($results == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $user = $results;
 
-        $response = Notification::select('unread_count')->where('unread_count', '>', 0)->where('to_user_no', $results->no)->sum('unread_count');;
-        $result['unread_notification_cnt'] = $response;
+        // If it is a exit requested user,
+        if($user->request_exit_flag == 1) {
+            $cur_time = AppServiceProvider::getTimeInDefaultFormat();
+            $diff_time = AppServiceProvider::diffTime($cur_time, $user->request_exit_time);
+            if($diff_time > 60*60*24) { // 1 day
+                $this->deleteUserCompletely($user->no);
+
+                $response = config('constants.ERROR_NO_INFORMATION');
+                return response()->json($response);
+            }
+            else {
+                $response = config('constants.ERROR_REQUESTED_EXIT_USER');
+                return response()->json($response);
+            }
+        }
+
+        $this->addImageData($user, $user->img_no);
+        $result = array_merge ( $user->toArray(), $response);
+
+        $notification_controller = new NotificationsController();
+        $result['unread_notification_cnt'] = $notification_controller->getUserUnreadCnt($user->no);
 
         return response()->json($result);
     }
@@ -220,6 +253,39 @@ class UsersController extends BasicController
         }
 
         return response()->json($response);
+    }
+
+    function sendSMS($hpReceiver, $hpMesg) {
+        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
+        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
+        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
+        // $hpSender = "02-2009-3773";
+        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
+        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
+        //	$hpMesg = "";           		// 메시지
+
+        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
+        $hpMesg = iconv("UTF-8", "EUC-KR","$hpMesg");
+        /*  ---------------------------------------- */
+        $hpMesg = urlencode($hpMesg);
+        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
+
+        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
+
+        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
+        if(!$fp) echo "$errno : $errstr";
+
+        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
+        $flag = 0;
+        $out = "";
+        while(!feof($fp)){
+            $row = fgets($fp, 1024);
+
+            if($flag) $out .= $row;
+            if($row=="\r\n") $flag = 1;
+        }
+        fclose($fp);
+        return $out;
     }
 
     public function requestAuthNumber(HttpRequest $request) {
@@ -249,15 +315,32 @@ class UsersController extends BasicController
         // send Auth Number
         $cert_code = AuthServiceProvider::generateRandomString(6);
         $sms_message = "VoiceTalk인증코드는 ".$cert_code." 입니다.";
-        SMS::send($sms_message, null, function($sms) use ($phone_number) {
+        $phone_number = str_replace("-","", $phone_number);
+
+        if(true) {
             $debug = config('app.debug');
-            if ($debug == true) {
-                $sms->to('+8615699581631');
+            $testmode = Config::get('config.testmode');
+            if ($testmode == 0) {
+                SMS::send($sms_message, null, function ($sms) use ($phone_number) {
+                    $phone_number = '+86' . $phone_number;
+                    $sms->from('+8615699581631');
+                    $sms->to($phone_number);
+                }
+                );
             }
             else {
-                $sms->to($phone_number);
+                $this->sendSMS($phone_number, $sms_message);
+                $phone_number = '+82' . $phone_number;
             }
-        });
+        }
+        else {
+            $phone_number = '+82' . $phone_number;
+            Nexmo::message()->send([
+                'to' => $phone_number,
+                'from' => '01028684884',
+                'text' => 'Using the facade to send a message.'
+            ]);
+        }
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;
@@ -268,6 +351,7 @@ class UsersController extends BasicController
         $authcode->save();
         $response['no'] = $authcode->no;
         $response['auth_code'] = $cert_code;
+        $response['phone_number'] = $phone_number;
 
         return response()->json($response);
     }
@@ -332,9 +416,6 @@ class UsersController extends BasicController
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
         $user_photo = $request->file('user_photo');
-        $device_type = $request->input('device_type');
-        $device_serial = $request->input('device_serial');
-        $device_token = $request->input('device_token');
         $status = $request->input('status');
 
 		if($oper == 'add') {	
@@ -372,9 +453,6 @@ class UsersController extends BasicController
 			$user->location_no = $location;
             $user->img_no = $user_photo_no;
             $user->subject = $subject;
-            $user->device_type = $device_type;
-            $user->device_serial = $device_serial;
-            $user->device_token = $device_token;
 
             if($latitude != null) {
                 $user->latitude = $latitude;
@@ -429,15 +507,6 @@ class UsersController extends BasicController
 
             if($subject != null) {
                 $update_data['subject'] = $subject;
-            }
-            if($device_type != null) {
-                $update_data['device_type'] = $device_type;
-            }
-            if($device_serial != null) {
-                $update_data['device_serial'] = $device_serial;
-            }
-            if($device_token != null) {
-                $update_data['device_token'] = $device_token;
             }
 
             if($status != null) {
@@ -527,9 +596,53 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($friend_no, json_encode($message));
-        $this->addNotification($message['type'],  $from_user->no, $friend_no, $message['title'] ,$message['content'], false);
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+        return response()->json($response);
+    }
 
+    public function requestPresent(HttpRequest $request) {
+        $no = $request->input('no');
+        $friend_no = $request->input('to_user_no');
+        $point = $request->input('point');
+
+        if($no == null || $friend_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = AppUser::where('no', $no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $from_user =  $results[0];
+
+        $results = AppUser::where('no', $friend_no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $to_user =  $results[0];
+
+        $message = [];
+        $message['type'] = config('constants.CHATMESSAGE_TYPE_REQUEST_PRESENT');
+        $message['user_no'] = $no;
+        $message['user_name'] = $from_user->nickname;
+
+        $file = ServerFile::where('no', $from_user->img_no)->first();
+        if($file != null) {
+            $message['user_img_url'] = $file->path;
+        }
+        else {
+            $message['user_img_url'] = "";
+        }
+        $message['time'] = "";
+        $message['content'] = $to_user->nickname."님으로부터 ".$point."P 조르기가 들어왔습니다.";
+        $message['title'] = "선물 조르기";
+        $message['talk_no'] = "";
+        $message['talk_user_no'] = "";
+
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+
+        $response = config('constants.ERROR_NO');
         return response()->json($response);
     }
 
@@ -569,12 +682,12 @@ class UsersController extends BasicController
     }
 
     public function updateLocation(HttpRequest $request) {
-        $device_serial = $request->input('device_serial');
+        $user_no = $request->input('user_no');
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('device_serial', $device_serial)->get();
+        $results = AppUser::where('no', $user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -607,14 +720,22 @@ class UsersController extends BasicController
 
         $user = $results[0];
 
-        if($flag == 0) {  // all
+        if($flag == 0) {  // alarm
             $user->enable_alarm_call_request = $value;
-        }
-        else if($flag == 1) { // add enable
-            $user->enable_alarm_call_request = $value;
-        }
-        else if($flag == 2) {
             $user->enable_alarm_add_friend = $value;
+        }
+        else if($flag == 1) { // call_request
+            $user->enable_alarm_call_request = $value;
+        }
+        else if($flag == 2) { // add_friend
+            $user->enable_alarm_add_friend = $value;
+        }
+
+        if($user->enable_alarm_call_request == 1 || $user->enable_alarm_add_friend  == 1) {
+            $user->enable_alarm = 1;
+        }
+        else {
+            $user->enable_alarm = 0;
         }
 
         $user->save();
@@ -626,9 +747,9 @@ class UsersController extends BasicController
         $type = $request->input('type');
         $from_user_no = $request->input('from_user_no');
         $to_user_no = $request->input('to_user_no');
-        $message = $request->input('message');
+        $content = $request->input('message');
 
-        if($from_user_no == null || $to_user_no == null || $message == null || $type == null) {
+        if($from_user_no == null || $to_user_no == null || $content == null || $type == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -647,12 +768,8 @@ class UsersController extends BasicController
         }
 
         $to_user = $results[0];
-        if($type == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == 1) {
-            $this->sendAlarmMessage($to_user_no, $message);
-            $message = json_decode($message, true);
-            $this->addNotification($type, $from_user_no, $to_user_no, $message['title'] ,$message['content']);
-        }
-
+        $message = json_decode($content, true);
+        $this->sendAlarmMessage($from_user_no, $to_user->no, $message);
         return response()->json($response);
     }
 
@@ -722,6 +839,214 @@ class UsersController extends BasicController
         $to_user = $results[0];
         $point = $time_in_second/60 * 200;
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
+        $response['no'] = round($point);
+        return response()->json($response);
+    }
+
+    public function writeReviewConsulting(HttpRequest $request) {
+        $from_user_no  = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+        $mark = $request->input('mark');
+
+        if($from_user_no == null || $to_user_no == null || $mark == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        if($from_user_no == $to_user_no) {
+            $response = config('constants.ERROR_NOT_ENABLE_SELF_REVIEW');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $from_user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $from_user = $results[0];
+
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $to_user = $results[0];
+
+        $consulting_review = new ConsultingReview;
+
+        $consulting_review->from_user_no = $from_user_no;
+        $consulting_review->to_user_no = $to_user_no;
+        $consulting_review->mark = $mark;
+
+        $consulting_review->save();
+
+        return response()->json($response);
+    }
+
+    public function buyPoint(HttpRequest $request) {
+        $from_user_no  = $request->input('user_no');
+        $purchase_data = AppServiceProvider::url_decord($request->input('purchase_data'));
+        $data_signature = AppServiceProvider::url_decord($request->input('data_signature'));
+
+        if($from_user_no == null || $purchase_data == null || $data_signature == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $from_user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $from_user = $results[0];
+
+
+        //
+        // 구매내역 검증.
+        //
+        // Decrypt($p_data_signature, 공개키) == SHA1($p_purchase_data)
+        //
+        $google_key = Config::get('config.google')['google_iab_public_key'];
+        $w_base64EncodedPublicKeyFromGoogle = $google_key;
+        $w_openSslFriendlyKey = "-----BEGIN PUBLIC KEY-----\n".chunk_split($w_base64EncodedPublicKeyFromGoogle, 64, "\n")."-----END PUBLIC KEY-----";
+        $w_publicKeyId = openssl_get_publickey($w_openSslFriendlyKey);
+        $w_verifyResult = openssl_verify($purchase_data, base64_decode($data_signature), $w_publicKeyId);
+
+        if ($w_verifyResult != 1) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        //
+        // 거래 유일성 체크.
+        //
+        $w_jsonPurchaseData = json_decode($purchase_data, true);
+        $w_order_id = $w_jsonPurchaseData['orderId'];
+        $results = InAppPurchaseHistory::where('order_id', $w_order_id)->get();
+        if ($results != null && count($results) > 0) {
+            $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+            return response()->json($response);
+        }
+
+
+        //
+        // 포인트 증가.
+        //
+        $w_purchase_item = $w_jsonPurchaseData['productId'];
+        $w_purchase_point = 0;
+        $w_purchase_price = 0;
+        //
+        // [2014/12/17 17:46]새 아이템 적용.
+        //
+        $arr_items = config('constants.INAPP_ITEMS');
+        $w_purchase_point = 0;
+        $w_purchase_price = 0;
+        for($i = 0; $i  < count($arr_items); $i++) {
+            $item = $arr_items[$i];
+            if($item['name'] == $w_purchase_item) {
+                $w_purchase_point = $item['value'];
+                $w_purchase_price = $item['price'];
+            }
+        }
+
+        $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_INAPP'), $w_purchase_point);
+
+        //
+        // 아이피주소 체크.
+        //
+        $ip = "unknown";
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+
+        //
+        // 구매내역 보관.
+        //
+        $inapp_history = new InAppPurchaseHistory();
+        $inapp_history->user_no = $from_user->no;
+        $inapp_history->order_id = $w_order_id;
+        $inapp_history->purchase_data = $purchase_data;
+        $inapp_history->data_signature = $data_signature;
+        $inapp_history->ip = $ip;
+        $inapp_history->price = $w_purchase_price;
+        $inapp_history->save();
+
+        $response['current_point'] = $from_user->point;
+        $response['purchased_point'] = $w_purchase_point;
+        return response()->json($response);
+    }
+
+    public function requestExitUser(HttpRequest $request) {
+        $user_no  = $request->input('user_no');
+
+        if($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $user = $results[0];
+        $user->request_exit_flag = 1;
+        $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
+        $user->save();
+
+        return response()->json($response);
+    }
+
+    public function registerDevice(HttpRequest $request) {
+        $user_no  = $request->input('user_no');
+        $device_id  = $request->input('device_id');
+        $os_enum  = $request->input('os_enum');
+        $model  = $request->input('model');
+        $operator  = $request->input('operator');
+        $api_level  = $request->input('api_level');
+        $push_service_enum  = $request->input('push_service_enum');
+        $push_service_token  = $request->input('push_service_token');
+
+        if($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $device = Device::where('os_enum', $os_enum)->where('device_id', $device_id)->first();
+
+        if($device == null) {
+            $device = new Device();
+        }
+
+        $device->user_no = $user_no;
+        $device->device_id = $device_id;
+        $device->os_enum = $os_enum;
+        $device->model = $model;
+        $device->operator = $operator;
+        $device->api_level = $api_level;
+        $device->push_service_enum = $push_service_enum;
+        $device->push_service_token = $push_service_token;
+        $device->save();
 
         return response()->json($response);
     }

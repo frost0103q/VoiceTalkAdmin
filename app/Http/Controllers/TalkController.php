@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
 use App\Models\AppUser;
-use App\Models\Talk;
 use App\Models\ServerFile;
-use App\Models\TalkReview;
 use App\Models\SSP;
+use App\Models\Talk;
+use App\Models\TalkReview;
 use App\Models\User;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
-
 use Config;
-use Session;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
+use Session;
 
 class TalkController extends BasicController
 {
@@ -90,7 +86,7 @@ class TalkController extends BasicController
                 ->get();
         }
         else  {            // Review sort
-            $review = DB::raw('(select SUM(mark) from t_talkreview where t_talkreview.talk_no=t_talk.no)');
+            $review = DB::raw('(select SUM(mark) from t_consultingreview where t_consultingreview.to_user_no=t_talk.user_no)');
 
             $query = DB::table('t_talk')->where('type', $type);
 
@@ -108,6 +104,7 @@ class TalkController extends BasicController
 
         for($i = 0; $i < count($response); $i++) {
             $response[$i] = $this->getDetailTalkInfo($response[$i]);
+            $this->addImageData($response[$i], $response[$i]->img_no);
         }
 
         return response()->json($response);
@@ -233,7 +230,9 @@ class TalkController extends BasicController
             if($age != null) {
                 $update_data['age'] = $age;
             }
-
+            if($greeting != null) {
+                $update_data['greeting'] = $greeting;
+            }
 
             $results = Talk::where('no', $no)->update($update_data);
         }
@@ -276,46 +275,6 @@ class TalkController extends BasicController
         return response()->json($talk);
     }
 
-    public function writeReview(HttpRequest $request) {
-        $no = $request->input('no');
-        $user_no = $request->input('user_no');
-        $mark = $request->input('mark');
-
-        if($no == null || $user_no == null || $mark == null) {
-            $response = config('constants.ERROR_NO_PARMA');
-            return response()->json($response);
-        }
-
-        $response = config('constants.ERROR_NO');
-        $results = Talk::where('no', $no)->get();
-
-        if ($results == null || count($results) == 0) {
-            $response = config('constants.ERROR_NO_INFORMATION');
-            return response()->json($response);
-        }
-        $talk = $results[0];
-
-        if($talk->user_no == $user_no) {
-            $response = config('constants.ERROR_NOT_ENABLE_SELF_REVIEW');
-            return response()->json($response);
-        }
-
-        $results = AppUser::where('no', $user_no)->get();
-        if ($results == null || count($results) == 0) {
-            $response = config('constants.ERROR_NO_INFORMATION');
-            return response()->json($response);
-        }
-
-        $talk_review = new TalkReview;
-
-        $talk_review->talk_no = $no;
-        $talk_review->user_no = $user_no;
-        $talk_review->mark = $mark;
-
-        $talk_review->save();
-
-        return response()->json($response);
-    }
 
     public function duplicateTalk(HttpRequest $request){
         $nickname = $request->input('nickname');
