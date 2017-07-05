@@ -562,7 +562,7 @@ class UsersController extends BasicController
 	}
 
     public function sendPresent(HttpRequest $request) {
-        $no = $request->input('no');
+        $no = $request->input('from_user_no');
         $friend_no = $request->input('to_user_no');
         $point = $request->input('point');
 
@@ -601,7 +601,7 @@ class UsersController extends BasicController
     }
 
     public function requestPresent(HttpRequest $request) {
-        $no = $request->input('no');
+        $no = $request->input('from_user_no');
         $friend_no = $request->input('to_user_no');
         $point = $request->input('point');
 

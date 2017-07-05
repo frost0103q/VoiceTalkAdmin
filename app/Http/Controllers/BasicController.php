@@ -212,7 +212,7 @@ class BasicController extends Controller
         $notification->to_user_no = $to_user;
 
         if($type == config('constants.CHATMESSAGE_TYPE_NORMAL')) {
-            $notification->content = json_decode($content)['content'];
+            $notification->content = json_decode($content)->content;
             $notification->data = $content;
         }
 

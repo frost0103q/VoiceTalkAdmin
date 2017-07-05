@@ -97,13 +97,13 @@ class NotificationsController extends BasicController
         $include_where = false;
         if($search_type == -1) { // search_all
             if($user_no != null) {
-                $sql = $sql . " where notification.to_user_no ='" . $user_no . "' OR notification.from_user_no='" . $user_no . "'";
+                $sql = $sql . " where (notification.to_user_no ='" . $user_no . "' OR notification.from_user_no=" . $user_no . ")";
                 $include_where = true;
             }
         }
         else if($search_type == -2 && $user_no != null) { // search_friend
-            $sql = $sql.' where (notification.from_user_no = '.$user_no.' and notification.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
-            $sql = $sql.'       OR (notification.to_user_no = '.$user_no.' and notification.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+            $sql = $sql.' where ((notification.from_user_no = '.$user_no.' and notification.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+            $sql = $sql.'       OR (notification.to_user_no = '.$user_no.' and notification.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0)))';
             $include_where = true;
         }
 
@@ -212,13 +212,13 @@ class NotificationsController extends BasicController
                         $q->where('type', config('constants.CHATMESSAGE_TYPE_NORMAL'));
                         $q->orWhere('type', config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP'));
                         });
-        $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
+        $response = $response->orderBy('updated_at', 'asc')->offset($limit * ($page - 1))->limit($limit)->get();
 
         $arrModel = array();
         for($i = 0; $i < count($response); $i++) {
             $notification = $response[$i];
-            $chat_message = [];
-            $user = AppUser::where('no', $notification->to_user_no)->first();
+            $user_no = $notification->from_user_no;
+            $user = AppUser::where('no', $user_no)->first();
             if($user != null) {
                 $imagefile = ServerFile::where('no', $user->img_no)->first();
 
@@ -230,19 +230,15 @@ class NotificationsController extends BasicController
                 }
             }
 
-            $chat_message['type'] = $notification->type;
-            $chat_message['user_no'] = $user->no;
-            $chat_message['user_name'] = $user->name;
-            $chat_message['user_img_url'] = $user->img_url;
-            $chat_message['time'] = $notification->updated_at;
-            $chat_message['content'] = $notification->content;
-            $chat_message['title'] = $notification->title;
-            $chat_message['data'] = $notification->data;
+            $notification->user_no = $user->no;
+            $notification->user_name = $user->nickname;
+            $notification->user_img_url = $user->img_url;
+            $notification->time = $notification->updated_at->format('Y-m-d H:i:s');
 
             $chat_history = array();
             $chat_history['from_user_no'] = $notification->from_user_no;
             $chat_history['to_user_no'] = $notification->to_user_no;
-            $chat_history['content'] = json_encode($chat_message);
+            $chat_history['content'] = json_encode($notification);
 
             array_push($arrModel, $chat_history);
         }
@@ -345,8 +341,8 @@ class NotificationsController extends BasicController
         $sex = $request->input('sex');
         $order = $request->input('order');
         $content = $request->input('content');
-        $cur_lat = $request->input('cur_lat');
-        $cur_lng = $request->input('cur_lng');
+        $cur_lat = $request->input('latitude');
+        $cur_lng = $request->input('longitude');
 
         $title = config('constants.NOTI_TITLE_SEND_ENVELOPE');
         $type = config('constants.NOTI_TYPE_SEND_ENVELOPE');
@@ -380,7 +376,7 @@ class NotificationsController extends BasicController
 
         $results = $query->offset(0)->limit($count)->get();
         for($i = 0; $i < count($results); $i++) {
-            $to_user_no = $results[$i];
+            $to_user_no = $results[$i]->no;
             $message = [];
             $message['type'] = config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP');
             $message['user_no'] = $from_user->no;

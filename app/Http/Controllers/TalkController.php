@@ -59,8 +59,8 @@ class TalkController extends BasicController
         $type = $request->input('type');
         $order = $request->input('order');
         $voice_type = $request->input('voice_type');
-        $cur_lat = $request->input('cur_lat'); // 37.457087
-        $cur_lng = $request->input('cur_lng'); // 126.705484
+        $cur_lat = $request->input('latitude'); // 37.457087
+        $cur_lng = $request->input('longitude'); // 126.705484
 
         if($limit == null) {
             $limit = Config::get('config.itemsPerPage.default');
@@ -127,7 +127,7 @@ class TalkController extends BasicController
 
         if($oper == 'add') {
             if($type == config('constants.TALK_CONSULTING') ) {
-                if($greeting == null || $voice_type == null || $greeting == null || $user_no == null) {
+                if($greeting == null || $voice_type == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
                     return response()->json($response);
                 }
@@ -168,16 +168,14 @@ class TalkController extends BasicController
                 $response['no'] = $talk->no;
             }
             else {
-                if($greeting == null || $nick_name == null || $age == null || $user_no == null) {
+                if($greeting == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
                     return response()->json($response);
                 }
 
                 $talk = new Talk;
 
-                $talk->nickname = $nick_name;
                 $talk->greeting = $greeting;
-                $talk->age = $age;
                 $talk->type = $type;
                 $talk->user_no = $user_no;
 
