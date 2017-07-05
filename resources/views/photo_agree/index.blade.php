@@ -207,10 +207,7 @@
                             $("#verify").addClass("hidden");
                         $("#point").html(data.point);
                         $("#phone_number").val(data.phone_number);
-                        if (data.device_type == "{{config('constants.android')}}")
-                            $("#device_type").val("Android");
-                        if (data.device_type == "{{config('constants.ios')}}")
-                            $("#device_type").val("IOS");
+
                         $("#btn_get_data").trigger('click');
                     }
                 }
