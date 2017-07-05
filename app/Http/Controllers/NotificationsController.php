@@ -217,8 +217,10 @@ class NotificationsController extends BasicController
         $arrModel = array();
         for($i = 0; $i < count($response); $i++) {
             $notification = $response[$i];
+
             $user_no = $notification->from_user_no;
             $user = AppUser::where('no', $user_no)->first();
+
             if($user != null) {
                 $imagefile = ServerFile::where('no', $user->img_no)->first();
 

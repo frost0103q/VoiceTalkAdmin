@@ -35,7 +35,7 @@
                 <th>{{trans('lang.ad')}}(+)</th>
                 <th>{{trans('lang.cupon')}}(-)</th>
                 <th>{{trans('lang.benefit')}}</th>
-                <th>{{trans('lang.log_in')}}({{trans('lang.male')}}+{{trans('lang.female')}}={{trans('lang.sum')}})</th>
+                <th>{{trans('lang.log_in')}}({{trans('lang.male')}}+{{trans('lang.female')}}-{{trans('lang.exit')}}={{trans('lang.sum')}})</th>
                 <th>{{trans('lang.presnet')}}</th>
             </tr>
             </thead>
@@ -66,8 +66,8 @@
             },
             "autowidth": true,
             "lengthMenu": [
-                [5, 10, 20],
-                [5, 10, 20] // change per page values here
+                [5, 10, 20,50],
+                [5, 10, 20,50] // change per page values here
             ],
             // set the initial value
             "pageLength": 10,
@@ -101,6 +101,7 @@
                 [0, "desc"]
             ]
         });
+
     });
 
     $("#btn_c_search").click(function () {

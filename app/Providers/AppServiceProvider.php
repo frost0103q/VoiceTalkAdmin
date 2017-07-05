@@ -40,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         //
         // [2014/09/26 10:41]urldecode()함수가 '()'기호를 정확히 디코드 하지 못하는 이슈있음.
         // &#40;, &#41;로 디코드됨.
+
         //
         $p_text = str_replace('&#40;', '(', $p_text);
         $p_text = str_replace('&#41;', ')', $p_text);

@@ -50,3 +50,13 @@
 		v_point_present_history
 		
 		
+-2017-07-05
+	테불변경
+		t_cash_history 테불에서 cash_date마당삭제
+		t_notification테불에서 unreaded_cnt마당삭제,is_read int마당추가,data varchar마당추가
+		t_user테불에 request_exit_flag int,request_exit_time datetime마당추가,device_type,device_serial,device_token마당삭제
+	새테불추가
+		t_free_charge_history(no, user_no, point, type, created_at, pointed_at)
+		t_gifticon_history(no, user_no, point, type, created_at, pointed_at)
+		t_inapp_purchase_history(no,user_no,created_at,updated_at,order_id,purchase_date,data_signature,class,ip,price)
+	

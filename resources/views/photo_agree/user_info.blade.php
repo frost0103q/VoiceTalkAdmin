@@ -43,17 +43,16 @@
                             </div>
                         </div>
                         <div class="form-group form-md-line-input">
-                            <label class="col-md-4 control-label"
-                                   style="text-align: right"><strong>{{trans('lang.device_type')}}</strong></label>
-                            <div class="col-md-8">
-                                <input class="form-control" name="device_type" id="device_type" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group form-md-line-input">
                             <label class="col-md-4 control-label "
                                    style="text-align: right"><strong>{{trans('lang.subject')}}</strong></label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="subject" id="subject" disabled></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group form-md-line-input" style="text-align: center;padding-top: 25px">
+                            <div class="form-group form-md-line-input">
+                                <label class="control-label col-md-4" style="text-align: right"><strong>{{trans('lang.earn_point')}}</strong></label>
+                                <label class="control-label col-md-8" style="text-align: left"><span class="badge badge-danger" id="point"></span></label>
                             </div>
                         </div>
                     </div>
@@ -68,12 +67,7 @@
                             <span class="badge badge-success hidden" id="verify" name="verify">{{trans('lang.talk_insure')}}</span>
                             <span class="badge badge-primary" id="status" name="status"></span>
                         </div>
-                        <div class="form-group form-md-line-input" style="text-align: center">
-                            <div class="form-group form-md-line-input">
-                                <label class="control-label "
-                                       style="text-align: right"><strong>{{trans('lang.earn_point')}}</strong>&nbsp;&nbsp;&nbsp;<span class="badge badge-danger" id="point"></span></label>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
