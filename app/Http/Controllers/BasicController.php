@@ -237,7 +237,7 @@ class BasicController extends Controller
             $results->img_checked = $file->checked;
             $results->img_url = $file->path;
         } else {
-            $results->img_checked = 0;
+            $results->img_checked = config('constants.AGREE');
             $results->img_url = "";
         }
     }

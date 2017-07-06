@@ -207,12 +207,16 @@ class NotificationsController extends BasicController
         $to_user_no = $request->input('to_user_no');
 
         $response = Notification::select('*');
-        $response = $response->where(['from_user_no' => $from_user_no,  'to_user_no' => $to_user_no])->orWhere(['to_user_no' => $from_user_no,  'from_user_no' => $to_user_no]);
-        $response = $response->where(function($q){
-                        $q->where('type', config('constants.CHATMESSAGE_TYPE_NORMAL'));
-                        $q->orWhere('type', config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP'));
+        $response = $response->where(function($q)  use ($from_user_no, $to_user_no) {
+                        $q->where(function($q) use ($from_user_no, $to_user_no){
+                            $q->where(['from_user_no' => $from_user_no,  'to_user_no' => $to_user_no]);
+                            $q->orWhere(['to_user_no' => $from_user_no,  'from_user_no' => $to_user_no]);
+                        })->where(function($q){
+                            $q->where('type', config('constants.CHATMESSAGE_TYPE_NORMAL'));
+                            $q->orWhere('type', config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP'));
                         });
-        $response = $response->orderBy('updated_at', 'asc')->offset($limit * ($page - 1))->limit($limit)->get();
+                    });
+        $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
 
         $arrModel = array();
         for($i = 0; $i < count($response); $i++) {
