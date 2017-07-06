@@ -601,7 +601,7 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
         return response()->json($response);
     }
 
@@ -645,7 +645,7 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
 
         $response = config('constants.ERROR_NO');
         return response()->json($response);
@@ -774,7 +774,15 @@ class UsersController extends BasicController
 
         $to_user = $results[0];
         $message = json_decode($content, true);
-        $this->sendAlarmMessage($from_user_no, $to_user->no, $message);
+
+        if($message['type'] == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING')) {
+            if($to_user->verified == 0) {
+                $response = config('constants.ERROR_NOT_VERIFIED_USER');
+                return response()->json($response);
+            }
+        }
+
+        $this->sendAlarmMessage($from_user_no, $to_user->no, $message, null);
         return response()->json($response);
     }
 

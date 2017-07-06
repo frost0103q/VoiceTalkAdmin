@@ -204,8 +204,8 @@ class FCMHandler
     protected function updateDevices(array $tokens)
     {
         foreach ($tokens as $old => $new) {
-            $device = Device::wherePushServiceId($old)->firstOrFail();
-            $device->push_service_id = $new;
+            $device = Device::wherePushServiceToken($old)->firstOrFail();
+            $device->push_service_token = $new;
             $device->save();
         }
         return true;
@@ -218,7 +218,7 @@ class FCMHandler
      */
     protected function deleteDevices(array $tokens) {
         foreach ($tokens as $token) {
-            $device = Device::wherePushServiceId($token)->firstOrFail();
+            $device = Device::wherePushServiceToken($token)->firstOrFail();
             $device->delete();
         }
         return true;

@@ -84,40 +84,76 @@ class NotificationsController extends BasicController
 
     public function getNotificationList($search_type, $read_type, $user_no, $limit, $page) {
 
-        $sql = "select * from (";
+        $sql = "select * , (
+                                SELECT
+                                    count(*)
+                                FROM
+                                    t_notification d
+                                WHERE
+                                    d.is_read = 0
+                                AND c.from_user_no = d.from_user_no
+                                AND c.to_user_no = d.to_user_no
+                              ) AS unread_cnt FROM ";
+
         if($user_no != null) {
-            $sql = $sql . " select notification.no,  notification.type, notification.title, notification.content, notification.from_user_no, notification.to_user_no, notification.is_read, notification.updated_at,
-                        (select count(*) from t_notification where is_read=0 and to_user_no = " . $user_no . ") as unread_cnt from (SELECT * FROM t_notification ORDER BY updated_at DESC) AS notification";
+            $sql = $sql ."(
+                            SELECT
+                                *
+                            FROM
+                                t_notification a
+                            INNER JOIN (
+                                SELECT
+                                    max(created_militime) latest
+                                FROM
+                                    t_notification
+                                WHERE
+                                    from_user_no = ".$user_no."
+                                OR to_user_no = ".$user_no."
+                                GROUP BY
+                                    from_user_no
+                            ) b ON a.created_militime = b.latest
+                        ) c";
         }
         else {
-            $sql = $sql . " select notification.no,  notification.type, notification.title, notification.content, notification.from_user_no, notification.to_user_no, notification.is_read, notification.updated_at,
-                        (select count(*) from t_notification where is_read=0) as unread_cnt from (SELECT * FROM t_notification ORDER BY updated_at DESC) AS notification";
+            $sql = $sql . "(
+                            SELECT
+                                *
+                            FROM
+                                t_notification a
+                            INNER JOIN (
+                                SELECT
+                                    max(created_militime) latest
+                                FROM
+                                    t_notification
+                                GROUP BY
+                                    from_user_no
+                                ) b ON a.created_militime = b.latest
+                            ) c";
         }
 
         $include_where = false;
         if($search_type == -1) { // search_all
             if($user_no != null) {
-                $sql = $sql . " where (notification.to_user_no ='" . $user_no . "' OR notification.from_user_no=" . $user_no . ")";
+                $sql = $sql . " where (c.to_user_no =" . $user_no . " OR c.from_user_no=" . $user_no . ")";
                 $include_where = true;
             }
         }
         else if($search_type == -2 && $user_no != null) { // search_friend
-            $sql = $sql.' where ((notification.from_user_no = '.$user_no.' and notification.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
-            $sql = $sql.'       OR (notification.to_user_no = '.$user_no.' and notification.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0)))';
+            $sql = $sql.' where ((c.from_user_no = '.$user_no.' and c.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+            $sql = $sql.'       OR (c.to_user_no = '.$user_no.' and c.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no='.$user_no.' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0)))';
             $include_where = true;
         }
 
         if($read_type == 0 || $read_type == 1){ // unread
             if($include_where == false) {
-                $sql = $sql . " where is_read ='" . $read_type . "'";
+                $sql = $sql . " where c.is_read ='" . $read_type . "'";
             }
             else {
-                $sql = $sql . " AND is_read ='" . $read_type . "'";
+                $sql = $sql . " AND c.is_read ='" . $read_type . "'";
             }
         }
 
-        $sql = $sql." group by from_user_no";
-        $sql = $sql.") as t ORDER BY t.updated_at DESC";
+        $sql = $sql." ORDER BY c.created_militime DESC";
 
         if($page != null && $page > 0 && $limit != null && $limit >= 0) {
             $sql = $sql." Limit ".$limit." OFFSET ".($limit * ($page - 1));
@@ -216,7 +252,7 @@ class NotificationsController extends BasicController
                             $q->orWhere('type', config('constants.CHATMESSAGE_TYPE_SEND_ENVELOP'));
                         });
                     });
-        $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
+        $response = $response->orderBy('created_militime', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
 
         $arrModel = array();
         for($i = 0; $i < count($response); $i++) {
@@ -267,7 +303,7 @@ class NotificationsController extends BasicController
 		$response = config('constants.ERROR_NO');
 		
 		if($oper == 'add') {
-            $response = $this->addNotification($type, $from_id, $to_id, $text, $content);
+            $response = $this->addNotification($type, $from_id, $to_id, $text, $content, null);
 		}
 		else if($oper == 'edit') {
 			if($id == null ) {
@@ -336,7 +372,7 @@ class NotificationsController extends BasicController
         $message['content'] = $content;
         $message['title'] = $title;
 
-        $this->sendAlarmMessage($from_user->no, $to_user->no, $message);
+        $this->sendAlarmMessage($from_user->no, $to_user->no, $message, null);
 
         $response = config('constants.ERROR_NO');
         return response()->json($response);
@@ -374,7 +410,7 @@ class NotificationsController extends BasicController
 
         if($order == 0) { // distance
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS('.$cur_lat.')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS('.$cur_lng.')) + SIN(RADIANS('.$cur_lat.')) * SIN(RADIANS(t_user.latitude))),2))');
-            $query = $query->orderBy($dist)->get();
+            $query = $query->orderBy($dist);
         }
         else {
             $query = $query->orderBy('created_at', 'desc');
@@ -399,7 +435,7 @@ class NotificationsController extends BasicController
             $message['content'] = $content;
             $message['title'] = config('constants.NOTI_TITLE_SEND_ENVELOPE');
 
-            $this->sendAlarmMessage($from_user->no, $to_user_no, $message);
+            $this->sendAlarmMessage($from_user->no, $to_user_no, $message, null);
         }
 
         $results = AppUser::where('no', $from_user->no)->get();

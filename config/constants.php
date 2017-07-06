@@ -11,6 +11,7 @@ return [
         'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
         'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
         'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
+        'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
 
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,

@@ -31,7 +31,7 @@ class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function sendAlarmMessage($from_user_no, $to_user_no, $message) {
+    public function sendAlarmMessage($from_user_no, $to_user_no, $message, $data) {
         $type = $message['type'];
 
         $results = AppUser::where('no', $to_user_no)->get();
@@ -85,7 +85,7 @@ class BasicController extends Controller
             $remove_point = false;
         }
 
-        $this->addNotification($type, $from_user_no, $to_user_no, $message['title'], $message['content'], $remove_point);
+        $this->addNotification($type, $from_user_no, $to_user_no, $message['title'], $message['content'],$data, $remove_point);
         return true;
     }
 
@@ -187,7 +187,7 @@ class BasicController extends Controller
         return true;
     }
 
-    public function addNotification($type, $from_user, $to_user, $title, $content, $need_point = true) {
+    public function addNotification($type, $from_user, $to_user, $title, $content, $data, $need_point = true) {
         if($from_user == null || $to_user == null || $content == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
@@ -210,10 +210,14 @@ class BasicController extends Controller
         $notification->content = $content;
         $notification->from_user_no = $from_user;
         $notification->to_user_no = $to_user;
+        $milliseconds = round(microtime(true) * 1000);
+        $notification->created_militime = $milliseconds;
 
-        if($type == config('constants.CHATMESSAGE_TYPE_NORMAL')) {
-            $notification->content = json_decode($content)->content;
-            $notification->data = $content;
+        if($data == null) {
+            $notification->data = "";
+        }
+        else {
+            $notification->data = $data;
         }
 
         $notification->save();

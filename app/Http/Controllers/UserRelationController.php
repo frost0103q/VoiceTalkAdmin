@@ -102,7 +102,7 @@ class UserRelationController  extends BasicController{
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $to_user->no, $message);
+        $this->sendAlarmMessage($from_user->no, $to_user->no, $message, null);
 
         return response()->json($response);
     }
