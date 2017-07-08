@@ -13,6 +13,8 @@ return [
         'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
         'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
 
+        'ADMIN_NAME' =>'관리자',
+
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
         'TALK_VOICE_TYPE' => ["일반 목소리", "귀여운 목소리", "중후한 목소리","통통목소리","애교목소리"],
@@ -53,6 +55,7 @@ return [
         'CHATMESSAGE_TYPE_SEND_ENVELOP'   => 4,
         'CHATMESSAGE_TYPE_ADD_FRIEND'   => 5,
         'CHATMESSAGE_TYPE_SEND_PRESENT'  =>6,
+        'CHATMESSAGE_TYPE_CASH_QA'  =>7,
 
         'CHECK_ROLL_POINT'   => 30,
 

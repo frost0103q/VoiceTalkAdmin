@@ -2,21 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\CashDeclare;
+use App\Models\CashQuestion;
+use App\Models\SSP;
+use App\Models\User;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 use Request;
 use Session;
-use App\Models\SSP;
-use App\Models\Admin;
-use App\Models\ManageNotice;
-use App\Models\Opinion;
-use App\Models\ServerFile;
-use App\Models\CashQuestion;
-use App\Models\CashDeclare;
-use App\Models\User;
+use Config;
 
 class CashQuestionController extends BasicController
 {
@@ -40,6 +34,128 @@ class CashQuestionController extends BasicController
     {
 
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | HomeController Controller Mobile API Functions
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles authenticating users for the application and
+    | redirecting them to your home screen. The controller uses a trait
+    | to conveniently provide its functionality to your applications.
+    |
+    */
+    public function cashQuestionList(HttpRequest $request)
+    {
+        $limit = $request->input('rows');
+        $page = $request->input('page');
+        $user_no = $request->input('user_no');
+
+        if($limit == null) {
+            $limit = Config::get('config.itemsPerPage.default');
+        }
+
+        if($page == null) {
+            $params['page'] = 1;
+        }
+
+        $response = CashQuestion::select('*');
+        if($user_no != null) {
+            $response = $response->where('user_no' , $user_no);
+        }
+
+        $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
+
+        return response()->json($response);
+    }
+
+    public function doCashQuestion(HttpRequest $request){
+
+        $oper = $request->input("oper");
+        $content = $request->input("content");
+        $user_no = $request->input('user_no');
+
+        $response = config('constants.ERROR_NO');
+
+        if($oper == 'add') {
+            if($user_no == null || $content == null) {
+                $response = config('constants.ERROR_NO_PARMA');
+                return response()->json($response);
+            }
+
+            $question = new CashQuestion();
+            $question->user_no = $user_no;
+            $question->content = $content;
+            $question->content = $content;
+
+            $question->save();
+            $response['no'] = $question->no;
+        }
+        else if($oper == 'edit') {
+
+            $no = $request->input('no');
+
+            if($no == null || ($user_no == null && $content == null)) {
+                $response = config('constants.ERROR_NO_PARMA');
+                return response()->json($response);
+            }
+
+            $update_data = [];
+
+            if($user_no != null) {
+                $update_data['user_no'] = $user_no;
+            }
+            if($content != null) {
+                $update_data['content'] = $content;
+            }
+
+            CashQuestion::where('no', $no)->update($update_data);
+        }
+        else if($oper == 'del') {
+            $no = $request->input('no');
+            if($no == null) {
+                $response = config('constants.ERROR_NO_PARMA');
+                return response()->json($response);
+            }
+
+            CashQuestion::where('no', $no)->delete();
+        }
+
+        return response()->json($response);
+    }
+
+
+    private function sendCashAnswerAlarm($cash_no) {
+        $cash  = CashQuestion::where('no', $cash_no)->first();
+
+        if($cash == null) {
+            return;
+        }
+
+        $message = [];
+        $message['type'] = config('constants.CHATMESSAGE_TYPE_CASH_QA');
+        $message['user_no'] = $cash->user_no;
+        $message['user_name'] = config('constants.ADMIN_NAME');
+        $message['user_img_url'] = "";
+        $message['time'] = "";
+        $message['content'] = "관리자님이 구글문의답변을 보냈습니다.";
+        $message['title'] = "문의";
+        $message['data'] = $cash_no;
+
+        $this->sendAlarmMessageFromAdmin($cash->user_no, $message);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | HomeController Controller Admin Functions
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles authenticating users for the application and
+    | redirecting them to your home screen. The controller uses a trait
+    | to conveniently provide its functionality to your applications.
+    |
+    */
 
     public function index()
     {
@@ -139,11 +255,14 @@ class CashQuestionController extends BasicController
         $data['updated_at'] = date('Y-m-d H:i:s');
 
         $result=CashQuestion::where('no',$no)->update($data);
-        if($result)
+        if($result) {
+            $this->sendCashAnswerAlarm($no);
             return config('constants.SUCCESS');
+        }
         else
             return config('constants.FAIL');
     }
+
     
     public function delete_cash_questin(){
         $no=$_POST['no'];

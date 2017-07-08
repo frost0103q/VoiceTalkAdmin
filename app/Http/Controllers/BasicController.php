@@ -31,6 +31,34 @@ class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function sendAlarmMessageFromAdmin($to_user_no, $message) {
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return false;
+        }
+
+        $to_user = $results[0];
+
+        $testmode = Config::get('config.pushmode');
+
+        if($testmode == 0) {
+            $title = config('app.name');
+            if(array_key_exists('title', $message)) {
+                $title = $message['title'];
+            }
+
+            $notification_message =  config('app.name');
+            if(array_key_exists('content', $message)) {
+                $notification_message = $message['content'];
+            }
+
+            $this->sendFCMMessage($to_user, $title, $notification_message, $message);
+        }
+        else {
+            $this->sendXmppMessage($to_user_no, json_encode($message));
+        }
+    }
+
     public function sendAlarmMessage($from_user_no, $to_user_no, $message, $data) {
         $type = $message['type'];
 
