@@ -38,9 +38,14 @@ Route::get('voice_disagree', 'AgreementController@voice_disagree');
 
 
 // notifiy page
-Route::get('/notify', 'Admin\AdminSettingController@notify');
-Route::get('/user_guide', 'Admin\AdminSettingController@use_guide');
-Route::get('/google_card_register_guide', 'Admin\AdminSettingController@google_card_register_guide');
+Route::get('/mobile_page', 'MobilePageController@index');
+Route::post('/save_mobile_page', 'MobilePageController@save_mobile_page');
+Route::get('/notify', 'MobilePageController@notify');
+Route::get('/use_guide', 'MobilePageController@use_guide');
+Route::get('/google_card_register_guide', 'MobilePageController@google_card_register_guide');
+Route::get('/agreement/service', 'MobilePageController@agreement_service');
+Route::get('/agreement/privacy', 'MobilePageController@agreement_privacy');
+Route::get('/agreement/gps', 'MobilePageController@agreement_gps');
 
 //Talk and User manage
 Route::get('talk_user_mgr', 'TalkController@index');

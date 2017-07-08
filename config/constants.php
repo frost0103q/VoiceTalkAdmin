@@ -138,4 +138,11 @@ return [
 
 		'GIFTICON_NOMAL'=>'1',
 		'GIFTICON_CANCEL'=>'0',
+
+        'MOBILE_SERVICE_PAGE'=> 0,
+        'MOBILE_PRIVACY_PAGE'=> 1,
+        'MOBILE_GPS_PAGE'=> 2,
+        'MOBILE_GOOGLE_PAY_PAGE'=> 3,
+        'MOBILE_USE_GUIDE_PAGE'=> 4,
+        'MOBILE_NOTIFY_PAGE'=> 5,
 ];
