@@ -8,6 +8,7 @@ use App\Models\TalkReview;
 use Config;
 use DB;
 use Illuminate\Support\Facades\URL;
+use mysqli;
 use Request;
 
 class MobilePageController extends BasicController
@@ -121,6 +122,7 @@ class MobilePageController extends BasicController
     private function getPage($type)
     {
         $mobile_page = MobilePage::where('type', $type)->first();
+        $mobile_page->content = $mobile_page->content;
         return $mobile_page;
     }
 
@@ -163,7 +165,7 @@ class MobilePageController extends BasicController
         if ($mobile_page == null) {
             $mobile_page = new MobilePage();
         }
-        $mobile_page->content = $data['content'];
+        $mobile_page->content =  $data['content'];
         $mobile_page->url = $data['url'];
         $mobile_page->type = $data['type'];
         $result = $mobile_page->save();
