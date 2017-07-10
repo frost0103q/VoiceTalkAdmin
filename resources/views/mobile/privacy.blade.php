@@ -13,7 +13,7 @@
 
 
 <body> 개인정보이용약관 <br />
-
+{{$content}} <br />
 </body>
 
 </html>

@@ -13,7 +13,7 @@
 
 
 <body> 이용가이드 <br />
-
+{{$content}} <br />
 </body>
 
 </html>

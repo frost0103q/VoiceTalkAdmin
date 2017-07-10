@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-    <link href="../assets/global/plugins/icheck/skins/all.css" rel="stylesheet" type="text/css" />
     <div class="row">
         <div class="col-md-12">
             <div class="portlet box green" style="border: none">
@@ -26,14 +25,18 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4" style="margin-top: 6px;">
+                    <div class="col-md-6" style="margin-top: 6px;">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <div class="icheck-inline" id="div_radio">
-                                    <label>
-                                        <input type="radio" id="rb_content" name="radio2" checked class="icheck" data-radio="iradio_flat-grey" value="false"> {{trans('lang.content')}} </label>
-                                    <label>
-                                        <input type="radio" id="rb_url" name="radio2" class="icheck" data-radio="iradio_flat-grey"  value="true">{{trans('lang.url')}} </label>
+                                <div class="mt-radio-inline" id="div_radio">
+                                    <label class="mt-radio"> {{trans('lang.content')}}
+                                        <input type="radio" value="false" name="radio2" id="rb_content" checked/>
+                                        <span></span>
+                                    </label>
+                                    <label class="mt-radio"> {{trans('lang.url')}}
+                                        <input type="radio" value="true" name="radio2" id="rb_url"  />
+                                        <span></span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -43,8 +46,7 @@
 
             <div class="row">
                 <div class="col-md-8">
-                    <textarea class="form-control" rows="16" id="ta_content"></textarea>
-
+                    <textarea class="form-control" rows="16" id="ta_content" content="{{$content}}" url="{{$url}}">{{$content}}</textarea>
                     <div class="row margin-top-20">
                         <div class="col-md-offset-2 col-md-8 text-center">
                             <button class="btn btn-primary" id="btn_save"> {{trans('lang.save')}}</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" id="btn_preview">{{trans('lang.preview')}}</button>
@@ -54,8 +56,12 @@
             </div>
         </div>
     </div>
-    <script src="../assets/global/plugins/icheck/icheck.min.js" type="text/javascript"></script>
-    <script src="../assets/global/plugins/icheck/icheck.min.js" type="text/javascript"></script>
+
+    <form id="invisible_form" action="new_window.php" method="get" target="_blank">
+        <input id="new_window_parameter_1" name="content" type="hidden" value="default">
+        <input id="new_window_parameter_2" name="_token" type="hidden" value="{{csrf_token()}}">
+    </form>
+
     <script>
         $("#btn_save").click(function () {
 
@@ -88,6 +94,47 @@
             });
         })
 
+        $("#rb_content").click(function () {
+            var content=$("#ta_content").attr("content");
+            $("#ta_content").val(content);
+        })
+
+        $("#rb_url").click(function () {
+            var url=$("#ta_content").attr("url");
+            $("#ta_content").val(url);
+        })
+
+        $( "#select_page_type" ).change(function() {
+            var type = $("#select_page_type").val()
+            $.ajax({
+                type: "GET",
+                data: {
+                    type: type,
+                    _token: "{{csrf_token()}}"
+                },
+                url: 'get_mobile_page',
+                success: function (result) {
+                    if(result=='{{config('constants.FAIL')}}'){
+                        toastr["error"]("{{trans('lang.no_display_data')}}", "{{trans('lang.notice')}}");
+                        return;
+                    }
+                    else {
+                        var obj = JSON.parse(result);
+                        $("#ta_content").attr("url", obj.url);
+                        $("#ta_content").attr("content", obj.content);
+
+                        var isurl = $('input[name=radio2]:checked', '#div_radio').val();
+                        if(isurl == "true") {
+                            $("#ta_content").val(obj.url);
+                        }
+                        else {
+                            $("#ta_content").val(obj.content);
+                        }
+                    }
+                }
+            });
+        });
+
         $("#btn_preview").click(function () {
 
             var content=$("#ta_content").val();
@@ -96,6 +143,34 @@
                 return;
             }
 
+            var type = $("#select_page_type").val()
+            var isurl = $('input[name=radio2]:checked', '#div_radio').val();
+
+            if(isurl == "true") {
+                var win = window.open(content, '_blank');
+                win.focus();
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    data: {
+                        type: type,
+                        _token: "{{csrf_token()}}"
+                    },
+                    url: 'get_mobile_page_url',
+                    success: function (result) {
+                        if(result=='{{config('constants.FAIL')}}'){
+                            toastr["error"]("{{trans('lang.no_display_data')}}", "{{trans('lang.notice')}}");
+                            return;
+                        }
+                        else {
+                            $('#invisible_form').attr("action", result);
+                            $('#new_window_parameter_1').val(content);
+                            $('#invisible_form').submit();
+                        }
+                    }
+                });
+            }
 
         })
     </script>

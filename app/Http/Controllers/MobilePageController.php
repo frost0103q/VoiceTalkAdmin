@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ManageNotice;
 use App\Models\MobilePage;
 use App\Models\TalkReview;
 use Config;
@@ -34,7 +35,87 @@ class MobilePageController extends BasicController
 
     public function index()
     {
-        return view('mobile.index');
+        $param = $this->getPage(config("constants.MOBILE_SERVICE_PAGE"));
+        return view('mobile.index', $param);
+    }
+
+    public function agreement_service()
+    {
+        $params = Request::all();
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_SERVICE_PAGE"));
+        }
+        return view('mobile.service', $params );
+    }
+
+    public function agreement_privacy()
+    {
+        $params = Request::all();
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_PRIVACY_PAGE"));
+        }
+        return view('mobile.privacy', $params);
+    }
+
+    public function agreement_gps()
+    {
+        $params = Request::all();
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_GPS_PAGE"));
+        }
+        return view('mobile.gps', $params);
+    }
+
+    public function use_guide()
+    {
+        $params = Request::all();
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_USE_GUIDE_PAGE"));
+        }
+        return view('mobile.use_guide', $params);
+    }
+
+    public function google_card_register_guide()
+    {
+        $params = Request::all();
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_GOOGLE_PAY_PAGE"));
+        }
+        return view('mobile.google_card_register_guide', $params);
+    }
+
+    public function notify()
+    {
+        $params = Request::all();
+
+        if($params == null) {
+            $params = $this->getPage(config("constants.MOBILE_NOTIFY_PAGE"));
+        }
+        else {
+           if(array_key_exists("no", $params) == true) {
+                $params = ManageNotice::where('no', $params['no'])->first();
+           }
+        }
+        return view('mobile.notify', $params);
+    }
+
+    private function get_page_url($type) {
+        $url = "";
+        if ($type == config("constants.MOBILE_SERVICE_PAGE")) {
+            $url = URL::to('/agreement/service');
+        } else if ($type == config("constants.MOBILE_PRIVACY_PAGE")) {
+            $url = URL::to('/agreement/privacy');
+        } else if ($type == config("constants.MOBILE_GPS_PAGE")) {
+            $url = URL::to('/agreement/gps');
+        } else if ($type == config("constants.MOBILE_GOOGLE_PAY_PAGE")) {
+            $url = URL::to('/google_card_register_guide');
+        } else if ($type == config("constants.MOBILE_USE_GUIDE_PAGE")) {
+            $url = URL::to('/use_guide');
+        } else if ($type == config("constants.MOBILE_NOTIFY_PAGE")) {
+            $url = URL::to('/notify');
+        }
+
+        return $url;
     }
 
     private function getPage($type)
@@ -43,35 +124,26 @@ class MobilePageController extends BasicController
         return $mobile_page;
     }
 
-    public function agreement_service()
-    {
-        return view('mobile.service', getPage(config("constants.MOBILE_SERVICE_PAGE")));
+    public function get_mobile_page() {
+        $params = Request::all();
+        $type= $params['type'];
+        $result = $this->getPage($type);
+        if ($result) {
+            return json_encode($result);
+        } else
+            return config('constants.FAIL');
     }
 
-    public function agreement_privacy()
-    {
-        return view('mobile.privacy', getPage(config("constants.MOBILE_PRIVACY_PAGE")));
+    public function get_mobile_page_url() {
+        $params = Request::all();
+        $type= $params['type'];
+        $result = $this->get_page_url($type);
+        if ($result) {
+            return $result;
+        } else
+            return config('constants.FAIL');
     }
 
-    public function agreement_gps()
-    {
-        return view('mobile.gps', getPage(config("constants.MOBILE_GPS_PAGE")));
-    }
-
-    public function notify()
-    {
-        return view('mobile.gps', getPage(config("constants.MOBILE_NOTIFY_PAGE")));
-    }
-
-    public function use_guide()
-    {
-        return view('mobile.use_guide', getPage(config("constants.MOBILE_USE_GUIDE_PAGE")));
-    }
-
-    public function google_card_register_guide()
-    {
-        return view('mobile.google_card_register_guide', getPage(config("constants.MOBILE_GOOGLE_PAY_PAGE")));
-    }
 
     public function save_mobile_page()
     {
@@ -81,19 +153,7 @@ class MobilePageController extends BasicController
 
         if ($isurl == "false") {
             $data['content'] = $params['content'];
-            if ($data['type'] == config("constants.MOBILE_SERVICE_PAGE")) {
-                $data['url'] = URL::to('/agreement/service');
-            } else if ($data['type'] == config("constants.MOBILE_PRIVACY_PAGE")) {
-                $data['url'] = URL::to('/agreement/privacy');
-            } else if ($data['type'] == config("constants.MOBILE_GPS_PAGE")) {
-                $data['url'] = URL::to('/agreement/gps');
-            } else if ($data['type'] == config("constants.MOBILE_GOOGLE_PAY_PAGE")) {
-                $data['url'] = URL::to('/google_card_register_guide');
-            } else if ($data['type'] == config("constants.MOBILE_USE_GUIDE_PAGE")) {
-                $data['url'] = URL::to('/use_guide');
-            } else if ($data['type'] == config("constants.MOBILE_NOTIFY_PAGE")) {
-                $data['url'] = URL::to('/notify');
-            }
+            $data['url']  = $this->get_page_url($data['type']);
         } else {
             $data['content'] = "";
             $data['url'] = $params['content'];

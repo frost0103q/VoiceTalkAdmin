@@ -7,6 +7,7 @@ use App\Models\AuthCode;
 use App\Models\ConsultingReview;
 use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
+use App\Models\MobilePage;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;

@@ -13,7 +13,7 @@
 
 
 <body> 공지사항 <br />
-
+{{$content}} <br />
 </body>
 
 </html>

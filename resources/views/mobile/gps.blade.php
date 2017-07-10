@@ -13,7 +13,7 @@
 
 
 <body> 위치정보약관 <br />
-
+{{$content}} <br />
 </body>
 
 </html>

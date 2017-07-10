@@ -84,3 +84,7 @@ Route::get('/chatHistoryList', 'ChatHistoryController@chatHistoryList');
 // cash question api
 Route::post('/cashQuestion', 'CashQuestionController@doCashQuestion');
 Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
+
+// mamage notice api
+Route::get('/manageNoticeList', 'AdminNoticeController@manageNoticeList');
+Route::get('/adminSetting', 'AdminNoticeController@adminSetting');

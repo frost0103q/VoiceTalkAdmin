@@ -13,7 +13,7 @@
 
 
 <body> 구글카드 결제 문의방법 <br />
-
+{{$content}} <br />
 </body>
 
 </html>

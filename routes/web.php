@@ -40,6 +40,8 @@ Route::get('voice_disagree', 'AgreementController@voice_disagree');
 // notifiy page
 Route::get('/mobile_page', 'MobilePageController@index');
 Route::post('/save_mobile_page', 'MobilePageController@save_mobile_page');
+Route::get('/get_mobile_page', 'MobilePageController@get_mobile_page');
+Route::get('/get_mobile_page_url', 'MobilePageController@get_mobile_page_url');
 Route::get('/notify', 'MobilePageController@notify');
 Route::get('/use_guide', 'MobilePageController@use_guide');
 Route::get('/google_card_register_guide', 'MobilePageController@google_card_register_guide');

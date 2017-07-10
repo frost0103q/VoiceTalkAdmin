@@ -14,6 +14,8 @@
 
 <body> 서비스 이용약관 <br />
 
+{{$content}} <br />
+
 </body>
 
 </html>
