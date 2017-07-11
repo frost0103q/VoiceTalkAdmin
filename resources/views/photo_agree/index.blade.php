@@ -189,6 +189,7 @@
                         $("#nickname").val(data.nickname);
                         $("#email").val(data.email);
                         $("#profile_img").attr("src", data1.path);
+                        $("#profile_img_fancy").attr("href", data1.path);
                         if (data.status == "{{config('constants.TALK_POSSIBLE')}}")
                             $("#status").html("{{trans('lang.enable_talk')}}");
                         else if (data.status == "{{config('constants.AWAY')}}")

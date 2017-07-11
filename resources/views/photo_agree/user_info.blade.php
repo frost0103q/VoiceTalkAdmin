@@ -60,7 +60,9 @@
                     <div class="col-md-5">
                         <div class="form-group form-md-line-input">
                             <div class="profile-userinfo">
-                                <img src="" alt="" class="thumbnail" id="profile_img" height="200" width="200">
+                                <a id="profile_img_fancy" href="" class="fancybox-button" data-rel="fancybox-button">
+                                    <img src="" alt="" class="img-responsive thumbnail" id="profile_img" height="200" width="200">
+                                </a>
                             </div>
                         </div>
                         <div class="form-group form-md-line-input" style="text-align: center;margin-bottom: 0">
