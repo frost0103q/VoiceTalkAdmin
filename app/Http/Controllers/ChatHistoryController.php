@@ -101,7 +101,8 @@ class ChatHistoryController extends BasicController
 
             $type = config('constants.CHATMESSAGE_TYPE_NORMAL');
 
-            $this->addNotification($type, $from_user_no, $to_user_no, "일반채팅", $message, false);
+            $content = json_decode($message)->content;
+            $this->addNotification($type, $from_user_no, $to_user_no, "일반채팅", $content, $message, false);
         }
         else if($oper == 'edit') {
 

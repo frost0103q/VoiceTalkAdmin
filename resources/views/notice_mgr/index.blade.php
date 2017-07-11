@@ -21,9 +21,9 @@
                         <li>
                             <a href="#tab_3" data-toggle="tab">{{trans('lang.talk_notice')}}</a>
                         </li>
-                        <li>
+                        <!--<li>
                             <a href="#tab_4" data-toggle="tab">{{trans('lang.message_notice')}}</a>
-                        </li>
+                        </li> -->
                         <li>
                             <a href="#tab_5" data-toggle="tab">{{trans('lang.sms_sending')}}</a>
                         </li>
@@ -38,9 +38,9 @@
                         <div class="tab-pane fade" id="tab_3">
                             @include('notice_mgr.talk')
                         </div>
-                        <div class="tab-pane fade" id="tab_4">
-                            @include('notice_mgr.message')
-                        </div>
+                        {{-- <div class="tab-pane fade" id="tab_4">
+                             @include('notice_mgr.message')
+                         </div> --}}
                         <div class="tab-pane fade" id="tab_5">
                             @include('notice_mgr.sms')
                         </div>

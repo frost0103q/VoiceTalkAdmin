@@ -322,4 +322,15 @@ return [
     'file_upload'=>'파일업로드',
     'file_upload_fail'=>'파일업로드가 실패하였습니다.',
 
+    //mobile page manage
+    'mobile_page'=>'모바일페이지들',
+    'service_page'=>'서비스이용약관',
+    'gps_page'=>'위치정보약관',
+    'privacy_page'=>'개인정보방침',
+    'google_card_page'=>'구글결제 문의',
+    'use_guide_page'=>'이용가이드',
+    'notify'=>'공지사항',
+    'url'=>'URL',
+    'preview'=>'미리보기',
 ];
+

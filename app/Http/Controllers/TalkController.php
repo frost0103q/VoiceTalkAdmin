@@ -59,8 +59,8 @@ class TalkController extends BasicController
         $type = $request->input('type');
         $order = $request->input('order');
         $voice_type = $request->input('voice_type');
-        $cur_lat = $request->input('cur_lat'); // 37.457087
-        $cur_lng = $request->input('cur_lng'); // 126.705484
+        $cur_lat = $request->input('latitude'); // 37.457087
+        $cur_lng = $request->input('longitude'); // 126.705484
 
         if($limit == null) {
             $limit = Config::get('config.itemsPerPage.default');
@@ -127,7 +127,7 @@ class TalkController extends BasicController
 
         if($oper == 'add') {
             if($type == config('constants.TALK_CONSULTING') ) {
-                if($greeting == null || $voice_type == null || $greeting == null || $user_no == null) {
+                if($greeting == null || $voice_type == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
                     return response()->json($response);
                 }
@@ -168,18 +168,30 @@ class TalkController extends BasicController
                 $response['no'] = $talk->no;
             }
             else {
-                if($greeting == null || $nick_name == null || $age == null || $user_no == null) {
+                if($greeting == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
+                    return response()->json($response);
+                }
+
+                if($photo_file != null) {
+                    $newfile = new ServerFile;
+                    $photo_no = $newfile->uploadFile($photo_file, TYPE_IMAGE);
+                }
+                else {
+                    $photo_no = -1;
+                }
+
+                if($photo_no == null) {
+                    $response = config('constants.ERROR_UPLOAD_FAILED');
                     return response()->json($response);
                 }
 
                 $talk = new Talk;
 
-                $talk->nickname = $nick_name;
                 $talk->greeting = $greeting;
-                $talk->age = $age;
                 $talk->type = $type;
                 $talk->user_no = $user_no;
+                $talk->img_no = $photo_no;
 
                 $talk->save();
                 $response['no'] = $talk->no;
@@ -317,16 +329,20 @@ class TalkController extends BasicController
 
         if($file != null) {
             $talk->voice_url = $file->path;
+            $talk->is_verified_voice = $file->checked;
         }
         else {
             $talk->voice_url = "";
+            $talk->is_verified_voice = config('constants.AGREE');
         }
 
         if($img != null) {
             $talk->img_url = $img->path;
+            $talk->img_checked = $img->checked;
         }
         else {
             $talk->img_url = "";
+            $talk->img_checked = config('constants.AGREE');
         }
 
         $arr_voice_type =   config('constants.TALK_VOICE_TYPE');

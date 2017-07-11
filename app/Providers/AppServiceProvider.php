@@ -38,8 +38,9 @@ class AppServiceProvider extends ServiceProvider
         $p_text = urldecode($p_text);
 
         //
-        // [2014/09/26 10:41]urldecode()ÂÜºã°¡ '()'±¨Âö¶¦ ¼³ÃúÃÅ ´Ñ¿¸´Å Â×¼è ·ÃÂ×²÷ ËËºïËØËÁ.
-        // &#40;, &#41;µá ´Ñ¿¸´Å´ö.
+        // [2014/09/26 10:41]urldecode()ÇÔ¼ö°¡ '()'±âÈ£¸¦ Á¤È®È÷ µğÄÚµå ÇÏÁö ¸øÇÏ´Â ÀÌ½´ÀÖÀ½.
+        // &#40;, &#41;·Î µğÄÚµåµÊ.
+
         //
         $p_text = str_replace('&#40;', '(', $p_text);
         $p_text = str_replace('&#41;', ')', $p_text);

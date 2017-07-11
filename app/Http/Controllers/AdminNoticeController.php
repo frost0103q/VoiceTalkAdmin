@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BasicController;
+use App\Models\MobilePage;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Response;
@@ -36,6 +37,36 @@ class AdminNoticeController extends BasicController
     public function __construct()
     {
 
+    }
+
+    /**
+     * getUserList
+     *
+     * @return json user arrya
+     */
+    public function manageNoticeList(HttpRequest $request)
+    {
+        $limit = $request->input('rows');
+        $page = $request->input('page');
+
+        if ($limit == null) {
+            $limit = Config::get('config.itemsPerPage.default');
+        }
+
+        if ($page == null) {
+            $params['page'] = 1;
+        }
+
+        $response = ManageNotice::offset($limit * ($page - 1))->limit($limit)->get();
+
+        return response()->json($response);
+    }
+
+    public function adminSetting(HttpRequest $request) {
+        // get mobile page url
+        $response = [];
+        $response['mobile_page'] = MobilePage::all("type", "url");
+        return response()->json($response);
     }
 
     public function index()

@@ -31,7 +31,6 @@ namespace App\Models;
 
 use Config;
 use PDO;
-use Illuminate\Database\Eloquent\Model;
 
 class SSP {
     /**

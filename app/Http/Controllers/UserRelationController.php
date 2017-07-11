@@ -33,8 +33,8 @@ class UserRelationController  extends BasicController{
     }
 
     public function addFriend(HttpRequest $request) {
-        $no = $request->input('no');
-        $friend_no = $request->input('friend_no');
+        $no = $request->input('user_no');
+        $friend_no = $request->input('friend_user_no');
 
         if($no == null || $friend_no == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -102,7 +102,7 @@ class UserRelationController  extends BasicController{
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $to_user->no, $message);
+        $this->sendAlarmMessage($from_user->no, $to_user->no, $message, null);
 
         return response()->json($response);
     }
@@ -226,8 +226,8 @@ class UserRelationController  extends BasicController{
     }
 
     public function deleteFriend(HttpRequest $request) {
-        $no = $request->input('no');
-        $friend_no = $request->input('friend_no');
+        $no = $request->input('user_no');
+        $friend_no = $request->input('friend_user_no');
 
         if($no == null || $friend_no == null) {
             $response = config('constants.ERROR_NO_PARMA');

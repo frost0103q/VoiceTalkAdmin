@@ -31,7 +31,35 @@ class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function sendAlarmMessage($from_user_no, $to_user_no, $message) {
+    public function sendAlarmMessageFromAdmin($to_user_no, $message) {
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return false;
+        }
+
+        $to_user = $results[0];
+
+        $testmode = Config::get('config.pushmode');
+
+        if($testmode == 0) {
+            $title = config('app.name');
+            if(array_key_exists('title', $message)) {
+                $title = $message['title'];
+            }
+
+            $notification_message =  config('app.name');
+            if(array_key_exists('content', $message)) {
+                $notification_message = $message['content'];
+            }
+
+            $this->sendFCMMessage($to_user, $title, $notification_message, $message);
+        }
+        else {
+            $this->sendXmppMessage($to_user_no, json_encode($message));
+        }
+    }
+
+    public function sendAlarmMessage($from_user_no, $to_user_no, $message, $data) {
         $type = $message['type'];
 
         $results = AppUser::where('no', $to_user_no)->get();
@@ -85,7 +113,7 @@ class BasicController extends Controller
             $remove_point = false;
         }
 
-        $this->addNotification($type, $from_user_no, $to_user_no, $message['title'], $message['content'], $remove_point);
+        $this->addNotification($type, $from_user_no, $to_user_no, $message['title'], $message['content'],$data, $remove_point);
         return true;
     }
 
@@ -187,7 +215,7 @@ class BasicController extends Controller
         return true;
     }
 
-    public function addNotification($type, $from_user, $to_user, $title, $content, $need_point = true) {
+    public function addNotification($type, $from_user, $to_user, $title, $content, $data, $need_point = true) {
         if($from_user == null || $to_user == null || $content == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
@@ -210,10 +238,14 @@ class BasicController extends Controller
         $notification->content = $content;
         $notification->from_user_no = $from_user;
         $notification->to_user_no = $to_user;
+        $milliseconds = round(microtime(true) * 1000);
+        $notification->created_militime = $milliseconds;
 
-        if($type == config('constants.CHATMESSAGE_TYPE_NORMAL')) {
-            $notification->content = json_decode($content)->content;
-            $notification->data = $content;
+        if($data == null) {
+            $notification->data = "";
+        }
+        else {
+            $notification->data = $data;
         }
 
         $notification->save();
@@ -237,7 +269,7 @@ class BasicController extends Controller
             $results->img_checked = $file->checked;
             $results->img_url = $file->path;
         } else {
-            $results->img_checked = 0;
+            $results->img_checked = config('constants.AGREE');
             $results->img_url = "";
         }
     }

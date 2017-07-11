@@ -11,6 +11,9 @@ return [
         'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
         'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
         'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
+        'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
+
+        'ADMIN_NAME' =>'관리자',
 
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
@@ -52,6 +55,7 @@ return [
         'CHATMESSAGE_TYPE_SEND_ENVELOP'   => 4,
         'CHATMESSAGE_TYPE_ADD_FRIEND'   => 5,
         'CHATMESSAGE_TYPE_SEND_PRESENT'  =>6,
+        'CHATMESSAGE_TYPE_CASH_QA'  =>7,
 
         'CHECK_ROLL_POINT'   => 30,
 
@@ -134,4 +138,11 @@ return [
 
 		'GIFTICON_NOMAL'=>'1',
 		'GIFTICON_CANCEL'=>'0',
+
+        'MOBILE_SERVICE_PAGE'=> 0,
+        'MOBILE_PRIVACY_PAGE'=> 1,
+        'MOBILE_GPS_PAGE'=> 2,
+        'MOBILE_GOOGLE_PAY_PAGE'=> 3,
+        'MOBILE_USE_GUIDE_PAGE'=> 4,
+        'MOBILE_NOTIFY_PAGE'=> 5,
 ];

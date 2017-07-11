@@ -7,6 +7,7 @@ use App\Models\AuthCode;
 use App\Models\ConsultingReview;
 use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
+use App\Models\MobilePage;
 use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;
@@ -305,7 +306,16 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $results = AppUser::where('phone_number', $phone_number)->get();
+        // $debug = config('app.debug');
+        $testmode = Config::get('config.testmode');
+        $real_number = "";
+        if ($testmode == 0) {
+            $real_number = '+86' . $phone_number;
+        }
+        else  {
+            $real_number = '+82' . $phone_number;
+        }
+        $results = AppUser::where('phone_number', $real_number)->get();
 
         if ($results != null && count($results) > 0) {
             $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -318,23 +328,18 @@ class UsersController extends BasicController
         $phone_number = str_replace("-","", $phone_number);
 
         if(true) {
-            $debug = config('app.debug');
-            $testmode = Config::get('config.testmode');
             if ($testmode == 0) {
-                SMS::send($sms_message, null, function ($sms) use ($phone_number) {
-                    $phone_number = '+86' . $phone_number;
+                SMS::send($sms_message, null, function ($sms) use ($real_number) {
                     $sms->from('+8615699581631');
-                    $sms->to($phone_number);
+                    $sms->to($real_number);
                 }
                 );
             }
             else {
                 $this->sendSMS($phone_number, $sms_message);
-                $phone_number = '+82' . $phone_number;
             }
         }
         else {
-            $phone_number = '+82' . $phone_number;
             Nexmo::message()->send([
                 'to' => $phone_number,
                 'from' => '01028684884',
@@ -344,14 +349,15 @@ class UsersController extends BasicController
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;
-        $authcode->user_phone_number = $phone_number;
+        $authcode->user_phone_number = $real_number;
         $authcode->auth_code = $cert_code;
         $date = date('Y-m-d H:i:s');
         $authcode->requested_time = $date;
         $authcode->save();
+
         $response['no'] = $authcode->no;
         $response['auth_code'] = $cert_code;
-        $response['phone_number'] = $phone_number;
+        $response['phone_number'] = $real_number;
 
         return response()->json($response);
     }
@@ -464,7 +470,7 @@ class UsersController extends BasicController
 			
 			$user->save();
             $user->addPoint(config('constants.POINT_HISTORY_TYPE_SIGN_UP'));
-            $response = array_merge ( $user->toArray(), $response);
+            $response = $this->getUserInfo($user->no);
 		}
 		else if($oper == 'edit') {
             if($no == null) {
@@ -562,7 +568,7 @@ class UsersController extends BasicController
 	}
 
     public function sendPresent(HttpRequest $request) {
-        $no = $request->input('no');
+        $no = $request->input('from_user_no');
         $friend_no = $request->input('to_user_no');
         $point = $request->input('point');
 
@@ -596,12 +602,12 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
         return response()->json($response);
     }
 
     public function requestPresent(HttpRequest $request) {
-        $no = $request->input('no');
+        $no = $request->input('from_user_no');
         $friend_no = $request->input('to_user_no');
         $point = $request->input('point');
 
@@ -640,7 +646,7 @@ class UsersController extends BasicController
         $message['talk_no'] = "";
         $message['talk_user_no'] = "";
 
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message);
+        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
 
         $response = config('constants.ERROR_NO');
         return response()->json($response);
@@ -769,7 +775,15 @@ class UsersController extends BasicController
 
         $to_user = $results[0];
         $message = json_decode($content, true);
-        $this->sendAlarmMessage($from_user_no, $to_user->no, $message);
+
+        if($message['type'] == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING')) {
+            if($to_user->verified == 0) {
+                $response = config('constants.ERROR_NOT_VERIFIED_USER');
+                return response()->json($response);
+            }
+        }
+
+        $this->sendAlarmMessage($from_user_no, $to_user->no, $message, null);
         return response()->json($response);
     }
 

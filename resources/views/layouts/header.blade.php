@@ -26,6 +26,10 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-default">
                         <li>
+                            <a href="mobile_page">
+                                <i class="fa fa-phone"></i> {{trans('lang.mobile_page')}} </a>
+                        </li>
+                        <li>
                             <a href="setting">
                                 <i class="fa fa-cog"></i> {{trans('lang.change_password')}} </a>
                         </li>
