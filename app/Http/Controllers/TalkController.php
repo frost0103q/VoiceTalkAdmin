@@ -461,6 +461,10 @@ class TalkController extends BasicController
 
         for($i=0;$i<count($selected_talk_str_array);$i++){
 
+            $talk_model = DB::table('t_talk')->where('no', $selected_talk_str_array[$i])->first();
+            $img_no=$talk_model->img_no;
+            DB::table('t_file')->where('no',$img_no)->delete();
+
             $result=DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_talk_str_array[$i]]);
             if(!$result)
                 return config('constants.FAIL');

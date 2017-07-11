@@ -1183,6 +1183,10 @@ class UsersController extends BasicController
         
         for($i=0;$i<count($new_selected_array);$i++){
 
+            $user_model = DB::table('t_user')->where('no', $new_selected_array[$i])->first();
+            $img_no=$user_model->img_no;
+            DB::table('t_file')->where('no',$img_no)->delete();
+
             $result=DB::update('update t_user set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$new_selected_array[$i]]);
             if(!$result)
                 return config('constants.FAIL');
