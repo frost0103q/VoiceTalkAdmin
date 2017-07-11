@@ -14,9 +14,9 @@
         .profile-userinfo img {
             float: none;
             margin: 0 auto;
-            -webkit-border-radius: 50% !important;
+           /* -webkit-border-radius: 50% !important;
             -moz-border-radius: 50% !important;
-            border-radius: 50% !important;
+            border-radius: 50% !important;*/
         }
     </style>
 
