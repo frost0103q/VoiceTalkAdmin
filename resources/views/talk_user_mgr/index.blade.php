@@ -21,6 +21,12 @@
                         <li>
                             <a href="#tab_3" data-toggle="tab">{{trans('lang.declare_content')}}</a>
                         </li>
+                        <li>
+                            <a href="#tab_4" data-toggle="tab">{{trans('lang.exit_request')}}</a>
+                        </li>
+                        <li>
+                            <a href="#tab_5" data-toggle="tab">{{trans('lang.exit_user')}}</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
@@ -31,6 +37,12 @@
                         </div>
                         <div class="tab-pane fade" id="tab_3">
                             @include('talk_user_mgr.declare_content')
+                        </div>
+                        <div class="tab-pane fade" id="tab_4">
+                            @include('talk_user_mgr.exit_request_user_list')
+                        </div>
+                        <div class="tab-pane fade" id="tab_5">
+                            @include('talk_user_mgr.exit_user_list')
                         </div>
                     </div>
                 </div>

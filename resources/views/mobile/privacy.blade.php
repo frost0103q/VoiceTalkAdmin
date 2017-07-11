@@ -65,11 +65,12 @@
     </style>
 </head>
 <body>
-<div style="margin: 10px;">
 
+<div style="margin: 10px;">
 
     <div class="content">
         <div class="m-b-md">
+
             <?php echo $content?>
         </div>
     </div>

@@ -148,4 +148,9 @@ return [
         'MOBILE_GOOGLE_PAY_PAGE'=> 3,
         'MOBILE_USE_GUIDE_PAGE'=> 4,
         'MOBILE_NOTIFY_PAGE'=> 5,
+
+		//user exit status
+		'USER_NOMAL'=> 0,
+		'USER_REQUEST_EXIT'=> 1,
+		'USER_EXIT'=> 2,
 ];

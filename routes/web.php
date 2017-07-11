@@ -43,6 +43,7 @@ Route::post('/save_mobile_page', 'MobilePageController@save_mobile_page');
 Route::get('/get_mobile_page', 'MobilePageController@get_mobile_page');
 Route::get('/get_mobile_page_url', 'MobilePageController@get_mobile_page_url');
 Route::get('/notify', 'MobilePageController@notify');
+
 Route::post('/notify', 'MobilePageController@notify');
 Route::get('/use_guide', 'MobilePageController@use_guide');
 Route::post('/use_guide', 'MobilePageController@use_guide');
@@ -60,12 +61,16 @@ Route::get('talk_user_mgr', 'TalkController@index');
 Route::post('ajax_user_table', 'UsersController@ajax_user_table');
 Route::post('ajax_talk_table', 'TalkController@ajax_talk_table');
 Route::post('ajax_declare_table', 'DeclareController@ajax_declare_table');
+Route::post('ajax_er_user_table', 'UsersController@ajax_er_user_table');
+Route::post('ajax_exit_user_table', 'UsersController@ajax_exit_user_table');
 Route::post('del_selected_profile', 'UsersController@del_selected_profile');
 Route::post('selected_user_warning', 'UsersController@selected_user_warning');
 Route::post('del_selected_talk_img', 'TalkController@del_selected_talk_img');
 Route::post('del_selected_user_talk', 'TalkController@del_selected_user_talk');
 Route::post('user_force_stop', 'UsersController@user_force_stop');
 Route::post('stop_app_use', 'UsersController@stop_app_use');
+Route::post('selected_user_exit', 'UsersController@selected_user_exit');
+Route::post('selected_user_recover', 'UsersController@selected_user_recover');
 
 //Interdict Idiom Manage
 Route::get('interdict_idiom_reg', 'IdiomController@index');

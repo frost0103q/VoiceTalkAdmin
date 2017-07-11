@@ -14,9 +14,9 @@
         .profile-userinfo img {
             float: none;
             margin: 0 auto;
-            -webkit-border-radius: 50% !important;
+           /* -webkit-border-radius: 50% !important;
             -moz-border-radius: 50% !important;
-            border-radius: 50% !important;
+            border-radius: 50% !important;*/
         }
     </style>
 
@@ -189,6 +189,7 @@
                         $("#nickname").val(data.nickname);
                         $("#email").val(data.email);
                         $("#profile_img").attr("src", data1.path);
+                        $("#profile_img_fancy").attr("href", data1.path);
                         if (data.status == "{{config('constants.TALK_POSSIBLE')}}")
                             $("#status").html("{{trans('lang.enable_talk')}}");
                         else if (data.status == "{{config('constants.AWAY')}}")

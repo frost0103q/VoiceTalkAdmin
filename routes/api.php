@@ -88,4 +88,3 @@ Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
 // mamage notice api
 Route::get('/manageNoticeList', 'AdminNoticeController@manageNoticeList');
 Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
-

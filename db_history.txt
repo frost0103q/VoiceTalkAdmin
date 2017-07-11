@@ -59,4 +59,15 @@
 		t_free_charge_history(no, user_no, point, type, created_at, pointed_at)
 		t_gifticon_history(no, user_no, point, type, created_at, pointed_at)
 		t_inapp_purchase_history(no,user_no,created_at,updated_at,order_id,purchase_date,data_signature,class,ip,price)
+
+-2017-07-11
+	테불변경
+		t_cash_history 테불에서 cash_date마당추가 (현재Admin에서는 결제날자를 created_at마당을 리용한다.)
+		t_notification 테불에 created_militime(varchar)마당추가
+		t_talk테불에서 is_verified_voice마당삭제
+		t_user테불에 exit_time(datetime)마당추가
+
+	새테불추가
+		t_mobile_page(no,type,content,url,created_at,updated_at)
+
 	
