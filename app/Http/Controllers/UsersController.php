@@ -1438,4 +1438,198 @@ class UsersController extends BasicController
 
         return 1;
     }
+
+    public function ajax_er_user_table(){
+        $table = 't_user';
+        // Custom Where
+        $custom_where = "request_exit_flag=".config('constants.USER_REQUEST_EXIT');
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sex=$_POST['sex'];
+        $nickname=$_POST['nickname'];
+        $phone_number=$_POST['phone_number'];
+        $email=$_POST['email'];
+
+        if($sex!="")
+            $custom_where.=" and sex=$sex";
+        if($nickname!="")
+            $custom_where.=" and nickname like '%".$nickname."%'";
+        if($phone_number!="")
+            $custom_where.=" and phone_number like '%".$phone_number."%'";
+        if($email!="")
+            $custom_where.=" and email like '%".$email."%'";
+
+        $columns = array(
+            
+            array('db' => 'no', 'dt' => 0,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null){
+                        $nickname=$results['nickname'];
+                        $verified=$results['verified'];
+                        if($verified=='1')
+                            return $nickname.'('.$d.')'.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                        else
+                            return $nickname.'('.$d.')';
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'img_no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    $results = ServerFile::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['path'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'point', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    return 'P'.number_format($d);
+                }
+            ),
+            array('db' => 'request_exit_time', 'dt' => 3),
+            array('db' => 'no', 'dt' => 4,
+                'formatter'=>function($d,$row){
+                    return '<input type="checkbox" class="user_no" value="'.$d.'">';
+                }
+            ),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function selected_user_exit(){
+        $selected_user_str=$_POST['selected_user_str'];
+
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $new_selected_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+
+        for($i=0;$i<count($new_selected_array);$i++){
+            $update_data['request_exit_flag']=config('constants.USER_EXIT');
+            $update_data['exit_time']=date('Y-m-d H:i:s');
+            $result=User::where('no', $new_selected_array[$i])->update($update_data);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function ajax_exit_user_table(){
+        $table = 't_user';
+        // Custom Where
+        $custom_where = "request_exit_flag=".config('constants.USER_EXIT');
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $sex=$_POST['sex'];
+        $nickname=$_POST['nickname'];
+        $phone_number=$_POST['phone_number'];
+        $email=$_POST['email'];
+
+        if($sex!="")
+            $custom_where.=" and sex=$sex";
+        if($nickname!="")
+            $custom_where.=" and nickname like '%".$nickname."%'";
+        if($phone_number!="")
+            $custom_where.=" and phone_number like '%".$phone_number."%'";
+        if($email!="")
+            $custom_where.=" and email like '%".$email."%'";
+
+        $columns = array(
+
+            array('db' => 'no', 'dt' => 0,
+                'formatter'=>function($d,$row){
+                    $results = User::where('no', $d)->first();
+                    if($results!=null){
+                        $nickname=$results['nickname'];
+                        $verified=$results['verified'];
+                        if($verified=='1')
+                            return $nickname.'('.$d.')'.'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                        else
+                            return $nickname.'('.$d.')';
+                    }
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'img_no', 'dt' => 1,
+                'formatter'=>function($d,$row){
+                    $results = ServerFile::where('no', $d)->first();
+                    if($results!=null)
+                        return $results['path'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'point', 'dt' => 2,
+                'formatter'=>function($d,$row){
+                    return 'P'.number_format($d);
+                }
+            ),
+            array('db' => 'request_exit_time', 'dt' => 3),
+            array('db' => 'no', 'dt' => 4,
+                'formatter'=>function($d,$row){
+                    return '<input type="checkbox" class="user_no" value="'.$d.'">';
+                }
+            ),
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
+    }
+
+    public function selected_user_recover(){
+        $selected_user_str=$_POST['selected_user_str'];
+
+        $selected_user_array=explode(',',$selected_user_str);
+
+        $new_selected_array=array();
+
+        foreach ($selected_user_array as $item){
+            if(!in_array($item,$new_selected_array))
+                array_push($new_selected_array,$item);
+        }
+
+        for($i=0;$i<count($new_selected_array);$i++){
+            $update_data['request_exit_flag']=config('constants.USER_NOMAL');
+            $update_data['exit_time']=date('Y-m-d H:i:s');
+            $result=User::where('no', $new_selected_array[$i])->update($update_data);
+            if(!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
 }
