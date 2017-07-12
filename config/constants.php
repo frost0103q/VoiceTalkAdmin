@@ -150,7 +150,7 @@ return [
         'MOBILE_NOTIFY_PAGE'=> 5,
 
 		//user exit status
-		'USER_NOMAL'=> 0,
+		'USER_NORMAL'=> 0,
 		'USER_REQUEST_EXIT'=> 1,
 		'USER_EXIT'=> 2,
 ];

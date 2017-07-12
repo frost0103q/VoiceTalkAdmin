@@ -210,7 +210,7 @@ class UserRelationController  extends BasicController{
     }
 
     public function deleteAllFriend(HttpRequest $request) {
-        $no = $request->input('no');
+        $no = $request->input('user_no');
         if($no == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
