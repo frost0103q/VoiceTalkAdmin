@@ -262,9 +262,9 @@ class NoticeController extends BasicController
         // Table's primary key
         $primaryKey = 'no';
 
-        $sender_type = $request->input('sender_type_search');
-        if ($sender_type)
-            $custom_where .= " and sender_type like '%$sender_type%'";
+        $notice_type = $request->input('notice_type_search');
+        if ($notice_type)
+            $custom_where .= " and notice_type like '%$notice_type%'";
         $content = $request->input('content_search');
         if ($content != "")
             $custom_where .= " and content like '%$content%'";
@@ -273,15 +273,16 @@ class NoticeController extends BasicController
         $columns = array(
             array('db' => 'no', 'dt' => 0),
             array('db' => 'created_at', 'dt' => 1),
-            array('db' => 'sender_type', 'dt' => 2,
+            array('db' => 'notice_type', 'dt' => 2,
                 'formatter' => function ($d, $row) {
-                    if ($d == config('constants.TALK_ADMIN'))
-                        return trans('lang.admin');
-                    else if ($d == config('constants.TALK_POLICE'))
-                        return trans('lang.talk_policy');
+                    if ($d == config('constants.TOP_NOTICE'))
+                        return trans('lang.top_notice');
+                    else if ($d == config('constants.FIXED_NOTICE'))
+                        return trans('lang.fixed_notice');
                 }),
             array('db' => 'content', 'dt' => 3),
-            array('db' => 'no', 'dt' => 4,
+            array('db' => 'link_url', 'dt' => 4),
+            array('db' => 'no', 'dt' => 5,
                 'formatter' => function ($d, $row) {
                     $str = "<a title=".trans('lang.edit')." onclick='talk_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
                     $str .= "<a title=".trans('lang.remove')." onclick='talk_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
@@ -308,7 +309,8 @@ class NoticeController extends BasicController
         if (!isset($flag))
             return config('constants.FAIL');
         $data["content"] = $request->input('talk_content');
-        $data["sender_type"] = $request->input('talk_sender_type');
+        $data["notice_type"] = $request->input('talk_notice_type');
+        $data["link_url"] = $request->input('talk_link_url');
 
         if ($flag == config('constants.SAVE_FLAG_ADD')) {
             $data["created_at"] = date("Y-m-d H:i:s");
@@ -331,7 +333,7 @@ class NoticeController extends BasicController
         if (!isset($no))
             return config('constants.FAIL');
         $response = TalkNotice::where('no', $no)->first();
-        return $response;
+        return json_encode($response);
     }
 
     public function remove_talk(HttpRequest $request)

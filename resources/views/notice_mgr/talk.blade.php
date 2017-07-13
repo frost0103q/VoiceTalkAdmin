@@ -1,11 +1,11 @@
 <div class="row" style="padding-left: 17px;padding-right: 17px;">
     <div class="col-md-12" style="margin-top: 30px;margin-bottom: 20px">
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.sender_mgr')}}</label>
-            <select class="form-control select2me" id="talk_sender_type_search" name="talk_sender_type_search">
+            <label class="control-label">{{trans('lang.select_notice')}}</label>
+            <select class="form-control select2me" id="talk_notice_type_search" name="talk_notice_type_search">
                 <option value="0">{{trans('lang.all')}}</option>
-                <option value="1">{{trans('lang.admin')}}</option>
-                <option value="2">{{trans('lang.talk_policy')}}</option>
+                <option value="{{config('constants.TOP_NOTICE')}}">{{trans('lang.top_notice')}}</option>
+                <option value="{{config('constants.FIXED_NOTICE')}}">{{trans('lang.fixed_notice')}}</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -27,8 +27,9 @@
             <tr>
                 <th>{{trans('lang.number')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
-                <th>{{trans('lang.sender_mgr')}}</th>
+                <th>{{trans('lang.select_notice')}}</th>
                 <th>{{trans('lang.content')}}</th>
+                <th>{{trans('lang.link_url')}}</th>
                 <th>{{trans('lang.function')}}</th>
             </tr>
             </thead>
@@ -53,11 +54,11 @@
             <div class="modal-body">
                 <form id="talk_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">
                     <div class="form-group" style="margin-top: 30px;">
-                        <label class="control-label col-md-2">{{trans('lang.sender_mgr')}}</label>
+                        <label class="control-label col-md-2">{{trans('lang.select_notice')}}</label>
                         <div class="col-md-2">
-                            <select class="form-control select2me" id="talk_sender_type" name="talk_sender_type">
-                                <option value="1">{{trans('lang.admin')}}</option>
-                                <option value="2">{{trans('lang.talk_policy')}}</option>
+                            <select class="form-control" id="talk_notice_type" name="talk_notice_type">
+                                <option value="{{config('constants.TOP_NOTICE')}}">{{trans('lang.top_notice')}}</option>
+                                <option value="{{config('constants.FIXED_NOTICE')}}">{{trans('lang.fixed_notice')}}</option>
                             </select>
                         </div>
                     </div>
@@ -67,6 +68,14 @@
                             <textarea class="form-control" id="talk_content" name="talk_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">{{trans('lang.link_url')}}</label>
+                        <div class="col-md-9">
+                            <input class="form-control" id="talk_link_url" name="talk_link_url">
+                        </div>
+                    </div>
+
+
                     <input type="hidden" name="talk_flag" id="talk_flag">
                     <input type="hidden" name="talk_edit_id" id="talk_edit_id">
                     <input type="hidden" name="_token" id="_token" value="{{csrf_token()}}">
@@ -132,7 +141,7 @@
                 "data":   function ( d ) {
                     start_index=d.start;
                     d._token= "{{csrf_token()}}";
-                    d.sender_type_search = $("#talk_sender_type_search").val();
+                    d.notice_type_search = $("#talk_notice_type_search").val();
                     d.content_search = $("#talk_content_search").val();
                 }
             },
@@ -148,7 +157,7 @@
             "pagingType": "bootstrap_full_number",
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,2,3,4]
+                'targets': [0,2,3,4,5]
             },
                 {  // set default column settings
                     'orderable': true,
@@ -176,8 +185,10 @@
                     toastr["error"]("{{trans('lang.no_display_data')}}", "{{trans('lang.notice')}}");
                 }
                 else {
-                    $("#talk_content").val(result.content);
-                    $("#talk_sender_type").val(result.sender_type);
+                    var jsonData=JSON.parse(result);
+                    $("#talk_content").val(jsonData.content);
+                    $("#talk_notice_type").val(jsonData.notice_type);
+                    $("#talk_link_url").val(jsonData.link_url);
                     $("#btn_talk_open_modal").trigger('click');
                 }
             }
@@ -213,16 +224,12 @@
     $("#btn_talk_add").click (function () {
         $("#talk_flag").val("{{config('constants.SAVE_FLAG_ADD')}}");
         $("#talk_content").val("");
-        $("#talk_sender_type").val("1");
+        $("#talk_notice_type").val("{{config('constants.TOP_NOTICE')}}");
+        $("#talk_link_url").val("");
         $("#btn_talk_open_modal").trigger('click');
     })
 
     $("#btn_talk_save").click(function () {
-        if ($("#talk_sender_type").val() == '') {
-            toastr["error"]("{{trans('lang.input_sender_type')}}", "{{trans('lang.notice')}}");
-            $("#talk_sender_type").focus();
-            return;
-        }
         if ($("#talk_content").val() == '') {
             toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
             $("#push_content").focus();
