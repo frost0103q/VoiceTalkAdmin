@@ -73,4 +73,9 @@ class AdminSettingController extends BasicController
 		else
 			return config('constants.SUCCESS');
 	}
+
+    public function phpinfo()
+    {
+        echo phpinfo();
+    }
 }

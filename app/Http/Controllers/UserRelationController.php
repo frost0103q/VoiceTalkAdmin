@@ -265,4 +265,37 @@ class UserRelationController  extends BasicController{
 
         return response()->json($response);
     }
+
+    public function isAlarmBlockingUser(HttpRequest $request) {
+        $from_user_no = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+
+        if($from_user_no == null || $to_user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $response = config('constants.ERROR_NO');
+        $results = AppUser::where('no', $from_user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $results = AppUser::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $results = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
+        if($results != null && $results->is_alarm == 0) {
+            $response->is_alarm = 0;
+            return response()->json($response);
+        }
+
+        $response->is_alarm = 1;
+        return response()->json($response);
+    }
 }

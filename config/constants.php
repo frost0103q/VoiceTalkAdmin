@@ -12,6 +12,7 @@ return [
         'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
         'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
         'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
+        'ERROR_FAILED_PURCHASE' => ["error" => 12,'message' => 'Failed Purchase Product.'],
 
         'ADMIN_NAME' =>'관리자',
 

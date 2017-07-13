@@ -19,6 +19,7 @@ Route::get('logout', 'Admin\AdminLoginController@doLogout');
 Route::get('/notifications', 'NotificationsController@index');
 Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
+Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
 
@@ -139,6 +140,3 @@ Route::post('delete_manage_notice', 'AdminNoticeController@delete_manage_notice'
 Route::post('ajax_upload', 'BasicController@ajax_upload');
 Route::get('file_download','BasicController@file_download');
 
-
-// free charge api
-Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');
