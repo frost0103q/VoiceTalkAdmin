@@ -28,6 +28,9 @@ return [
         'POINT_HISTORY_TYPE_SIGN_UP'=> 5,
         'POINT_HISTORY_TYPE_NORMAL'=> 6,
         'POINT_HISTORY_TYPE_INAPP'=> 7,
+        'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
+
+        'FREE_CHARGE_TYPE_ADSYNC'=> 0,
 
         'INAPP_ITEMS' => [
                             ["name" => 'point_1','price' => 700, 'value' => 700],
@@ -150,7 +153,7 @@ return [
         'MOBILE_NOTIFY_PAGE'=> 5,
 
 		//user exit status
-		'USER_NOMAL'=> 0,
+		'USER_NORMAL'=> 0,
 		'USER_REQUEST_EXIT'=> 1,
 		'USER_EXIT'=> 2,
 ];

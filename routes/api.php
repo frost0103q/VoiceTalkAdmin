@@ -47,6 +47,7 @@ Route::post('/deleteFriend', 'UserRelationController@deleteFriend');
 Route::post('/deleteAllFriend', 'UserRelationController@deleteAllFriend');
 Route::post('/setUserRelation', 'UserRelationController@setUserRelation');
 Route::get('/friendList', 'UserRelationController@getFriendList');
+Route::get('/isBlockingUser', 'UserRelationController@isAlarmBlockingUser');
 
 // auth api
 Route::post('/requestAuthNum', 'UsersController@requestAuthNumber');
@@ -88,3 +89,6 @@ Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
 // mamage notice api
 Route::get('/manageNoticeList', 'AdminNoticeController@manageNoticeList');
 Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
+
+// free charge api
+Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');

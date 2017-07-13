@@ -209,12 +209,10 @@ class UsersController extends BasicController
         $user = $results;
 
         // If it is a exit requested user,
-        if($user->request_exit_flag == 1) {
+        if($user->request_exit_flag != config("constants.USER_NORMAL")) {
             $cur_time = AppServiceProvider::getTimeInDefaultFormat();
             $diff_time = AppServiceProvider::diffTime($cur_time, $user->request_exit_time);
             if($diff_time > 60*60*24) { // 1 day
-                $this->deleteUserCompletely($user->no);
-
                 $response = config('constants.ERROR_NO_INFORMATION');
                 return response()->json($response);
             }
@@ -1627,7 +1625,7 @@ class UsersController extends BasicController
         }
 
         for($i=0;$i<count($new_selected_array);$i++){
-            $update_data['request_exit_flag']=config('constants.USER_NOMAL');
+            $update_data['request_exit_flag']=config('constants.USER_NORMAL');
             $update_data['exit_time']=date('Y-m-d H:i:s');
             $result=User::where('no', $new_selected_array[$i])->update($update_data);
             if(!$result)

@@ -43,11 +43,18 @@ Route::post('/save_mobile_page', 'MobilePageController@save_mobile_page');
 Route::get('/get_mobile_page', 'MobilePageController@get_mobile_page');
 Route::get('/get_mobile_page_url', 'MobilePageController@get_mobile_page_url');
 Route::get('/notify', 'MobilePageController@notify');
+
+Route::post('/notify', 'MobilePageController@notify');
 Route::get('/use_guide', 'MobilePageController@use_guide');
+Route::post('/use_guide', 'MobilePageController@use_guide');
 Route::get('/google_card_register_guide', 'MobilePageController@google_card_register_guide');
+Route::post('/google_card_register_guide', 'MobilePageController@google_card_register_guide');
 Route::get('/agreement/service', 'MobilePageController@agreement_service');
+Route::post('/agreement/service', 'MobilePageController@agreement_service');
 Route::get('/agreement/privacy', 'MobilePageController@agreement_privacy');
+Route::post('/agreement/privacy', 'MobilePageController@agreement_privacy');;
 Route::get('/agreement/gps', 'MobilePageController@agreement_gps');
+Route::post('/agreement/gps', 'MobilePageController@agreement_gps');
 
 //Talk and User manage
 Route::get('talk_user_mgr', 'TalkController@index');
@@ -131,3 +138,4 @@ Route::post('delete_manage_notice', 'AdminNoticeController@delete_manage_notice'
 
 Route::post('ajax_upload', 'BasicController@ajax_upload');
 Route::get('file_download','BasicController@file_download');
+

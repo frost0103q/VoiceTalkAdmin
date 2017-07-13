@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <form id="invisible_form" action="new_window.php" method="get" target="_blank">
+    <form id="invisible_form" action="new_window.php" method="post" target="_blank">
         <input id="new_window_parameter_1" name="content" type="hidden" value="default">
         <input id="new_window_parameter_2" name="_token" type="hidden" value="{{csrf_token()}}">
     </form>
@@ -66,6 +66,7 @@
         $("#btn_save").click(function () {
 
             var content=$("#ta_content").val();
+
             if(content==''){
                 toastr["error"]("{{trans('lang.input_content')}}", "{{trans('lang.notice')}}");
                 return;

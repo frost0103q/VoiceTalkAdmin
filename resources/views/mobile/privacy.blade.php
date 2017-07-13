@@ -42,7 +42,7 @@
         }
 
         .content {
-            text-align: center;
+            text-align: left;
         }
 
         .title {
@@ -65,12 +65,13 @@
     </style>
 </head>
 <body>
-<div class="flex-center position-ref full-height">
 
+<div style="margin: 10px;">
 
     <div class="content">
         <div class="m-b-md">
-            {{$content}}
+
+            <?php echo $content?>
         </div>
     </div>
 </div>
