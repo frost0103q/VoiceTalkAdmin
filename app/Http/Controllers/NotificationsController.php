@@ -146,9 +146,13 @@ class NotificationsController extends BasicController
 
         if ($read_type == 0 || $read_type == 1) { // unread
             if ($include_where == false) {
-                $sql = $sql . " where c.is_read ='" . $read_type . "'";
+                $sql = $sql . " where c.is_read =" . $read_type;
             } else {
-                $sql = $sql . " AND c.is_read ='" . $read_type . "'";
+                $sql = $sql . " AND c.is_read =" . $read_type;
+            }
+
+            if($user_no != null) {
+                $sql = $sql." AND c.to_user_no=" . $user_no;
             }
         }
 
