@@ -96,67 +96,72 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_talk;
+    var init_tbl_talk;
     $(document).ready(function () {
-        var start_index;
-        tbl_talk = $("#tbl_talk").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_talk_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.sex = $("#talk_user_sex").val();
-                    d.user_no = $("#talk_user_no").val();
-                    d.nickname = $("#talk_user_nickname").val();
-                    d.phone_number = $("#talk_user_phone_number").val();
-                    d.email = $("#talk_user_email").val();
-                    d.chat_content = $("#talk_user_chat_content").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                if (data[2] != null)
-                    $('td:eq(2)', row).html('<img src="' + data[2] + '" height="50px">');
-                if (data[7] != null)
-                    $('td:eq(7)', row).html('<img src="' + data[7] + '" height="50px">');
-            },
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number",
-            "columnDefs": [{  // set default column settings
-                'orderable': false,
-                'targets': [0, 1, 2, 3, 4, 6, 7,8,9]
-            },
-                {  // set default column settings
-                    'orderable': true,
-                    'targets': [5]
-                }],
+        init_tbl_talk=function () {
+            if(!$("#tbl_talk").hasClass("dataTable")){
+                tbl_talk = $("#tbl_talk").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_talk_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.sex = $("#talk_user_sex").val();
+                            d.user_no = $("#talk_user_no").val();
+                            d.nickname = $("#talk_user_nickname").val();
+                            d.phone_number = $("#talk_user_phone_number").val();
+                            d.email = $("#talk_user_email").val();
+                            d.chat_content = $("#talk_user_chat_content").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        if (data[2] != null)
+                            $('td:eq(2)', row).html('<img src="' + data[2] + '" height="50px">');
+                        if (data[7] != null)
+                            $('td:eq(7)', row).html('<img src="' + data[7] + '" height="50px">');
+                    },
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 5,
+                    "pagingType": "bootstrap_full_number",
+                    "columnDefs": [{  // set default column settings
+                        'orderable': false,
+                        'targets': [0, 1, 2, 3, 4, 6, 7,8,9]
+                    },
+                        {  // set default column settings
+                            'orderable': true,
+                            'targets': [5]
+                        }],
 
-            "order": [
-                [5, "desc"]
-            ] // set first column as a default sort by asc
-        });
+                    "order": [
+                        [5, "desc"]
+                    ] // set first column as a default sort by asc
+                });
+            }
+        }
     });
 
     $("#btn_talk_search").click(function () {

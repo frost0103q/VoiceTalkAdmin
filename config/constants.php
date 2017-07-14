@@ -129,6 +129,9 @@ return [
 		'TALK_ADMIN' => 1,
 		'TALK_POLICE' => 2,
 
+		'TOP_NOTICE' => 1,
+		'FIXED_NOTICE' => 2,
+
 		'SPECIAL_USER' => 1,
 		'COMMON_USER' => 2,
 		'TALK_USER' => 3,

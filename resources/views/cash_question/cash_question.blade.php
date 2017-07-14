@@ -116,74 +116,79 @@
 <input type="hidden" id="delete_cash_question_no">
 
 <script>
+    var start_index;
     var tbl_cash_question;
+    var init_tbl_cash_question;
     $(document).ready(function () {
-        var start_index;
-        tbl_cash_question=$("#tbl_cash_question").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number",
+        init_tbl_cash_question=function () {
+            if(!$("#tbl_cash_question").hasClass("dataTable")){
+                tbl_cash_question=$("#tbl_cash_question").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 5,
+                    "pagingType": "bootstrap_full_number",
 
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_cash_question_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.user_sex=$("#user_sex").val();
-                    d.user_no=$("#user_no").val();
-                    d.user_nickname=$("#user_nickname").val();
-                    d.user_phone_number=$("#user_phone_number").val();
-                    d.user_email=$("#user_email").val();
-                    d.user_chat_content=$("#user_chat_content").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                if(data[2]!='')
-                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
-                if(data[6]!='' && data[6]!=null)
-                    $('td:eq(6)', row).html('{{trans('lang.answer')}}');
-                else
-                    $('td:eq(6)', row).html('{{trans('lang.uncertain')}}');
-                var option_html = '<a><i class="fa fa-edit" onclick="cash_question_edit(' + data[0] + ',\'' + data[4] + '\',\'' + data[6] + '\')"></i>' +
-                        ' <i class="fa fa-remove" onclick="cash_question_delete(' + data[0] + ')"></i></a>';
-                $('td:eq(8)', row).html(option_html);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2, 3, 4,6,7,8]
-            },
-                {
-                    'orderable': true,
-                    'targets': [5]
-                }],
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_cash_question_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.user_sex=$("#user_sex").val();
+                            d.user_no=$("#user_no").val();
+                            d.user_nickname=$("#user_nickname").val();
+                            d.user_phone_number=$("#user_phone_number").val();
+                            d.user_email=$("#user_email").val();
+                            d.user_chat_content=$("#user_chat_content").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        if(data[2]!='')
+                            $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                        if(data[6]!='' && data[6]!=null)
+                            $('td:eq(6)', row).html('{{trans('lang.answer')}}');
+                        else
+                            $('td:eq(6)', row).html('{{trans('lang.uncertain')}}');
+                        var option_html = '<a><i class="fa fa-edit" onclick="cash_question_edit(' + data[0] + ',\'' + data[4] + '\',\'' + data[6] + '\')"></i>' +
+                                ' <i class="fa fa-remove" onclick="cash_question_delete(' + data[0] + ')"></i></a>';
+                        $('td:eq(8)', row).html(option_html);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2, 3, 4,6,7,8]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [5]
+                        }],
 
-            "order": [
-                [5, "desc"]
-            ]
-        });
+                    "order": [
+                        [5, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     function cash_question_edit(no,content,answer) {

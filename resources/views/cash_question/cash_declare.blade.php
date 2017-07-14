@@ -115,72 +115,77 @@
 <input type="hidden" id="delete_cash_declare_no">
 
 <script>
+    var start_index;
     var tbl_declare;
+    var init_tbl_declare;
     $(document).ready(function () {
-        var start_index;
-        tbl_declare=$("#tbl_declare").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_cash_declare_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.user_sex=$("#d_user_sex").val();
-                    d.user_no=$("#d_user_no").val();
-                    d.user_nickname=$("#d_user_nickname").val();
-                    d.user_phone_number=$("#d_user_phone_number").val();
-                    d.user_email=$("#d_user_email").val();
-                    d.user_chat_content=$("#d_user_chat_content").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
+        init_tbl_declare=function () {
+            if(!$("#tbl_declare").hasClass("dataTable")){
+                tbl_declare=$("#tbl_declare").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 5,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_cash_declare_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.user_sex=$("#d_user_sex").val();
+                            d.user_no=$("#d_user_no").val();
+                            d.user_nickname=$("#d_user_nickname").val();
+                            d.user_phone_number=$("#d_user_phone_number").val();
+                            d.user_email=$("#d_user_email").val();
+                            d.user_chat_content=$("#d_user_chat_content").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
 
-                if(data[5]!='' && data[5]!=null)
-                    $('td:eq(5)', row).html('{{trans('lang.answer')}}');
-                else
-                    $('td:eq(5)', row).html('{{trans('lang.uncertain')}}');
-                var option_html = '<a><i class="fa fa-edit" onclick="cash_declare_edit(' + data[0] + ',\'' + data[3] + '\',\'' + data[5] + '\')"></i>' +
-                        ' <i class="fa fa-remove" onclick="cash_declare_delete(' + data[0] + ')"></i></a>';
-                $('td:eq(7)', row).html(option_html);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2, 3, 5,6,7]
-            },
-                {
-                    'orderable': true,
-                    'targets': [4]
-                }],
+                        if(data[5]!='' && data[5]!=null)
+                            $('td:eq(5)', row).html('{{trans('lang.answer')}}');
+                        else
+                            $('td:eq(5)', row).html('{{trans('lang.uncertain')}}');
+                        var option_html = '<a><i class="fa fa-edit" onclick="cash_declare_edit(' + data[0] + ',\'' + data[3] + '\',\'' + data[5] + '\')"></i>' +
+                                ' <i class="fa fa-remove" onclick="cash_declare_delete(' + data[0] + ')"></i></a>';
+                        $('td:eq(7)', row).html(option_html);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2, 3, 5,6,7]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [4]
+                        }],
 
-            "order": [
-                [4, "desc"]
-            ]
-        });
+                    "order": [
+                        [4, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     function cash_declare_edit(no,content,answer) {

@@ -58,65 +58,70 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_point_present;
+    var init_tbl_point_present;
     $(document).ready(function () {
-        var start_index;
-        tbl_point_present=$("#tbl_point_present").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_present_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.sex=$("#pp_sex").val();
-                    d.user_no=$("#pp_user_no").val();
-                    d.nickname=$("#pp_user_nickname").val();
-                    d.phone_number=$("#pp_phone_number").val();
-                    d.email=$("#pp_email").val();
-                    d.chat_content=$("#pp_chat_content").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $("#total_withdraw_amount").text(data[10]);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2,4,5,6]
-            },
-                {
-                    'orderable': true,
-                    'targets': [3]
-                }],
+        init_tbl_point_present=function () {
+            if(!$("#tbl_point_present").hasClass("dataTable")){
+                tbl_point_present=$("#tbl_point_present").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_present_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.sex=$("#pp_sex").val();
+                            d.user_no=$("#pp_user_no").val();
+                            d.nickname=$("#pp_user_nickname").val();
+                            d.phone_number=$("#pp_phone_number").val();
+                            d.email=$("#pp_email").val();
+                            d.chat_content=$("#pp_chat_content").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $("#total_withdraw_amount").text(data[10]);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2,4,5,6]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [3]
+                        }],
 
-            "order": [
-                [3, "desc"]
-            ]
-        });
+                    "order": [
+                        [3, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_pp_search").click(function () {

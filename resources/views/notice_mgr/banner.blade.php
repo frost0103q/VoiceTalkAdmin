@@ -118,62 +118,67 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_banner;
+    var init_tbl_banner;
     $(document).ready(function () {
-        var start_index;
-        tbl_banner=$("#tbl_banner").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "zeroRecords": "{{trans('lang.no_display_data')}}",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "processing":false,
-            "serverSide": true,
-            "ajax": {
-                "url": 	"ajax_banner_table",
-                "type":	"POST",
-                "data":   function ( d ) {
-                    start_index=d.start;
-                    d._token= "{{csrf_token()}}";
-                    d.send_type_search = $("#banner_send_type_search").val();
-                    d.title_search = $("#banner_title_search").val();
-                    d.content_search = $("#banner_content_search").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-            },
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number",
-            "columnDefs": [{  // set default column settings
-                'orderable': false,
-                'targets': [0,2,3,4,5]
-            },
-                {  // set default column settings
-                    'orderable': true,
-                    'targets': [1]
-                }],
+        init_tbl_banner=function () {
+            if(!$("#tbl_banner").hasClass("dataTable")){
+                tbl_banner=$("#tbl_banner").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "zeroRecords": "{{trans('lang.no_display_data')}}",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "processing":false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": 	"ajax_banner_table",
+                        "type":	"POST",
+                        "data":   function ( d ) {
+                            start_index=d.start;
+                            d._token= "{{csrf_token()}}";
+                            d.send_type_search = $("#banner_send_type_search").val();
+                            d.title_search = $("#banner_title_search").val();
+                            d.content_search = $("#banner_content_search").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                    },
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 5,
+                    "pagingType": "bootstrap_full_number",
+                    "columnDefs": [{  // set default column settings
+                        'orderable': false,
+                        'targets': [0,2,3,4,5]
+                    },
+                        {  // set default column settings
+                            'orderable': true,
+                            'targets': [1]
+                        }],
 
-            "order": [
-                [1, "desc"]
-            ] // set first column as a default sort by asc
-        });
+                    "order": [
+                        [1, "desc"]
+                    ] // set first column as a default sort by asc
+                });
+            }
+        }
     });
 
     function banner_edit(no) {

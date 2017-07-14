@@ -64,66 +64,71 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_cash;
+    var init_tbl_cash;
     $(document).ready(function () {
-        var start_index;
-        tbl_cash=$("#tbl_cash").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_cash_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.start_dt=$("#c_from_date").val();
-                    d.end_dt=$("#c_to_date").val();
-                    d.status=$("#c_status").val();
-                    d.user_no=$("#c_user_no").val();
-                    d.nickname=$("#c_user_nickname").val();
-                    d.order_number=$("#c_order_number").val();
-                    d.cash_code=$("#c_cash_code").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $("#total_cash_amount").text(data[7]);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2, 3,5,6]
-            },
-                {
-                    'orderable': true,
-                    'targets': [4]
-                }],
+        init_tbl_cash=function () {
+            if(!$("#tbl_cash").hasClass("dataTable")){
+                tbl_cash=$("#tbl_cash").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_cash_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.start_dt=$("#c_from_date").val();
+                            d.end_dt=$("#c_to_date").val();
+                            d.status=$("#c_status").val();
+                            d.user_no=$("#c_user_no").val();
+                            d.nickname=$("#c_user_nickname").val();
+                            d.order_number=$("#c_order_number").val();
+                            d.cash_code=$("#c_cash_code").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $("#total_cash_amount").text(data[7]);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2, 3,5,6]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [4]
+                        }],
 
-            "order": [
-                [4, "desc"]
-            ]
-        });
+                    "order": [
+                        [4, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_c_search").click(function () {

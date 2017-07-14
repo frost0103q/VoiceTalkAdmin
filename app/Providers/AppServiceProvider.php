@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
     public static function url_decord($p_text)
     {
         $p_text = urldecode($p_text);
+
         // [2014/09/26 10:41]urldecode()함수가 '()'기호를 정확히 디코드 하지 못하는 이슈있음.
         // &#40;, &#41;로 디코드됨.
         //

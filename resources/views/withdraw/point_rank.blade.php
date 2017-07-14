@@ -48,62 +48,67 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_point_rank;
+    var init_tbl_point_rank;
     $(document).ready(function () {
-        var start_index;
-        tbl_point_rank=$("#tbl_point_rank").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_point_rank_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.sex=$("#pr_sex").val();
-                    d.start_dt=$("#pr_from_date").val();
-                    d.end_dt=$("#pr_to_date").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                if (data[2] != null)
-                    $('td:eq(2)', row).html('<img src="' + data[2] + '" height="40px">');
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [ 1,2,3,4,5,6,7,8,9]
-            },
-                {
-                    'orderable': true,
-                    'targets': [0]
-                }],
+        init_tbl_point_rank=function () {
+            if(!$("#tbl_point_rank").hasClass("dataTable")){
+                tbl_point_rank=$("#tbl_point_rank").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_point_rank_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.sex=$("#pr_sex").val();
+                            d.start_dt=$("#pr_from_date").val();
+                            d.end_dt=$("#pr_to_date").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        if (data[2] != null)
+                            $('td:eq(2)', row).html('<img src="' + data[2] + '" height="40px">');
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [ 1,2,3,4,5,6,7,8,9]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [0]
+                        }],
 
-            "order": [
-                [0, "desc"]
-            ]
-        });
+                    "order": [
+                        [0, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_pr_search").click(function () {

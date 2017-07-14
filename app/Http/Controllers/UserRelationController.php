@@ -270,6 +270,7 @@ class UserRelationController extends BasicController
         }
 
         $results = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
+
         if ($results != null && $results->is_alarm == config('constants.FALSE')) {
             $response->is_alarm = config('constants.FALSE');
             return response()->json($response);

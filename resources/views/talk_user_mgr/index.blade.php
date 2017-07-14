@@ -50,6 +50,25 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            init_tbl_user();
+        });
+
+        $(".nav.nav-tabs li:eq(1)").click(function () {
+            init_tbl_talk();
+        });
+        $(".nav.nav-tabs li:eq(2)").click(function () {
+            init_tbl_declare();
+        });
+        $(".nav.nav-tabs li:eq(3)").click(function () {
+            init_tbl_er_user();
+        });
+        $(".nav.nav-tabs li:eq(4)").click(function () {
+            init_tbl_e_user();
+        });
+    </script>
+
 @stop
 
 
