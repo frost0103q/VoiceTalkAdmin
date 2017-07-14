@@ -7,6 +7,7 @@ use App\Models\ManageNotice;
 use App\Models\MobilePage;
 use App\Models\Opinion;
 use App\Models\SSP;
+use App\Models\TalkNotice;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
 use Request;
@@ -63,6 +64,7 @@ class AdminNoticeController extends BasicController
         // get mobile page url
         $response = [];
         $response['mobile_page'] = MobilePage::all("type", "url");
+        $response['talk_notice_list'] = TalkNotice::all("notice_type", "link_url", "content");
         return response()->json($response);
     }
 
