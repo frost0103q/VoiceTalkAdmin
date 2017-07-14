@@ -45,13 +45,20 @@ class AppServiceProvider extends ServiceProvider
         return $p_text;
     }
 
-    public static function getTimeInDefaultFormat() {
-        return  date("Y-m-d H:i:s");
+    public static function getTimeInDefaultFormat()
+    {
+        return date("Y-m-d H:i:s");
     }
 
-    public static function diffTime($time1, $time2) {
+    public static function diffTime($time1, $time2)
+    {
         $to_time = strtotime($time1);
         $from_time = strtotime($time2);
         return round(abs($to_time - $from_time) / 60, 2);
+    }
+
+    public static function getMilliTime()
+    {
+        return round(microtime(true) * 1000);
     }
 }

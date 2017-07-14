@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
-use App\Models\SSP;
-use App\Models\Push;
 use App\Models\Banner;
-use App\Models\TalkNotice;
 use App\Models\Message;
+use App\Models\Push;
 use App\Models\SMS;
+use App\Models\SSP;
+use App\Models\TalkNotice;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 use Request;
 use Session;
-use App\Models\ServerFile;
 
 class NoticeController extends BasicController
 {
@@ -47,11 +43,12 @@ class NoticeController extends BasicController
             return redirect("/login");
         }
 
-        return view('notice_mgr.index',['menu_index'=>5]);
+        return view('notice_mgr.index', ['menu_index' => 5]);
     }
 
     //push
-    public function ajax_push_table(HttpRequest $request){
+    public function ajax_push_table(HttpRequest $request)
+    {
         $table = 't_push';
         // Custom Where
         $custom_where = "1=1";
@@ -89,12 +86,12 @@ class NoticeController extends BasicController
                     if ($d == "")
                         return $d;
                     $str = "<a onclick='file_download(\"$d\")'><i class='fa fa-download'></i></a>";
-                    return $d."&nbsp;&nbsp;".$str;
+                    return $d . "&nbsp;&nbsp;" . $str;
                 }),
             array('db' => 'no', 'dt' => 6,
                 'formatter' => function ($d, $row) {
-                    $str = "<a title=".trans('lang.edit')." onclick='push_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
-                    $str .= "<a title=".trans('lang.remove')." onclick='push_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    $str = "<a title=" . trans('lang.edit') . " onclick='push_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=" . trans('lang.remove') . " onclick='push_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
                     return $str;
                 }),
         );
@@ -130,7 +127,7 @@ class NoticeController extends BasicController
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('push_edit_id');
-            $result = Push::where('no',$edit_id)->update($data);
+            $result = Push::where('no', $edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -159,7 +156,8 @@ class NoticeController extends BasicController
 
     //banner
 
-    public function ajax_banner_table(HttpRequest $request){
+    public function ajax_banner_table(HttpRequest $request)
+    {
         $table = 't_banner';
         // Custom Where
         $custom_where = "1=1";
@@ -185,12 +183,12 @@ class NoticeController extends BasicController
                     if ($d == "")
                         return $d;
                     $str = "<a onclick='file_download(\"$d\")'><i class='fa fa-download'></i></a>";
-                    return $d."&nbsp;&nbsp;".$str;
+                    return $d . "&nbsp;&nbsp;" . $str;
                 }),
             array('db' => 'no', 'dt' => 5,
                 'formatter' => function ($d, $row) {
-                    $str = "<a title=".trans('lang.edit')." onclick='banner_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
-                    $str .= "<a title=".trans('lang.remove')." onclick='banner_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    $str = "<a title=" . trans('lang.edit') . " onclick='banner_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=" . trans('lang.remove') . " onclick='banner_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
                     return $str;
                 }),
         );
@@ -225,7 +223,7 @@ class NoticeController extends BasicController
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('banner_edit_id');
-            $result = Banner::where('no',$edit_id)->update($data);
+            $result = Banner::where('no', $edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -254,7 +252,8 @@ class NoticeController extends BasicController
 
     //talk
 
-    public function ajax_talk_notice_table(HttpRequest $request){
+    public function ajax_talk_notice_table(HttpRequest $request)
+    {
         $table = 't_talk_notice';
         // Custom Where
         $custom_where = "1=1";
@@ -283,8 +282,8 @@ class NoticeController extends BasicController
             array('db' => 'content', 'dt' => 3),
             array('db' => 'no', 'dt' => 4,
                 'formatter' => function ($d, $row) {
-                    $str = "<a title=".trans('lang.edit')." onclick='talk_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
-                    $str .= "<a title=".trans('lang.remove')." onclick='talk_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    $str = "<a title=" . trans('lang.edit') . " onclick='talk_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=" . trans('lang.remove') . " onclick='talk_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
                     return $str;
                 }),
         );
@@ -318,7 +317,7 @@ class NoticeController extends BasicController
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('talk_edit_id');
-            $result = TalkNotice::where('no',$edit_id)->update($data);
+            $result = TalkNotice::where('no', $edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -346,7 +345,8 @@ class NoticeController extends BasicController
     }
 
     //message
-    public function ajax_message_table(HttpRequest $request){
+    public function ajax_message_table(HttpRequest $request)
+    {
         $table = 't_message';
         // Custom Where
         $custom_where = "1=1";
@@ -408,8 +408,8 @@ class NoticeController extends BasicController
             array('db' => 'content', 'dt' => 6),
             array('db' => 'no', 'dt' => 7,
                 'formatter' => function ($d, $row) {
-                    $str = "<a title=".trans('lang.edit')." onclick='message_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
-                    $str .= "<a title=".trans('lang.remove')." onclick='message_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    $str = "<a title=" . trans('lang.edit') . " onclick='message_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=" . trans('lang.remove') . " onclick='message_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
                     return $str;
                 }),
         );
@@ -446,7 +446,7 @@ class NoticeController extends BasicController
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('message_edit_id');
-            $result = Message::where('no',$edit_id)->update($data);
+            $result = Message::where('no', $edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -475,7 +475,8 @@ class NoticeController extends BasicController
 
     //sms
 
-    public function ajax_sms_table(HttpRequest $request){
+    public function ajax_sms_table(HttpRequest $request)
+    {
         $table = 't_sms';
         // Custom Where
         $custom_where = "1=1";
@@ -498,8 +499,8 @@ class NoticeController extends BasicController
             array('db' => 'content', 'dt' => 3),
             array('db' => 'no', 'dt' => 4,
                 'formatter' => function ($d, $row) {
-                    $str = "<a title=".trans('lang.edit')." onclick='sms_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
-                    $str .= "<a title=".trans('lang.remove')." onclick='sms_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
+                    $str = "<a title=" . trans('lang.edit') . " onclick='sms_edit($d)' style='cursor:pointer'><i class='fa fa-edit'></i></a>&nbsp";
+                    $str .= "<a title=" . trans('lang.remove') . " onclick='sms_del($d)' style='cursor:pointer'><i class='fa fa-trash'></i></a>";
                     return $str;
                 }),
         );
@@ -536,7 +537,7 @@ class NoticeController extends BasicController
         } else if ($flag == config('constants.SAVE_FLAG_EDIT')) {
             $data["updated_at"] = date("Y-m-d H:i:s");
             $edit_id = $request->input('sms_edit_id');
-            $result = SMS::where('no',$edit_id)->update($data);
+            $result = SMS::where('no', $edit_id)->update($data);
             if (!$result)
                 return config('constants.FAIL');
         }

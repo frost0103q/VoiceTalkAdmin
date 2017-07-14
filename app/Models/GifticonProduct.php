@@ -10,7 +10,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GifticonProduct  extends Model
+class GifticonProduct extends Model
 {
     protected $table = 't_gifticon_product';
 

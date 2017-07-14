@@ -28,8 +28,9 @@ class IdiomController extends BasicController
     {
 
     }
-    
-    public function index(){
+
+    public function index()
+    {
 
         $email = Session::get('u_email');
         if (!isset($email) || $email == null) {
@@ -37,68 +38,64 @@ class IdiomController extends BasicController
         }
 
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
-        if($interdict_idiom!=null)
-            $content=$interdict_idiom->content;
+        if ($interdict_idiom != null)
+            $content = $interdict_idiom->content;
         else
-            $content="";
-        return view('idiom_manage.index',['menu_index'=>9,'content'=>$content]);
+            $content = "";
+        return view('idiom_manage.index', ['menu_index' => 9, 'content' => $content]);
     }
 
-    public function save_interdict_idiom(){
-        
-        $content=$_POST['idiom_str'];
+    public function save_interdict_idiom()
+    {
+
+        $content = $_POST['idiom_str'];
 
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
-        if($interdict_idiom==null){
+        if ($interdict_idiom == null) {
 
-            $result=DB::insert('insert into t_interdict_idiom (no,content,created_at) values(1,?,?)',[$content,date('Y-m-d H:i:s')]);
+            $result = DB::insert('insert into t_interdict_idiom (no,content,created_at) values(1,?,?)', [$content, date('Y-m-d H:i:s')]);
 
-            if($result){
-                return view('idiom_manage.select_idiom',['content'=>$content]);
-            }
-            else
+            if ($result) {
+                return view('idiom_manage.select_idiom', ['content' => $content]);
+            } else
                 return config('constants.FAIL');
-        }
-        else{
-            $no=$interdict_idiom->no;
-            $content_str=$interdict_idiom->content.','.$content;
+        } else {
+            $no = $interdict_idiom->no;
+            $content_str = $interdict_idiom->content . ',' . $content;
 
-            $result=DB::table('t_interdict_idiom')
+            $result = DB::table('t_interdict_idiom')
                 ->where('no', $no)
-                ->update(['content' => $content_str,'updated_at'=>date('Y-m-d H:i:s')]);
+                ->update(['content' => $content_str, 'updated_at' => date('Y-m-d H:i:s')]);
 
-            if($result){
-                return view('idiom_manage.select_idiom',['content'=>$content_str]);
-            }
-            else
+            if ($result) {
+                return view('idiom_manage.select_idiom', ['content' => $content_str]);
+            } else
                 return config('constants.FAIL');
         }
 
     }
 
-    public function del_selected_idiom(){
-        $content=$_POST['idiom_str'];
+    public function del_selected_idiom()
+    {
+        $content = $_POST['idiom_str'];
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
-        if($interdict_idiom==null){
-            $result=DB::table('t_interdict_idiom')->insert(
-                ['content' => $content,'updated_at'=>'', 'created_at' => date('Y-m-d H:i:s')]);
-            if($result){
-                return view('idiom_manage.select_idiom',['content'=>$content]);
-            }
-            else
+        if ($interdict_idiom == null) {
+            $result = DB::table('t_interdict_idiom')->insert(
+                ['content' => $content, 'updated_at' => '', 'created_at' => date('Y-m-d H:i:s')]);
+            if ($result) {
+                return view('idiom_manage.select_idiom', ['content' => $content]);
+            } else
                 return config('constants.FAIL');
-        }
-        else{
-            $no=$interdict_idiom->no;
+        } else {
+            $no = $interdict_idiom->no;
 
-            $result=DB::table('t_interdict_idiom')
+            $result = DB::table('t_interdict_idiom')
                 ->where('no', $no)
-                ->update(['content' => $content,'updated_at'=>date('Y-m-d H:i:s')]);
+                ->update(['content' => $content, 'updated_at' => date('Y-m-d H:i:s')]);
 
-            if($result){
-                return view('idiom_manage.select_idiom',['content'=>$content]);
-            }
-            else
+            if ($result) {
+                return view('idiom_manage.select_idiom', ['content' => $content]);
+            } else
                 return config('constants.FAIL');
         }
     }

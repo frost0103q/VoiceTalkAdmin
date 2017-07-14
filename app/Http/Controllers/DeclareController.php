@@ -32,7 +32,8 @@ class DeclareController extends BasicController
     }
 
 
-    public function ajax_declare_table(){
+    public function ajax_declare_table()
+    {
         $table = 'v_declare';
         // Custom Where
         $custom_where = "1=1";
@@ -40,59 +41,57 @@ class DeclareController extends BasicController
         // Table's primary key
         $primaryKey = 'no';
 
-        $sex=$_POST['sex'];
-        $user_no=$_POST['user_no'];
-        $nickname=$_POST['nickname'];
-        $phone_number=$_POST['phone_number'];
-        $email=$_POST['email'];
-        $chat_content=$_POST['chat_content'];
+        $sex = $_POST['sex'];
+        $user_no = $_POST['user_no'];
+        $nickname = $_POST['nickname'];
+        $phone_number = $_POST['phone_number'];
+        $email = $_POST['email'];
+        $chat_content = $_POST['chat_content'];
 
-        if($sex!="")
-            $custom_where.=" and from_user_sex=$sex";
-        if($user_no!="")
-            $custom_where.=" and from_user_no like '%".$user_no."%'";
-        if($nickname!="")
-            $custom_where.=" and from_user_nickname like '%".$nickname."%'";
-        if($phone_number!="")
-            $custom_where.=" and from_user_phone_number like '%".$phone_number."%'";
-        if($email!="")
-            $custom_where.=" and from_user_email like '%".$email."%'";
-        if($chat_content!=""){
-            $custom_where.=" and from_user_no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
+        if ($sex != "")
+            $custom_where .= " and from_user_sex=$sex";
+        if ($user_no != "")
+            $custom_where .= " and from_user_no like '%" . $user_no . "%'";
+        if ($nickname != "")
+            $custom_where .= " and from_user_nickname like '%" . $nickname . "%'";
+        if ($phone_number != "")
+            $custom_where .= " and from_user_phone_number like '%" . $phone_number . "%'";
+        if ($email != "")
+            $custom_where .= " and from_user_email like '%" . $email . "%'";
+        if ($chat_content != "") {
+            $custom_where .= " and from_user_no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
         }
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
-                'formatter'=>function($d,$row){
-                    return '<input type="checkbox" class="declare_no" to_user_no="'.$row['to_user_no'].'" value="'.$d.'">';
+                'formatter' => function ($d, $row) {
+                    return '<input type="checkbox" class="declare_no" to_user_no="' . $row['to_user_no'] . '" value="' . $d . '">';
                 }
             ),
             array('db' => 'from_user_no', 'dt' => 1,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $results = User::where('no', $d)->first();
-                    if($results!=null){
-                        $verified=$results['verified'];
-                        if($verified=='1')
-                            return $results['nickname'].'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                    if ($results != null) {
+                        $verified = $results['verified'];
+                        if ($verified == '1')
+                            return $results['nickname'] . '&nbsp;&nbsp;<span class="badge badge-success">' . trans('lang.talk_insure') . '</span>';
                         else
                             return $results['nickname'];
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),
             array('db' => 'from_user_profile_img_path', 'dt' => 2),
             array('db' => 'to_user_no', 'dt' => 3,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $user_model = User::where('no', $d)->first();
-                    if($user_model!=null){
+                    if ($user_model != null) {
                         $return_str = $user_model['nickname'];
-                        if($user_model->force_stop_flag=='1'){
-                            $return_str.='&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                        if ($user_model->force_stop_flag == '1') {
+                            $return_str .= '&nbsp;&nbsp;<span class="badge badge-success">' . trans('lang.force_stop') . '</span>';
                         }
-                        return $return_str.'<br>'.'<p style="color:#3598dc">P '.$user_model['point'].'</p>';
-                    }
-                    else
+                        return $return_str . '<br>' . '<p style="color:#3598dc">P ' . $user_model['point'] . '</p>';
+                    } else
                         return '';
                 }
             ),

@@ -10,7 +10,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FreeChargeHistory  extends Model
+class FreeChargeHistory extends Model
 {
     protected $table = 't_free_charge_history';
 

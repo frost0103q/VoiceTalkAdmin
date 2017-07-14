@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppUser;
 use App\Models\GifticonProduct;
-use Illuminate\Http\Request as HttpRequest;
+use App\Models\User;
 use Config;
 use DB;
+use Illuminate\Http\Request as HttpRequest;
 
 class GifticonController extends BasicController
 {
@@ -31,17 +31,18 @@ class GifticonController extends BasicController
 
     }
 
-    public function requestGiftIcon(HttpRequest $request) {
+    public function requestGiftIcon(HttpRequest $request)
+    {
         $goods_id = $request->input('goods_id');
         $user_no = $request->input('user_no');
 
-        if($goods_id == null || $user_no == null){
+        if ($goods_id == null || $user_no == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
 
-        $user = AppUser::where('no', $user_no)->first();
-        if($user == null) {
+        $user = User::where('no', $user_no)->first();
+        if ($user == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
@@ -55,7 +56,7 @@ class GifticonController extends BasicController
         $cid = Config::get('config.giftN')['cid'];
         $ckey = Config::get('config.giftN')['ckey'];
         $w_enc = urlencode(md5($ckey . $cid . $goods_id . $w_co_tid));
-        $w_url = "https://wapi.gift-n.net/SendEPin?cid=" . $cid . "&enc=" . $w_enc . "&goods_id=" . $goods_id . "&count=1&title=" . $w_title . "&content=" . $w_content . "&mdn=" .$user->phone_number . "&receive_tel=" . $user->phone_number . "&co_tid=" . $w_co_tid . "&reserved=0";
+        $w_url = "https://wapi.gift-n.net/SendEPin?cid=" . $cid . "&enc=" . $w_enc . "&goods_id=" . $goods_id . "&count=1&title=" . $w_title . "&content=" . $w_content . "&mdn=" . $user->phone_number . "&receive_tel=" . $user->phone_number . "&co_tid=" . $w_co_tid . "&reserved=0";
         $w_opt_arr = array(
             CURLOPT_URL => $w_url,
             CURLOPT_POST => false,

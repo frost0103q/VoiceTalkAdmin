@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppUser;
 use App\Models\AuthCode;
 use App\Models\ConsultingReview;
 use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
+use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;
 use App\Models\User;
@@ -75,17 +75,15 @@ class UsersController extends BasicController
     private function getUserInfo($user_no)
     {
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $user_no)->first();
+        $results = User::where('no', $user_no)->first();
 
         if ($results == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return $response;
         }
 
-        $this->addImageData($results, $results->img_no);
-        $result = array_merge($results->toArray(), $response);
-
-        return $result;
+        $results->fillInfo();
+        return $results;
     }
 
     private function sendPoint($from_user, $to_user, $point, $type = 0)
@@ -98,7 +96,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $no)->get();
+        $results = User::where('no', $no)->get();
 
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
@@ -109,7 +107,7 @@ class UsersController extends BasicController
             return config('constants.ERROR_NOT_ENOUGH_POINT');
         }
 
-        $results = AppUser::where('no', $friend_no)->get();
+        $results = User::where('no', $friend_no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
         }
@@ -138,11 +136,6 @@ class UsersController extends BasicController
             $response = config('constants.ERROR_NOT_ENOUGH_POINT');
         }
         return $response;
-    }
-
-    private function deleteUserCompletely($user_no)
-    {
-        AppUser::where('no', $user_no)->delete();
     }
 
     /******************************************************************
@@ -178,7 +171,7 @@ class UsersController extends BasicController
             $params['page'] = 1;
         }
 
-        $response = AppUser::offset($limit * ($page - 1))->limit($limit)->get();
+        $response = User::offset($limit * ($page - 1))->limit($limit)->get();
 
         return response()->json($response);
     }
@@ -194,7 +187,6 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $response = config('constants.ERROR_NO');
         $results = Device::where('os_enum', $type)->where('device_id', $serial)->first();
 
         if ($results == null) {
@@ -222,13 +214,12 @@ class UsersController extends BasicController
             }
         }
 
-        $this->addImageData($user, $user->img_no);
-        $result = array_merge($user->toArray(), $response);
+        $user->fillInfo();
 
         $notification_controller = new NotificationsController();
-        $result['unread_notification_cnt'] = $notification_controller->getUserUnreadCnt($user->no);
+        $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
 
-        return response()->json($result);
+        return response()->json($user);
     }
 
 
@@ -244,7 +235,7 @@ class UsersController extends BasicController
         $response = config('constants.ERROR_NO');
 
         $nickname = $request->input('nickname');
-        $results = AppUser::where('nickname', $nickname)->get();
+        $results = User::where('nickname', $nickname)->get();
 
         if ($results != null && count($results) != 0) {
             $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -299,22 +290,21 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $no)->get();
+        $results = User::where('no', $no)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
-        // $debug = config('app.debug');
-        $testmode = Config::get('config.testmode');
+        $testmode = config('constants.testmode');
 
-        if ($testmode == 0) {
+        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
             $real_number = '+86' . $phone_number;
         } else {
             $real_number = '+82' . $phone_number;
         }
-        $results = AppUser::where('phone_number', $real_number)->get();
+        $results = User::where('phone_number', $real_number)->get();
 
         if ($results != null && count($results) > 0) {
             $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -323,11 +313,11 @@ class UsersController extends BasicController
 
         // send Auth Number
         $cert_code = AuthServiceProvider::generateRandomString(6);
-        $sms_message = "VoiceTalk인증코드는 " . $cert_code . " 입니다.";
+        $sms_message = sprintf(config("constants.SMS_TEXT"), $cert_code);
         $phone_number = str_replace("-", "", $phone_number);
 
         if (true) {
-            if ($testmode == 0) {
+            if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
                 SMS::send($sms_message, null, function ($sms) use ($real_number) {
                     $sms->from('+8615699581631');
                     $sms->to($real_number);
@@ -348,8 +338,7 @@ class UsersController extends BasicController
         $authcode->user_no = $no;
         $authcode->user_phone_number = $real_number;
         $authcode->auth_code = $cert_code;
-        $date = date('Y-m-d H:i:s');
-        $authcode->requested_time = $date;
+        $authcode->requested_time = AppServiceProvider::getTimeInDefaultFormat();
         $authcode->save();
 
         $response['no'] = $authcode->no;
@@ -380,10 +369,10 @@ class UsersController extends BasicController
         $authcode = $results[0];
         if (strcmp($authcode->auth_code, $auth_code) == 0) {
             $update_data = [];
-            $update_data['verified'] = 1;
+            $update_data['verified'] = config("constants.TRUE");
             $update_data['phone_number'] = $authcode->user_phone_number;
 
-            AppUser::where('no', $authcode->user_no)->update($update_data);
+            User::where('no', $authcode->user_no)->update($update_data);
         } else {
             $response = config('constants.ERROR_NO_INFORMATION');
         }
@@ -429,7 +418,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            $results = AppUser::where('nickname', $nickname)->get();
+            $results = User::where('nickname', $nickname)->get();
 
             if ($results != null && count($results) != 0) {
                 $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -439,7 +428,7 @@ class UsersController extends BasicController
             // image upload
             if ($user_photo != null) {
                 $newfile = new ServerFile;
-                $user_photo_no = $newfile->uploadFile($user_photo, TYPE_IMAGE);
+                $user_photo_no = $newfile->uploadFile($user_photo, config('constants.IMAGE'));
 
                 if ($user_photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
@@ -449,7 +438,7 @@ class UsersController extends BasicController
                 $user_photo_no = -1;
             }
 
-            $user = new AppUser;
+            $user = new User;
 
             $user->nickname = $nickname;
             $user->sex = $sex;
@@ -466,8 +455,12 @@ class UsersController extends BasicController
                 $user->longitude = $longitude;
             }
 
-            if(true) { // for test temp
+            $testmode = config('constants.testmode');
+            if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
+            }
+            else {
+                $user->point = config('constants.USER_FIRST_POINT');
             }
 
             $user->save();
@@ -481,7 +474,7 @@ class UsersController extends BasicController
 
             $update_data = [];
             if ($nickname != null) {
-                $results = AppUser::where('nickname', $nickname)->where('no', '!=', $no)->get();
+                $results = User::where('nickname', $nickname)->where('no', '!=', $no)->get();
 
                 if ($results != null && count($results) != 0) {
                     $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -502,7 +495,7 @@ class UsersController extends BasicController
             if ($user_photo != null) {
                 // image upload
                 $newfile = new ServerFile;
-                $user_photo_no = $newfile->uploadFile($user_photo, TYPE_IMAGE);
+                $user_photo_no = $newfile->uploadFile($user_photo,  config('constants.IMAGE'));
 
                 if ($user_photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
@@ -520,7 +513,7 @@ class UsersController extends BasicController
                 $update_data['status'] = $status;
             }
 
-            AppUser::where('no', $no)->update($update_data);
+            User::where('no', $no)->update($update_data);
             $response = $this->getUserInfo($no);
         } else if ($oper == 'del') {
             if ($no == null) {
@@ -528,7 +521,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            AppUser::where('no', $no)->delete();
+            User::where('no', $no)->delete();
         } else {
             $response = config('constants.ERROR_NO_PARMA');
         }
@@ -551,7 +544,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $results = AppUser::where('f_email', $email)->get();
+        $results = User::where('f_email', $email)->get();
 
         if (!$results || count($results) == 0) {
             $response = config('constants.ERROR_NO_MATCH_INFORMATION');
@@ -579,30 +572,18 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $results = AppUser::where('no', $no)->get();
+        $results = User::where('no', $no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
         }
         $from_user = $results[0];
 
-        $message = [];
-        $message['type'] = config('constants.CHATMESSAGE_TYPE_SEND_PRESENT');
-        $message['user_no'] = $no;
-        $message['user_name'] = $from_user->nickname;
-
-        $file = ServerFile::where('no', $from_user->img_no)->first();
-        if ($file != null) {
-            $message['user_img_url'] = $file->path;
-        } else {
-            $message['user_img_url'] = "";
+        $data = [];
+        $data['point'] = $point;
+        $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_SEND_PRESENT'), $data);
+        if($ret == false) {
+            $response = config('constants.ERROR_ALARM');
         }
-        $message['time'] = "";
-        $message['content'] = $from_user->nickname . "님이 당신에게 " . $point . "포인트를 선물했습니다.";
-        $message['title'] = "선물";
-        $message['talk_no'] = "";
-        $message['talk_user_no'] = "";
-
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
         return response()->json($response);
     }
 
@@ -617,38 +598,27 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $results = AppUser::where('no', $no)->get();
+        $results = User::where('no', $no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
         }
         $from_user = $results[0];
 
-        $results = AppUser::where('no', $friend_no)->get();
+        $results = User::where('no', $friend_no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
         }
-        $to_user = $results[0];
 
-        $message = [];
-        $message['type'] = config('constants.CHATMESSAGE_TYPE_REQUEST_PRESENT');
-        $message['user_no'] = $no;
-        $message['user_name'] = $from_user->nickname;
-
-        $file = ServerFile::where('no', $from_user->img_no)->first();
-        if ($file != null) {
-            $message['user_img_url'] = $file->path;
-        } else {
-            $message['user_img_url'] = "";
+        $data = [];
+        $data['point'] = $point;
+        $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_REQUEST_PRESENT'), $data);
+        if($ret == false) {
+            $response = config('constants.ERROR_ALARM');
         }
-        $message['time'] = "";
-        $message['content'] = $to_user->nickname . "님으로부터 " . $point . "P 조르기가 들어왔습니다.";
-        $message['title'] = "선물 조르기";
-        $message['talk_no'] = "";
-        $message['talk_user_no'] = "";
+        else {
+            $response = config('constants.ERROR_NO');
+        }
 
-        $this->sendAlarmMessage($from_user->no, $friend_no, $message, $point);
-
-        $response = config('constants.ERROR_NO');
         return response()->json($response);
     }
 
@@ -665,14 +635,14 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $from_user)->get();
+        $results = User::where('no', $from_user)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
-        $results = AppUser::where('no', $to_user)->get();
+        $results = User::where('no', $to_user)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -695,7 +665,7 @@ class UsersController extends BasicController
         $longitude = $request->input('longitude');
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $user_no)->get();
+        $results = User::where('no', $user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -721,7 +691,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $no)->get();
+        $results = User::where('no', $no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -738,53 +708,14 @@ class UsersController extends BasicController
             $user->enable_alarm_add_friend = $value;
         }
 
-        if ($user->enable_alarm_call_request == 1 || $user->enable_alarm_add_friend == 1) {
-            $user->enable_alarm = 1;
+        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE') ) {
+            $user->enable_alarm = config('constants.TRUE') ;
         } else {
-            $user->enable_alarm = 0;
+            $user->enable_alarm = config('constants.FALSE') ;
         }
 
         $user->save();
 
-        return response()->json($response);
-    }
-
-    public function sendAlarm(HttpRequest $request)
-    {
-        $type = $request->input('type');
-        $from_user_no = $request->input('from_user_no');
-        $to_user_no = $request->input('to_user_no');
-        $content = $request->input('message');
-
-        if ($from_user_no == null || $to_user_no == null || $content == null || $type == null) {
-            $response = config('constants.ERROR_NO_PARMA');
-            return response()->json($response);
-        }
-
-        $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $from_user_no)->get();
-        if ($results == null || count($results) == 0) {
-            $response = config('constants.ERROR_NO_INFORMATION');
-            return response()->json($response);
-        }
-
-        $results = AppUser::where('no', $to_user_no)->get();
-        if ($results == null || count($results) == 0) {
-            $response = config('constants.ERROR_NO_INFORMATION');
-            return response()->json($response);
-        }
-
-        $to_user = $results[0];
-        $message = json_decode($content, true);
-
-        if ($message['type'] == config('constants.CHATMESSAGE_TYPE_REQUEST_CONSULTING')) {
-            if ($to_user->verified == 0) {
-                $response = config('constants.ERROR_NOT_VERIFIED_USER');
-                return response()->json($response);
-            }
-        }
-
-        $this->sendAlarmMessage($from_user_no, $to_user->no, $message, null);
         return response()->json($response);
     }
 
@@ -798,15 +729,15 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $user_no)->get();
+        $results = User::where('no', $user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
         $user = $results[0];
-        $response['no'] = 0;
-        $curdatetime = date("Y-m-d H:i:s"); //current datetime
+        $response['no'] = config('constants.INVALID_MODEL_NO');
+        $curdatetime = AppServiceProvider::getTimeInDefaultFormat(); //current datetime
         if ($user->check_roll_time != null) {
             $dbdatetime = $user->check_roll_time;//datetime from database: "2014-05-18 18:10:18"
 
@@ -839,7 +770,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $from_user_no)->get();
+        $results = User::where('no', $from_user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -847,13 +778,13 @@ class UsersController extends BasicController
 
         $from_user = $results[0];
 
-        $results = AppUser::where('no', $to_user_no)->get();
+        $results = User::where('no', $to_user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
         $to_user = $results[0];
-        $point = $time_in_second / 60 * 200;
+        $point = $time_in_second / 60 *  config('constants.POINT_PER_MIN');
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
         $response['no'] = round($point);
         return response()->json($response);
@@ -876,7 +807,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $from_user_no)->get();
+        $results = User::where('no', $from_user_no)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
@@ -884,7 +815,7 @@ class UsersController extends BasicController
         }
         $from_user = $results[0];
 
-        $results = AppUser::where('no', $to_user_no)->get();
+        $results = User::where('no', $to_user_no)->get();
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
@@ -914,7 +845,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $from_user_no)->get();
+        $results = User::where('no', $from_user_no)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
@@ -1014,14 +945,14 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $user_no)->get();
+        $results = User::where('no', $user_no)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
         $user = $results[0];
-        $user->request_exit_flag = 1;
+        $user->request_exit_flag =  config('constants.TRUE');
         $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
         $user->save();
 
@@ -1045,7 +976,7 @@ class UsersController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
-        $results = AppUser::where('no', $user_no)->get();
+        $results = User::where('no', $user_no)->get();
 
         if ($results == null || count($results) == 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
@@ -1067,6 +998,45 @@ class UsersController extends BasicController
         $device->push_service_enum = $push_service_enum;
         $device->push_service_token = $push_service_token;
         $device->save();
+
+        return response()->json($response);
+    }
+
+    public function sendAlarm(HttpRequest $request) {
+        $from_user_no = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+        $type = $request->input('type');
+        $data = $request->input('data');
+
+        if ($from_user_no == null || $to_user_no == null || $type == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $from_user = User::where('no', $from_user_no)->first();
+        if ($from_user == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $to_user = User::where('no', $to_user_no)->first();
+        if ($to_user == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
+            $response = config('constants.ERROR_NOT_VERIFIED_USER');
+            return response()->json($response);
+        }
+
+        $ret = $this->sendAlarmMessage($from_user_no, $to_user_no, $type, json_decode($data));
+        if($ret == false) {
+            $response = config('constants.ERROR_ALARM');
+        }
+        else {
+            $response = config('constants.ERROR_NO');
+        }
 
         return response()->json($response);
     }

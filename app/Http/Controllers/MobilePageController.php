@@ -42,16 +42,16 @@ class MobilePageController extends BasicController
     public function agreement_service()
     {
         $params = Request::all();
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_SERVICE_PAGE"));
         }
-        return view('mobile.service', $params );
+        return view('mobile.service', $params);
     }
 
     public function agreement_privacy()
     {
         $params = Request::all();
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_PRIVACY_PAGE"));
         }
         return view('mobile.privacy', $params);
@@ -60,7 +60,7 @@ class MobilePageController extends BasicController
     public function agreement_gps()
     {
         $params = Request::all();
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_GPS_PAGE"));
         }
         return view('mobile.gps', $params);
@@ -69,7 +69,7 @@ class MobilePageController extends BasicController
     public function use_guide()
     {
         $params = Request::all();
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_USE_GUIDE_PAGE"));
         }
         return view('mobile.use_guide', $params);
@@ -78,7 +78,7 @@ class MobilePageController extends BasicController
     public function google_card_register_guide()
     {
         $params = Request::all();
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_GOOGLE_PAY_PAGE"));
         }
         return view('mobile.google_card_register_guide', $params);
@@ -88,18 +88,18 @@ class MobilePageController extends BasicController
     {
         $params = Request::all();
 
-        if($params == null) {
+        if ($params == null) {
             $params = $this->getPage(config("constants.MOBILE_NOTIFY_PAGE"));
-        }
-        else {
-           if(array_key_exists("no", $params) == true) {
+        } else {
+            if (array_key_exists("no", $params) == true) {
                 $params = ManageNotice::where('no', $params['no'])->first();
-           }
+            }
         }
         return view('mobile.notify', $params);
     }
 
-    private function get_page_url($type) {
+    private function get_page_url($type)
+    {
         $url = "";
         if ($type == config("constants.MOBILE_SERVICE_PAGE")) {
             $url = URL::to('/agreement/service');
@@ -122,7 +122,7 @@ class MobilePageController extends BasicController
     {
         $mobile_page = MobilePage::where('type', $type)->first();
 
-        if($mobile_page == null) {
+        if ($mobile_page == null) {
             $mobile_page = new MobilePage();
             $mobile_page->url = $this->get_page_url($type);
             $mobile_page->type = $type;
@@ -131,9 +131,10 @@ class MobilePageController extends BasicController
         return $mobile_page;
     }
 
-    public function get_mobile_page() {
+    public function get_mobile_page()
+    {
         $params = Request::all();
-        $type= $params['type'];
+        $type = $params['type'];
         $result = $this->getPage($type);
         if ($result) {
             return json_encode($result);
@@ -141,9 +142,10 @@ class MobilePageController extends BasicController
             return config('constants.FAIL');
     }
 
-    public function get_mobile_page_url() {
+    public function get_mobile_page_url()
+    {
         $params = Request::all();
-        $type= $params['type'];
+        $type = $params['type'];
         $result = $this->get_page_url($type);
         if ($result) {
             return $result;
@@ -160,7 +162,7 @@ class MobilePageController extends BasicController
 
         if ($isurl == "false") {
             $data['content'] = $params['content'];
-            $data['url']  = $this->get_page_url($data['type']);
+            $data['url'] = $this->get_page_url($data['type']);
         } else {
             $data['content'] = "";
             $data['url'] = $params['content'];

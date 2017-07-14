@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AppUser;
 use App\Models\ServerFile;
 use App\Models\SSP;
 use App\Models\Talk;
@@ -44,7 +43,7 @@ class TalkController extends BasicController
             return redirect("/login");
         }
 
-        return view('talk_user_mgr.index',['menu_index'=>4]);
+        return view('talk_user_mgr.index', ['menu_index' => 4]);
     }
 
     /**
@@ -61,56 +60,48 @@ class TalkController extends BasicController
         $voice_type = $request->input('voice_type');
         $cur_lat = $request->input('latitude'); // 37.457087
         $cur_lng = $request->input('longitude'); // 126.705484
+        $photo = $request->input('photo'); // 126.705484
 
-        if($limit == null) {
+        if ($limit == null) {
             $limit = Config::get('config.itemsPerPage.default');
         }
 
-        if($page == null) {
+        if ($page == null) {
             $params['page'] = 1;
         }
 
-        if($order == 0) { // Distance sort
-            $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS('.$cur_lat.')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS('.$cur_lng.')) + SIN(RADIANS('.$cur_lat.')) * SIN(RADIANS(t_user.latitude))),2))');
-
-            $query = DB::table('t_talk')->where('type', $type);
-
-            if($voice_type != 0) {
-                $query = $query->where('voice_type', $voice_type);
-            }
-
-            $response = $query->join('t_user', 't_talk.user_no', '=', 't_user.no')
-                ->select('t_talk.*')
-                ->orderBy($dist)
-                ->offset($limit*($page - 1))->limit($limit)
-                ->get();
+        $query = Talk::select('t_talk.*')->where('t_talk.type', $type);
+        if ($voice_type != 0) {
+            $query = $query->where('t_talk.voice_type', $voice_type);
         }
-        else  {            // Review sort
+
+        if($photo == config('constants.TRUE')) {
+            $query = $query->join('t_file', function ($q){
+                            $q->on('t_talk.img_no', 't_file.no');
+                            $q->where('t_file.type',  config('constants.IMAGE'));
+                            $q->where('t_file.checked', config('constants.AGREE'));
+                        });
+        }
+
+        if ($order == 0) { // Distance sort
+            $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');
+            $query = $query->join('t_user', 't_talk.user_no', '=', 't_user.no')->orderBy($dist);
+        } else {            // Review sort
             $review = DB::raw('(select SUM(mark) from t_consultingreview where t_consultingreview.to_user_no=t_talk.user_no)');
-
-            $query = DB::table('t_talk')->where('type', $type);
-
-            if($voice_type != 0) {
-                $query = $query->where('voice_type', $voice_type);
-            }
-
-            $response = $query
-                ->join('t_user', 't_talk.user_no', '=', 't_user.no')
-                ->select('t_talk.*')
-                ->orderBy($review, 'desc')
-                ->offset($limit*($page - 1))->limit($limit)
-                ->get();
+            $query = $query ->orderBy($review, 'desc');
         }
 
-        for($i = 0; $i < count($response); $i++) {
-            $response[$i] = $this->getDetailTalkInfo($response[$i]);
-            $this->addImageData($response[$i], $response[$i]->img_no);
+        $response = $query->offset($limit * ($page - 1))->limit($limit)->get();
+
+        for ($i = 0; $i < count($response); $i++) {
+            $response[$i]->fillInfo();
         }
 
         return response()->json($response);
     }
 
-    public function doTalk(HttpRequest $request){
+    public function doTalk(HttpRequest $request)
+    {
         $response = config('constants.ERROR_NO');
 
         $oper = $request->input("oper");
@@ -121,35 +112,33 @@ class TalkController extends BasicController
         $voice_file = $request->file('talk_voice');
         $photo_file = $request->file('talk_photo');
         $user_no = $request->input('user_no');
-        $type = $request->input('type') == null ? config('constants.TALK_CONSULTING')  : $request->input('type');
+        $type = $request->input('type') == null ? config('constants.TALK_CONSULTING') : $request->input('type');
         $nick_name = $request->input('nickname');
         $age = $request->input('age');
 
-        if($oper == 'add') {
-            if($type == config('constants.TALK_CONSULTING') ) {
-                if($greeting == null || $voice_type == null || $user_no == null) {
+        if ($oper == 'add') {
+            if ($type == config('constants.TALK_CONSULTING')) {
+                if ($greeting == null || $voice_type == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
                     return response()->json($response);
                 }
 
                 // image upload
-                if($voice_file != null) {
+                if ($voice_file != null) {
                     $newfile = new ServerFile;
-                    $voice_no = $newfile->uploadFile($voice_file, TYPE_VOICE);
-                }
-                else {
+                    $voice_no = $newfile->uploadFile($voice_file,  config('constants.VOICE'));
+                } else {
                     $voice_no = -1;
                 }
 
-                if($photo_file != null) {
+                if ($photo_file != null) {
                     $newfile = new ServerFile;
-                    $photo_no = $newfile->uploadFile($photo_file, TYPE_IMAGE);
-                }
-                else {
+                    $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
+                } else {
                     $photo_no = -1;
                 }
 
-                if($photo_no == null) {
+                if ($photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
                     return response()->json($response);
                 }
@@ -166,22 +155,20 @@ class TalkController extends BasicController
 
                 $talk->save();
                 $response['no'] = $talk->no;
-            }
-            else {
-                if($greeting == null || $user_no == null) {
+            } else {
+                if ($greeting == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
                     return response()->json($response);
                 }
 
-                if($photo_file != null) {
+                if ($photo_file != null) {
                     $newfile = new ServerFile;
-                    $photo_no = $newfile->uploadFile($photo_file, TYPE_IMAGE);
-                }
-                else {
+                    $photo_no = $newfile->uploadFile($photo_file,  config('constants.IMAGE'));
+                } else {
                     $photo_no = -1;
                 }
 
-                if($photo_no == null) {
+                if ($photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
                     return response()->json($response);
                 }
@@ -196,78 +183,76 @@ class TalkController extends BasicController
                 $talk->save();
                 $response['no'] = $talk->no;
             }
-        }
-        else if($oper == 'edit') {
-            if($no == null) {
+        } else if ($oper == 'edit') {
+            if ($no == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
 
             $update_data = [];
-            if($subject != null) {
+            if ($subject != null) {
                 $update_data['subject'] = $subject;
             }
-            if($voice_type != null) {
+            if ($voice_type != null) {
                 $update_data['voice_type'] = $voice_type;
             }
-            if($voice_file != null) {
+            if ($voice_file != null) {
                 $newfile = new ServerFile;
-                $voice_no = $newfile->uploadFile($voice_file, TYPE_VOICE);
+                $voice_no = $newfile->uploadFile($voice_file, config('constants.VOICE'));
 
-                if($voice_no == null) {
+                if ($voice_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
                     return response()->json($response);
                 }
 
                 $update_data['voice_no'] = $voice_no;
             }
-            if($user_no != null) {
+            if ($user_no != null) {
                 $update_data['user_no'] = $user_no;
             }
 
-            if($photo_file != null) {
+            if ($photo_file != null) {
                 $newfile = new ServerFile;
-                $photo_no = $newfile->uploadFile($photo_file, TYPE_IMAGE);
+                $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
 
-                if($photo_no == null) {
+                if ($photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
                     return response()->json($response);
                 }
 
                 $update_data['img_no'] = $photo_no;
             }
-            if($nick_name != null) {
+            if ($nick_name != null) {
                 $update_data['nickname'] = $nick_name;
             }
-            if($age != null) {
+            if ($age != null) {
                 $update_data['age'] = $age;
             }
-            if($greeting != null) {
+            if ($greeting != null) {
                 $update_data['greeting'] = $greeting;
             }
 
             $results = Talk::where('no', $no)->update($update_data);
-        }
-        else if($oper == 'del') {
-            if($no == null) {
+        } else if ($oper == 'del') {
+            if ($no == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
 
             Talk::where('no', $no)->delete();
-        }
-        else {
+        } else {
             $response = config('constants.ERROR_NO_PARMA');
         }
 
         return response()->json($response);
     }
 
-    public function talk(HttpRequest $request) {
+    public function talk(HttpRequest $request)
+    {
         $user_no = $request->input('user_no');
         $type = $request->input('type');
 
-        if($user_no == null || $type == null) {
+        if ($user_no == null || $type == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -276,22 +261,22 @@ class TalkController extends BasicController
         $results = Talk::where('user_no', $user_no)->where('type', $type)->get();
 
         if ($results == null || count($results) == 0) {
-            $response["no"] = -1;
+            $response["no"] = config('constants.INVALID_MODEL_NO');
             return response()->json($response);
-        }
-        else {
+        } else {
             $talk = $results[0];
-            $talk = $this->getDetailTalkInfo($talk);
+            $talk->fillInfo();
         }
 
         return response()->json($talk);
     }
 
 
-    public function duplicateTalk(HttpRequest $request){
+    public function duplicateTalk(HttpRequest $request)
+    {
         $nickname = $request->input('nickname');
 
-        if($nickname == null) {
+        if ($nickname == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -309,49 +294,8 @@ class TalkController extends BasicController
         return response()->json($response);
     }
 
-
-    private function getDetailTalkInfo($talk) {
-        $user = AppUser::where('no', $talk->user_no)->first();
-
-        if($user != null) {
-            $imagefile = ServerFile::where('no', $user->img_no)->first();
-            if($imagefile != null) {
-                $user->img_url = $imagefile->path;
-            }
-            else {
-                $user->img_url = "";
-            }
-        }
-
-        $file = ServerFile::where('no', $talk->voice_no)->first();
-        $img = ServerFile::where('no', $talk->img_no)->first();
-        $talk->user = $user;
-
-        if($file != null) {
-            $talk->voice_url = $file->path;
-            $talk->is_verified_voice = $file->checked;
-        }
-        else {
-            $talk->voice_url = "";
-            $talk->is_verified_voice = config('constants.AGREE');
-        }
-
-        if($img != null) {
-            $talk->img_url = $img->path;
-            $talk->img_checked = $img->checked;
-        }
-        else {
-            $talk->img_url = "";
-            $talk->img_checked = config('constants.AGREE');
-        }
-
-        $arr_voice_type =   config('constants.TALK_VOICE_TYPE');
-        $talk->voice_type_string = $arr_voice_type[$talk->voice_type];
-
-        return $talk;
-    }
-
-    public function ajax_talk_table(){
+    public function ajax_talk_table()
+    {
         $table = 'v_talk';
         // Custom Where
         $custom_where = "1=1";
@@ -359,43 +303,42 @@ class TalkController extends BasicController
         // Table's primary key
         $primaryKey = 'no';
 
-        $sex=$_POST['sex'];
-        $user_no=$_POST['user_no'];
-        $nickname=$_POST['nickname'];
-        $phone_number=$_POST['phone_number'];
-        $email=$_POST['email'];
-        $chat_content=$_POST['chat_content'];
+        $sex = $_POST['sex'];
+        $user_no = $_POST['user_no'];
+        $nickname = $_POST['nickname'];
+        $phone_number = $_POST['phone_number'];
+        $email = $_POST['email'];
+        $chat_content = $_POST['chat_content'];
 
-        if($sex!="")
-            $custom_where.=" and talk_user_sex=$sex";
-        if($user_no!="")
-            $custom_where.=" and user_no like '%".$user_no."%'";
-        if($nickname!="")
-            $custom_where.=" and user_nickname like '%".$nickname."%'";
-        if($phone_number!="")
-            $custom_where.=" and phone_number like '%".$phone_number."%'";
-        if($email!="")
-            $custom_where.=" and email like '%".$email."%'";
-        if($chat_content!="")
-            $custom_where.=" and user_no in (select from_user_no from t_chathistory where content like '%".$chat_content."%') ";
+        if ($sex != "")
+            $custom_where .= " and talk_user_sex=$sex";
+        if ($user_no != "")
+            $custom_where .= " and user_no like '%" . $user_no . "%'";
+        if ($nickname != "")
+            $custom_where .= " and user_nickname like '%" . $nickname . "%'";
+        if ($phone_number != "")
+            $custom_where .= " and phone_number like '%" . $phone_number . "%'";
+        if ($email != "")
+            $custom_where .= " and email like '%" . $email . "%'";
+        if ($chat_content != "")
+            $custom_where .= " and user_no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
-                'formatter'=>function($d,$row){
-                    return '<input type="checkbox" class="talk_no" user_no="'.$row['user_no'].'" value="'.$d.'">';
+                'formatter' => function ($d, $row) {
+                    return '<input type="checkbox" class="talk_no" user_no="' . $row['user_no'] . '" value="' . $d . '">';
                 }
             ),
             array('db' => 'user_no', 'dt' => 1,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $results = User::where('no', $d)->first();
-                    if($results!=null){
-                        $verified=$results['verified'];
-                        if($verified=='1')
-                            return sprintf("%'.05d", $d).'&nbsp;&nbsp;<span class="badge badge-success">'.trans('lang.talk_insure').'</span>';
+                    if ($results != null) {
+                        $verified = $results['verified'];
+                        if ($verified == '1')
+                            return sprintf("%'.05d", $d) . '&nbsp;&nbsp;<span class="badge badge-success">' . trans('lang.talk_insure') . '</span>';
                         else
                             return sprintf("%'.05d", $d);
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),
@@ -404,38 +347,36 @@ class TalkController extends BasicController
             array('db' => 'greeting', 'dt' => 4),
             array('db' => 'talk_edit_time', 'dt' => 5),
             array('db' => 'user_no', 'dt' => 6,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
-                    if($user_model!=null)
-                        $reg_time=$user_model->created_at;
+                    if ($user_model != null)
+                        $reg_time = $user_model->created_at;
                     else
-                        $reg_time='';
+                        $reg_time = '';
                     $last_login_time = DB::table('t_login_history')->where('user_no', $d)->max('created_at');
-                    return $reg_time."/".$last_login_time;
+                    return $reg_time . "/" . $last_login_time;
                 }
             ),
             array('db' => 'profile_img_path', 'dt' => 7),
             array('db' => 'user_no', 'dt' => 8,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
-                    if($user_model!=null){
-                        if($user_model->force_stop_flag=='1'){
-                            return '<span class="badge badge-success">'.trans('lang.force_stop').'</span>';
+                    if ($user_model != null) {
+                        if ($user_model->force_stop_flag == '1') {
+                            return '<span class="badge badge-success">' . trans('lang.force_stop') . '</span>';
                         }
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),
             array('db' => 'user_no', 'dt' => 9,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
-                    if($user_model!=null){
-                        if($user_model->app_stop_flag=='1'){
-                            return $user_model->app_stop_from_date.'~'.$user_model->app_stop_to_date;
+                    if ($user_model != null) {
+                        if ($user_model->app_stop_flag == '1') {
+                            return $user_model->app_stop_from_date . '~' . $user_model->app_stop_to_date;
                         }
-                    }
-                    else
+                    } else
                         return '';
                 }
             )
@@ -454,41 +395,43 @@ class TalkController extends BasicController
         );
     }
 
-    public function del_selected_talk_img(){
+    public function del_selected_talk_img()
+    {
 
-        $selected_talk_str=$_POST['selected_talk_str'];
-        $selected_talk_str_array=explode(',',$selected_talk_str);
+        $selected_talk_str = $_POST['selected_talk_str'];
+        $selected_talk_str_array = explode(',', $selected_talk_str);
 
-        for($i=0;$i<count($selected_talk_str_array);$i++){
+        for ($i = 0; $i < count($selected_talk_str_array); $i++) {
 
             $talk_model = DB::table('t_talk')->where('no', $selected_talk_str_array[$i])->first();
-            $img_no=$talk_model->img_no;
-            DB::table('t_file')->where('no',$img_no)->delete();
+            $img_no = $talk_model->img_no;
+            DB::table('t_file')->where('no', $img_no)->delete();
 
-            $result=DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?',[-1,date('Y-m-d H:i:s'),$selected_talk_str_array[$i]]);
-            if(!$result)
+            $result = DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?', [-1, date('Y-m-d H:i:s'), $selected_talk_str_array[$i]]);
+            if (!$result)
                 return config('constants.FAIL');
         }
 
         return config('constants.SUCCESS');
     }
 
-    public function del_selected_user_talk(){
-        
-        $selected_user_str=$_POST['selected_user_str'];
-        $selected_user_array=explode(',',$selected_user_str);
+    public function del_selected_user_talk()
+    {
 
-        $user_array=array();
+        $selected_user_str = $_POST['selected_user_str'];
+        $selected_user_array = explode(',', $selected_user_str);
 
-        foreach ($selected_user_array as $item){
-            if(!in_array($item,$user_array))
-                array_push($user_array,$item);
+        $user_array = array();
+
+        foreach ($selected_user_array as $item) {
+            if (!in_array($item, $user_array))
+                array_push($user_array, $item);
         }
 
-        for($i=0;$i<count($user_array);$i++){
+        for ($i = 0; $i < count($user_array); $i++) {
 
-            $result=DB::delete('delete from t_talk where user_no = ?',[$user_array[$i]]);
-            if(!$result)
+            $result = DB::delete('delete from t_talk where user_no = ?', [$user_array[$i]]);
+            if (!$result)
                 return config('constants.FAIL');
         }
 
