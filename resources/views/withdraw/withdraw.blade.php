@@ -64,65 +64,70 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_withdraw;
+    var init_tbl_withdraw;
     $(document).ready(function () {
-        var start_index;
-        tbl_withdraw=$("#tbl_withdraw").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_withdraw_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.start_dt=$("#w_from_date").val();
-                    d.end_dt=$("#w_to_date").val();
-                    d.status=$("#w_status").val();
-                    d.user_no=$("#w_user_no").val();
-                    d.account_name=$("#account_name").val();
-                    d.bank_name=$("#bank_name").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $("#total_withdraw_amount").text(data[10]);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2,3,4,5,6,7,8]
-            },
-                {
-                    'orderable': true,
-                    'targets': [9]
-                }],
+        init_tbl_withdraw=function () {
+            if(!$("#tbl_withdraw").hasClass("dataTable")){
+                tbl_withdraw=$("#tbl_withdraw").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_withdraw_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.start_dt=$("#w_from_date").val();
+                            d.end_dt=$("#w_to_date").val();
+                            d.status=$("#w_status").val();
+                            d.user_no=$("#w_user_no").val();
+                            d.account_name=$("#account_name").val();
+                            d.bank_name=$("#bank_name").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $("#total_withdraw_amount").text(data[10]);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2,3,4,5,6,7,8]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [9]
+                        }],
 
-            "order": [
-                [9, "desc"]
-            ]
-        });
+                    "order": [
+                        [9, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_w_search").click(function () {

@@ -89,67 +89,72 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_declare;
+    var init_tbl_declare;
     $(document).ready(function () {
-        var start_index;
-        tbl_declare=$("#tbl_declare").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "processing":false,
-            "serverSide": true,
-            "ajax": {
-                "url": 	"ajax_declare_table",
-                "type":	"POST",
-                "data":   function ( d ) {
-                    start_index=d.start;
-                    d._token= "{{csrf_token()}}";
-                    d.sex=$("#declare_user_sex").val();
-                    d.user_no=$("#declare_user_no").val();
-                    d.nickname=$("#declare_user_nickname").val();
-                    d.phone_number=$("#declare_user_phone_number").val();
-                    d.email=$("#declare_user_email").val();
-                    d.chat_content=$("#declare_user_chat_content").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                if(data[2]!=null)
-                    $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
-                if(data[4]!=null)
-                    $('td:eq(4)', row).html('<img src="'+data[4]+'" height="50px">');
-            },
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 5,
-            "pagingType": "bootstrap_full_number",
-            "columnDefs": [{  // set default column settings
-                'orderable': false,
-                'targets': [0,1,2,3,4,5,7]
-            },
-                {  // set default column settings
-                    'orderable': true,
-                    'targets': [6]
-                }],
+        init_tbl_declare=function () {
+            if(!$("#tbl_declare").hasClass("dataTable")){
+                tbl_declare=$("#tbl_declare").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "processing":false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": 	"ajax_declare_table",
+                        "type":	"POST",
+                        "data":   function ( d ) {
+                            start_index=d.start;
+                            d._token= "{{csrf_token()}}";
+                            d.sex=$("#declare_user_sex").val();
+                            d.user_no=$("#declare_user_no").val();
+                            d.nickname=$("#declare_user_nickname").val();
+                            d.phone_number=$("#declare_user_phone_number").val();
+                            d.email=$("#declare_user_email").val();
+                            d.chat_content=$("#declare_user_chat_content").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        if(data[2]!=null)
+                            $('td:eq(2)', row).html('<img src="'+data[2]+'" height="50px">');
+                        if(data[4]!=null)
+                            $('td:eq(4)', row).html('<img src="'+data[4]+'" height="50px">');
+                    },
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 5,
+                    "pagingType": "bootstrap_full_number",
+                    "columnDefs": [{  // set default column settings
+                        'orderable': false,
+                        'targets': [0,1,2,3,4,5,7]
+                    },
+                        {  // set default column settings
+                            'orderable': true,
+                            'targets': [6]
+                        }],
 
-            "order": [
-                [6, "desc"]
-            ] // set first column as a default sort by asc
-        });
+                    "order": [
+                        [6, "desc"]
+                    ] // set first column as a default sort by asc
+                });
+            }
+        }
     });
 
     $("#btn_declare_search").click(function () {

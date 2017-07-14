@@ -46,62 +46,66 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_connect;
+    var init_tbl_connect;
     $(document).ready(function () {
-        var start_index;
-        tbl_connect=$("#tbl_connect").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20,50],
-                [5, 10, 20,50] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_connect_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.start_dt=$("#c_from_date").val();
-                    d.end_dt=$("#c_to_date").val();
-                    d.sex=$("#c_sex").val();
-                    d.display_length=$("select[name='tbl_connect_length']").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [1, 2,3,4,5,6,7,8]
-            },
-                {
-                    'orderable': true,
-                    'targets': [0]
-                }],
+        init_tbl_connect=function () {
+            if(!$("#tbl_connect").hasClass("dataTable")){
+                tbl_connect=$("#tbl_connect").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20,50],
+                        [5, 10, 20,50] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_connect_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.start_dt=$("#c_from_date").val();
+                            d.end_dt=$("#c_to_date").val();
+                            d.sex=$("#c_sex").val();
+                            d.display_length=$("select[name='tbl_connect_length']").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [1, 2,3,4,5,6,7,8]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [0]
+                        }],
 
-            "order": [
-                [0, "desc"]
-            ]
-        });
-
+                    "order": [
+                        [0, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_c_search").click(function () {

@@ -32,6 +32,16 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            init_tbl_connect();
+        });
+
+        $(".nav.nav-tabs li:eq(1)").click(function () {
+            init_tbl_edwards();
+        });
+    </script>
+
 @stop
 
 

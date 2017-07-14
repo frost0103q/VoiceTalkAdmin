@@ -50,6 +50,24 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            init_tbl_cash();
+        });
+
+        $(".nav.nav-tabs li:eq(1)").click(function () {
+            init_tbl_withdraw();
+        });
+        $(".nav.nav-tabs li:eq(2)").click(function () {
+            init_tbl_gifticon();
+        });
+        $(".nav.nav-tabs li:eq(3)").click(function () {
+            init_tbl_point_present();
+        });
+        $(".nav.nav-tabs li:eq(4)").click(function () {
+            init_tbl_point_rank();
+        });
+    </script>
 @stop
 
 

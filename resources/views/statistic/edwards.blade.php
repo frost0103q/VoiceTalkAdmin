@@ -57,66 +57,71 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_edwards;
+    var init_tbl_edwards;
     $(document).ready(function () {
-        var start_index;
-        tbl_edwards=$("#tbl_edwards").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_edwards_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.start_dt=$("#e_from_date").val();
-                    d.end_dt=$("#e_to_date").val();
-                    d.sex=$("#e_sex").val();
-                    d.user_no=$("#e_user_no").val();
-                    d.nickname=$("#e_user_nickname").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $("#period_total_sum").text(data[8]);
-                if (data[3] != null)
-                    $('td:eq(3)', row).html('<img src="' + data[3] + '" height="40px">');
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2,3,4,5,6]
-            },
-                {
-                    'orderable': true,
-                    'targets': [7]
-                }],
+        init_tbl_edwards=function () {
+            if(!$("#tbl_edwards").hasClass("dataTable")){
+                tbl_edwards=$("#tbl_edwards").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_edwards_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.start_dt=$("#e_from_date").val();
+                            d.end_dt=$("#e_to_date").val();
+                            d.sex=$("#e_sex").val();
+                            d.user_no=$("#e_user_no").val();
+                            d.nickname=$("#e_user_nickname").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $("#period_total_sum").text(data[8]);
+                        if (data[3] != null)
+                            $('td:eq(3)', row).html('<img src="' + data[3] + '" height="40px">');
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2,3,4,5,6]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [7]
+                        }],
 
-            "order": [
-                [7, "desc"]
-            ]
-        });
+                    "order": [
+                        [7, "desc"]
+                    ]
+                });
+            }
+        };
     });
 
     $("#btn_e_search").click(function () {

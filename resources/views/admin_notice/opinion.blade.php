@@ -84,59 +84,64 @@
 <input type="hidden" id="delete_opinion_no">
 
 <script>
+    var start_index;
     var tbl_opinion;
+    var init_tbl_opinion;
     $(document).ready(function () {
-        var start_index;
-        tbl_opinion=$("#tbl_opinion").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "processing":false,
-            "serverSide": true,
-            "ajax": {
-                "url": 	"ajax_opinion_table",
-                "type":	"POST",
-                "data":   function ( d ) {
-                    start_index=d.start;
-                    d._token= "{{csrf_token()}}";
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $('td:eq(5)', row).html('<a><i class="fa fa-edit" onclick="opinion_edit('+data[5]+',\''+data[1]+'\',\''+data[6]+'\')"></i> <i class="fa fa-remove" onclick="opinion_delete('+data[5]+')"></i></a>');
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
-            "columnDefs": [{  // set default column settings
-                'orderable': false,
-                'targets': [0,1,2,4,5]
-            },
-                {  // set default column settings
-                    'orderable': true,
-                    'targets': [3]
-                }],
+        init_tbl_opinion=function () {
+            if(!$("#tbl_opinion").hasClass("dataTable")){
+                tbl_opinion=$("#tbl_opinion").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "processing":false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": 	"ajax_opinion_table",
+                        "type":	"POST",
+                        "data":   function ( d ) {
+                            start_index=d.start;
+                            d._token= "{{csrf_token()}}";
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $('td:eq(5)', row).html('<a><i class="fa fa-edit" onclick="opinion_edit('+data[5]+',\''+data[1]+'\',\''+data[6]+'\')"></i> <i class="fa fa-remove" onclick="opinion_delete('+data[5]+')"></i></a>');
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
+                    "columnDefs": [{  // set default column settings
+                        'orderable': false,
+                        'targets': [0,1,2,4,5]
+                    },
+                        {  // set default column settings
+                            'orderable': true,
+                            'targets': [3]
+                        }],
 
-            "order": [
-                [3, "desc"]
-            ] // set first column as a default sort by asc
-        });
+                    "order": [
+                        [3, "desc"]
+                    ] // set first column as a default sort by asc
+                });
+            }
+        }
     });
 
     $("#btn_add_opinion").click(function () {

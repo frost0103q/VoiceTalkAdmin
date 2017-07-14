@@ -65,67 +65,72 @@
 </div>
 
 <script>
+    var start_index;
     var tbl_gifticon;
+    var init_tbl_gifticon;
     $(document).ready(function () {
-        var start_index;
-        tbl_gifticon=$("#tbl_gifticon").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
-            ],
-            // set the initial value
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number",
+        init_tbl_gifticon=function () {
+            if(!$("#tbl_gifticon").hasClass("dataTable")){
+                tbl_gifticon=$("#tbl_gifticon").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"] // change per page values here
+                    ],
+                    // set the initial value
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number",
 
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_gifticon_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                    d.start_dt=$("#g_from_date").val();
-                    d.end_dt=$("#g_to_date").val();
-                    d.status=$("#g_status").val();
-                    d.user_no=$("#g_user_no").val();
-                    d.nickname=$("#g_user_nickname").val();
-                    d.mgr_number=$("#g_mgr_number").val();
-                    d.cupon_number=$("#g_cupon_number").val();
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                $("#gif_total_nomal_price").text(data[8]);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2,3,4,5,6]
-            },
-                {
-                    'orderable': true,
-                    'targets': [7]
-                }],
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_gifticon_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                            d.start_dt=$("#g_from_date").val();
+                            d.end_dt=$("#g_to_date").val();
+                            d.status=$("#g_status").val();
+                            d.user_no=$("#g_user_no").val();
+                            d.nickname=$("#g_user_nickname").val();
+                            d.mgr_number=$("#g_mgr_number").val();
+                            d.cupon_number=$("#g_cupon_number").val();
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        $("#gif_total_nomal_price").text(data[8]);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2,3,4,5,6]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [7]
+                        }],
 
-            "order": [
-                [7, "desc"]
-            ]
-        });
+                    "order": [
+                        [7, "desc"]
+                    ]
+                });
+            }
+        }
     });
 
     $("#btn_g_search").click(function () {

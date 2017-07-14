@@ -32,6 +32,15 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            init_tbl_cash_question();
+        });
+
+        $(".nav.nav-tabs li:eq(1)").click(function () {
+            init_tbl_declare();
+        });
+    </script>
 @stop
 
 

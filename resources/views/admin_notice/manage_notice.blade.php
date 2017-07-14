@@ -112,62 +112,67 @@
 <input type="hidden" id="delete_manage_notice_no">
 
 <script>
+    var start_index;
     var tbl_manage_notice;
+    var init_tbl_manage_notice;
     $(document).ready(function () {
-        var start_index;
-        tbl_manage_notice = $("#tbl_manage_notice").DataTable({
-            "dom": '<"top"i><"toolbar pull-left">rtlp',
-            "language": {
-                "emptyTable": "{{trans('lang.no_display_data')}}",
-                "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
-                "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
-                "infoFiltered": "",
-                "sInfoEmpty": "",
-                "paginate": {
-                    "previous": "Prev",
-                    "next": "Next",
-                    "last": "Last",
-                    "first": "First"
-                }
-            },
-            "processing": false,
-            "serverSide": true,
-            "ajax": {
-                "url": "ajax_manage_notice_table",
-                "type": "POST",
-                "data": function (d) {
-                    start_index = d.start;
-                    d._token = "{{csrf_token()}}";
-                }
-            },
-            "createdRow": function (row, data, dataIndex) {
-                $('td:eq(0)', row).html(dataIndex + start_index + 1);
-                if (data[2] != "" && data[2] != null)
-                    $('td:eq(2)', row).html(data[2] + ' &nbsp;<a onclick="file_download(\'' + data[2] + '\')"><i class="fa fa-download"></i></a>');
-                var option_html = '<a><i class="fa fa-edit" onclick="manage_notice_edit(' + data[0] + ',\'' + data[1] + '\',\'' + data[2] + '\',\'' + data[7] + '\')"></i>' +
-                        ' <i class="fa fa-remove" onclick="manage_notice_delete(' + data[0] + ')"></i></a>';
-                $('td:eq(6)', row).html(option_html);
-            },
-            "columnDefs": [{
-                'orderable': false,
-                'targets': [0, 1, 2, 3, 5]
-            },
-                {
-                    'orderable': true,
-                    'targets': [4]
-                }],
+        init_tbl_manage_notice=function () {
+            if(!$("#tbl_manage_notice").hasClass("dataTable")){
+                tbl_manage_notice = $("#tbl_manage_notice").DataTable({
+                    "dom": '<"top"i><"toolbar pull-left">rtlp',
+                    "language": {
+                        "emptyTable": "{{trans('lang.no_display_data')}}",
+                        "lengthMenu": "{{trans('lang.display_cnt')}} _MENU_",
+                        "sInfo": "{{trans('lang.all_cnt')}} _TOTAL_ {{trans('lang.unit')}}",
+                        "infoFiltered": "",
+                        "sInfoEmpty": "",
+                        "paginate": {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    "processing": false,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "ajax_manage_notice_table",
+                        "type": "POST",
+                        "data": function (d) {
+                            start_index = d.start;
+                            d._token = "{{csrf_token()}}";
+                        }
+                    },
+                    "createdRow": function (row, data, dataIndex) {
+                        $('td:eq(0)', row).html(dataIndex + start_index + 1);
+                        if (data[2] != "" && data[2] != null)
+                            $('td:eq(2)', row).html(data[2] + ' &nbsp;<a onclick="file_download(\'' + data[2] + '\')"><i class="fa fa-download"></i></a>');
+                        var option_html = '<a><i class="fa fa-edit" onclick="manage_notice_edit(' + data[0] + ',\'' + data[1] + '\',\'' + data[2] + '\',\'' + data[7] + '\')"></i>' +
+                                ' <i class="fa fa-remove" onclick="manage_notice_delete(' + data[0] + ')"></i></a>';
+                        $('td:eq(6)', row).html(option_html);
+                    },
+                    "columnDefs": [{
+                        'orderable': false,
+                        'targets': [0, 1, 2, 3, 5]
+                    },
+                        {
+                            'orderable': true,
+                            'targets': [4]
+                        }],
 
-            "order": [
-                [4, "desc"]
-            ],
-            "autowidth": true,
-            "lengthMenu": [
-                [5, 10, 20, -1],
-                [5, 10, 20, "{{trans('lang.all')}}"]
-            ],
-            "pageLength": 10,
-            "pagingType": "bootstrap_full_number"
-        });
+                    "order": [
+                        [4, "desc"]
+                    ],
+                    "autowidth": true,
+                    "lengthMenu": [
+                        [5, 10, 20, -1],
+                        [5, 10, 20, "{{trans('lang.all')}}"]
+                    ],
+                    "pageLength": 10,
+                    "pagingType": "bootstrap_full_number"
+                });
+            }
+        }
     });
 
     $(function () {
