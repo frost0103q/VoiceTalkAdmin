@@ -47,6 +47,10 @@ class IdiomController extends BasicController
 
     public function includeForbidden($text) {
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
+        if($interdict_idiom == null) {
+            return false;
+        }
+
         $arr_idiom = explode(",", $interdict_idiom->content);
 
         $size = count($arr_idiom);

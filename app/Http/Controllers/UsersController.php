@@ -367,7 +367,8 @@ class UsersController extends BasicController
         }
 
         $authcode = $results[0];
-        if (strcmp($authcode->auth_code, $auth_code) == 0) {
+        $testmode = config('constants.testmode');
+        if ($testmode !=  config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
             $update_data = [];
             $update_data['verified'] = config("constants.TRUE");
             $update_data['phone_number'] = $authcode->user_phone_number;

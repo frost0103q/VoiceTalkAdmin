@@ -20,12 +20,12 @@ return [
         'TEST_MODE_GLOBAL' => 1,
         'TEST_MODE_DELIVERY' => 2,
 
-        'testmode' => 0,
+        'testmode' => 1,
 
         'PUSH_MODE_FCM' => 0,
         'PUSH_MODE_XMPP' => 1,
 
-        'pushmode' => 1,
+        'pushmode' => 0,
 
         'USER_FIRST_POINT' => 300,
         'TALK_CONSULTING' =>0,
