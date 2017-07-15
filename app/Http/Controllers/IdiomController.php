@@ -45,6 +45,23 @@ class IdiomController extends BasicController
         return view('idiom_manage.index', ['menu_index' => 9, 'content' => $content]);
     }
 
+    public function includeForbidden($text) {
+        $interdict_idiom = DB::table('t_interdict_idiom')->first();
+        $arr_idiom = explode(",", $interdict_idiom->content);
+
+        $size = count($arr_idiom);
+        $include = false;
+        for($i = 0; $i < $size; $i++) {
+            $idiom = trim($arr_idiom[$i]);
+            if(strpos($text, $idiom) !== false) {
+                $include = true;
+                break;
+            }
+        }
+
+        return $include;
+    }
+
     public function save_interdict_idiom()
     {
 

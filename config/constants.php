@@ -14,6 +14,7 @@ return [
         'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
         'ERROR_FAILED_PURCHASE' => ["error" => 12,'message' => 'Failed Purchase Product.'],
         'ERROR_ALARM' => ["error" => 13,'message' => 'Failed Send Alarm.'],
+        'ERROR_FORBIDDEN_WORD' => ["error" => 14,'message' => 'Include Forbidden word.'],
 
         'TEST_MODE_LOCAL' => 0,
         'TEST_MODE_GLOBAL' => 1,

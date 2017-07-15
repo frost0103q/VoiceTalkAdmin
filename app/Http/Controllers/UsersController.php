@@ -412,6 +412,7 @@ class UsersController extends BasicController
         $user_photo = $request->file('user_photo');
         $status = $request->input('status');
 
+        $idiomCotroller = new IdiomController();
         if ($oper == 'add') {
             if ($nickname == null || $subject == null) {
                 $response = config('constants.ERROR_NO_PARMA');
@@ -422,6 +423,11 @@ class UsersController extends BasicController
 
             if ($results != null && count($results) != 0) {
                 $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+                return response()->json($response);
+            }
+
+            if($idiomCotroller->includeForbidden($nickname) == true || $idiomCotroller->includeForbidden($subject) == true) {
+                $response = config('constants.ERROR_FORBIDDEN_WORD');
                 return response()->json($response);
             }
 
@@ -481,6 +487,11 @@ class UsersController extends BasicController
                     return response()->json($response);
                 }
 
+                if($idiomCotroller->includeForbidden($nickname) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
+
                 $update_data['nickname'] = $nickname;
             }
             if ($sex != null) {
@@ -506,6 +517,11 @@ class UsersController extends BasicController
             }
 
             if ($subject != null) {
+                if($idiomCotroller->includeForbidden($subject) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
+
                 $update_data['subject'] = $subject;
             }
 

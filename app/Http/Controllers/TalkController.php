@@ -116,10 +116,16 @@ class TalkController extends BasicController
         $nick_name = $request->input('nickname');
         $age = $request->input('age');
 
+        $idiomCotroller = new IdiomController();
         if ($oper == 'add') {
             if ($type == config('constants.TALK_CONSULTING')) {
                 if ($greeting == null || $voice_type == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
+                    return response()->json($response);
+                }
+
+                if($idiomCotroller->includeForbidden($greeting) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
 
@@ -143,6 +149,7 @@ class TalkController extends BasicController
                     return response()->json($response);
                 }
 
+
                 $talk = new Talk;
 
                 $talk->subject = $subject;
@@ -158,6 +165,11 @@ class TalkController extends BasicController
             } else {
                 if ($greeting == null || $user_no == null) {
                     $response = config('constants.ERROR_NO_PARMA');
+                    return response()->json($response);
+                }
+
+                if($idiomCotroller->includeForbidden($greeting) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
 
@@ -191,8 +203,21 @@ class TalkController extends BasicController
 
             $update_data = [];
             if ($subject != null) {
+                if($idiomCotroller->includeForbidden($subject) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
                 $update_data['subject'] = $subject;
             }
+
+            if ($greeting != null) {
+                if($idiomCotroller->includeForbidden($greeting) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
+                $update_data['greeting'] = $greeting;
+            }
+
             if ($voice_type != null) {
                 $update_data['voice_type'] = $voice_type;
             }
@@ -223,13 +248,14 @@ class TalkController extends BasicController
                 $update_data['img_no'] = $photo_no;
             }
             if ($nick_name != null) {
+                if($idiomCotroller->includeForbidden($nick_name) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
                 $update_data['nickname'] = $nick_name;
             }
             if ($age != null) {
                 $update_data['age'] = $age;
-            }
-            if ($greeting != null) {
-                $update_data['greeting'] = $greeting;
             }
 
             $results = Talk::where('no', $no)->update($update_data);
