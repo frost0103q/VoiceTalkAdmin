@@ -12,6 +12,7 @@ use App\Models\FreeChargeHistory;
 use App\Models\User;
 use App\Models\UserRelation;
 use DB;
+use Illuminate\Support\Facades\Log;
 use Request;
 use Session;
 
@@ -58,6 +59,7 @@ class FreeChargeController extends BasicController
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 4;
             $arr_result['ResultMsg'] = "파라미터 오류";
+            Log::debug($arr_result);
             echo json_encode($arr_result);
             exit;
         }
@@ -75,6 +77,7 @@ class FreeChargeController extends BasicController
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 2;
             $arr_result['ResultMsg'] = "유효성 확인 key 오류";
+            Log::debug($arr_result);
             echo json_encode($arr_result);
             exit;
         }
@@ -91,6 +94,7 @@ class FreeChargeController extends BasicController
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 3;
             $arr_result['ResultMsg'] = "중복 지급  오류";
+            Log::debug($arr_result);
             echo json_encode($arr_result);
             exit;
         }
@@ -102,17 +106,20 @@ class FreeChargeController extends BasicController
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 2;
             $arr_result['ResultMsg'] = "유효성 확인 key 오류";
+            Log::debug($arr_result);
             echo json_encode($arr_result);
             exit;
         }
 
-        $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_FREE_CHARGE'), $point);
+        $nPoint = intval($point);
+        $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_FREE_CHARGE'), $nPoint);
 
         if($ret == false) {
             //서비스 처리 코딩 후 결과를 JSON 형식으로 출력
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 2;
             $arr_result['ResultMsg'] = "유효성 확인 key 오류";
+            Log::debug($arr_result);
             echo json_encode($arr_result);
             exit;
         }
@@ -120,7 +127,7 @@ class FreeChargeController extends BasicController
         // add history
         $history = new FreeChargeHistory();
         $history->user_no = $user->no;
-        $history->point = $point;
+        $history->point = $nPoint;
         $history->type = config('constants.FREE_CHARGE_TYPE_ADSYNC');
         $history->save();
 
@@ -131,7 +138,7 @@ class FreeChargeController extends BasicController
         $arr_result['Result'] = true;
         $arr_result['ResultCode'] = 1;
         $arr_result['ResultMsg'] = "success";
-
+        Log::debug($arr_result);
         echo json_encode($arr_result);
     }
 }
