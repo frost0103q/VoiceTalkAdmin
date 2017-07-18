@@ -46,6 +46,12 @@ return [
         'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
+        'FREE_CHARGE_TYPE_NAS'=> 1,
+        'FREE_CHARGE_TYPE_IGAWORKS'=> 2,
+
+        'FREE_CHARGE_RATIO_ADSYNC'=> 1,
+        'FREE_CHARGE_RATIO_NAS'=> 0.5,
+        'FREE_CHARGE_RATIO_IGAWORKS'=> 1,
 
         'INAPP_ITEMS' => [
                             ["name" => 'point_1','price' => 700, 'value' => 700],

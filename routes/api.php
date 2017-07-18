@@ -89,4 +89,6 @@ Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
 
 // free charge api
 Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');
+Route::post('/nas_delivery_point', 'FreeChargeController@nas_delivery_point');
+Route::post('/igaworks_delivery_point', 'FreeChargeController@igaworks_delivery_point');
 Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');
