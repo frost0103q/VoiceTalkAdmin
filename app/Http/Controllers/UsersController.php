@@ -6,7 +6,6 @@ use App\Models\AuthCode;
 use App\Models\ConsultingReview;
 use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
-use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;
 use App\Models\User;
@@ -245,40 +244,6 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
-    function sendSMS($hpReceiver, $hpMesg)
-    {
-        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
-        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
-        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
-        // $hpSender = "02-2009-3773";
-        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
-        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
-        //	$hpMesg = "";           		// 메시지
-
-        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
-        $hpMesg = iconv("UTF-8", "EUC-KR", "$hpMesg");
-        /*  ---------------------------------------- */
-        $hpMesg = urlencode($hpMesg);
-        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
-
-        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
-
-        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
-        if (!$fp) echo "$errno : $errstr";
-
-        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
-        $flag = 0;
-        $out = "";
-        while (!feof($fp)) {
-            $row = fgets($fp, 1024);
-
-            if ($flag) $out .= $row;
-            if ($row == "\r\n") $flag = 1;
-        }
-        fclose($fp);
-        return $out;
-    }
-
     public function requestAuthNumber(HttpRequest $request)
     {
         $no = $request->input('no');
@@ -297,13 +262,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $testmode = config('constants.testmode');
-
-        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
-            $real_number = '+86' . $phone_number;
-        } else {
-            $real_number = '+82' . $phone_number;
-        }
+        $real_number = $this->getRealPhoneNumber($phone_number);
         $results = User::where('phone_number', $real_number)->get();
 
         if ($results != null && count($results) > 0) {
@@ -316,23 +275,7 @@ class UsersController extends BasicController
         $sms_message = sprintf(config("constants.SMS_TEXT"), $cert_code);
         $phone_number = str_replace("-", "", $phone_number);
 
-        if (true) {
-            if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
-                SMS::send($sms_message, null, function ($sms) use ($real_number) {
-                    $sms->from('+8615699581631');
-                    $sms->to($real_number);
-                }
-                );
-            } else {
-                $this->sendSMS($phone_number, $sms_message);
-            }
-        } else {
-            Nexmo::message()->send([
-                'to' => $phone_number,
-                'from' => '01028684884',
-                'text' => 'Using the facade to send a message.'
-            ]);
-        }
+        $this->sendSMS($phone_number, $sms_message);
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;

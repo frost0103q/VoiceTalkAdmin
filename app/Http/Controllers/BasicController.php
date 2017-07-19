@@ -23,6 +23,8 @@ use Request;
 use Session;
 use Socialite;
 use URL;
+use Nexmo;
+use SMS;
 
 class BasicController extends Controller
 {
@@ -235,6 +237,86 @@ class BasicController extends Controller
 
         $response['no'] = $notification->no;
         return $response;
+    }
+
+    public function  getRealPhoneNumber($phone_number) {
+        $testmode = config('constants.testmode');
+
+        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
+            $real_number = '+86' . $phone_number;
+        } else {
+            $real_number = '+82' . $phone_number;
+        }
+        return $real_number;
+    }
+
+    public function  sendSMS($phone_number, $message, $save = true) {
+        $testmode = config('constants.testmode');
+        $real_number = $this->getRealPhoneNumber($phone_number);
+
+        $sender = "";
+        if (true) {
+            if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
+                SMS::send($message, null, function ($sms) use ($real_number) {
+                    $sms->from('+8615699581631');
+                    $sms->to($real_number);
+                }
+                );
+                $sender = '+861569958163';
+            } else {
+                $this->sendSMSByMunjaNara($phone_number, $message);
+                $sender = '+8207076330105';
+            }
+        } else {
+            Nexmo::message()->send([
+                'to' => $phone_number,
+                'from' => '01028684884',
+                'text' => 'Using the facade to send a message.'
+            ]);
+            $sender = '+8201028684884';
+        }
+
+        if($save == true) {
+            $sms = new \App\Models\SMS();
+            $sms->sender_number = $sender;
+            $sms->receive_number = $real_number;
+            $sms->content = $message;
+            $sms->save();
+        }
+    }
+
+    public function sendSMSByMunjaNara($hpReceiver, $hpMesg)
+    {
+        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
+        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
+        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
+        // $hpSender = "02-2009-3773";
+        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
+        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
+        //	$hpMesg = "";           		// 메시지
+
+        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
+        $hpMesg = iconv("UTF-8", "EUC-KR", "$hpMesg");
+        /*  ---------------------------------------- */
+        $hpMesg = urlencode($hpMesg);
+        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
+
+        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
+
+        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
+        if (!$fp) echo "$errno : $errstr";
+
+        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
+        $flag = 0;
+        $out = "";
+        while (!feof($fp)) {
+            $row = fgets($fp, 1024);
+
+            if ($flag) $out .= $row;
+            if ($row == "\r\n") $flag = 1;
+        }
+        fclose($fp);
+        return $out;
     }
 
     public function ajax_upload()
