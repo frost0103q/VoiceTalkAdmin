@@ -14,37 +14,38 @@ class Notification extends Model
     public static function getInstance($type, $from_user, $data=null)
     {
         $notifcation = new Notification();
+        $noti_content = config('constants.NOTI_TITLE_CONTENT');
+        $title = $noti_content[$type]['title'];
+
         if($type == config('constants.NOTI_TYPE_CHATMESSAGE')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         }
         else if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         }
         else if($type == config('constants.NOTI_TYPE_REQUEST_ACCEPT_CONSULTING')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         }
         else if($type == config('constants.NOTI_TYPE_REQUEST_PRESENT')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname, $data['point']);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname, $data['point']);
         }
         else if($type == config('constants.NOTI_TYPE_SEND_ENVELOP')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         }
         else if($type == config('constants.NOTI_TYPE_ADD_FRIEND')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         }
         else if($type == config('constants.NOTI_TYPE_SEND_PRESENT')) {
-            $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TITLE_CONTENT')[$type]['content'], $from_user->nickname, $data['point']);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname, $data['point']);
         }
         else if($type == config('constants.NOTI_TYPE_CASH_QA')) {
-            $title = config('constants.NOTI_TYPE_REQUEST_CONSULTING')[$type]['title'];
-            $content = sprintf(config('constants.NOTI_TYPE_REQUEST_CONSULTING')[$type]['content'], $from_user->nickname);
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
+        }
+        else if($type == config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH')) {
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
+        }
+        else if($type == config('constants.NOTI_TYPE_REFUSE_IMAGE')) {
+            $content = $noti_content[$type]['content'];
         }
 
         $notifcation->type = $type;

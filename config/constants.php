@@ -76,6 +76,8 @@ return [
         'NOTI_TYPE_ADD_FRIEND'   => 5,
         'NOTI_TYPE_SEND_PRESENT'  =>6,
         'NOTI_TYPE_CASH_QA'  =>7,
+        'NOTI_TYPE_ADMIN_NORMAL_PUSH'  =>8,
+        'NOTI_TYPE_REFUSE_IMAGE'  =>9,
 
         'NOTI_TITLE_CONTENT' => [
                                             ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],
@@ -85,7 +87,9 @@ return [
                                             ["title"=>"쪽지전송","content"=>"%s님으로부터 쪽지가 도착했습니다."],
                                             ["title"=>"친구추가","content"=>"%s님이 당신을 친구추가했습니다."],
                                             ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],
-                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."]
+                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],
+                                            ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],
+                                            ["title"=>"이미지거절","content"=>"회원님이 등록하신 사진이 게시에 부적합하다 판단되어 연락드립니다. 변경 부탁 드립니다."],
                                         ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
@@ -133,6 +137,7 @@ return [
 		'PUSH_SEND_NOTICE' => 2,
 		'PUSH_SEND_EVENT' => 3,
 
+        'NO_ADMIN' => 0,
 		'TALK_ADMIN' => 1,
 		'TALK_POLICE' => 2,
 
