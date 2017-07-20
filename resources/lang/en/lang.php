@@ -17,6 +17,7 @@ return [
     'incorrect_password'=>'비밀번호가 정확하지않습니다.',
 
     //menu
+    'homepage'=>'기본페지',
     'photo_agree'=>'사진승인',
     'voice_agree'=>'Voice 승인',
     'cash_question'=>'결제문의',
@@ -26,6 +27,18 @@ return [
     'statistic_manage'=>'통계관리',
     'admin_notice'=>'운영자계시판',
     'interdict_manage'=>'금지어등록',
+
+    //home page
+    'connect_status'=>'접속자 현황',
+    'today_connect'=>'오늘의 접속',
+    'yesterday_connect'=>'어제의 접속',
+    'max_day_connect'=>'일최고 접속',
+    'total_statistic'=>'전체루적',
+    'sale_status'=>'매출 현황',
+    'today_sale'=>'오늘 매출',
+    'today_withdraw'=>'오늘 출금',
+    'yesterday_sale'=>'어제 매출',
+    'month_statistic'=>'월루적',
 
     //Photo agree
     'wait_all_view'=>'미 승인건 모아보기',

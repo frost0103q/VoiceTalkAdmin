@@ -297,6 +297,8 @@ class BasicController extends Controller
 
         $s_time = mktime(0, 0, 0, $s_month, $s_day, $s_year);
         $e_time = mktime(0, 0, 0, $e_month, $e_day, $e_year);
-        return ($e_time - $s_time) / 24 / 60 / 60;
+        
+        $days=($e_time - $s_time) / 24 / 60 / 60;
+        return abs($days);
     }
 }

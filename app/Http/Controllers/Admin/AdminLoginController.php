@@ -80,7 +80,7 @@ class AdminLoginController extends BasicController
         Session::put('u_no', $results[0]->no);
         Session::put('u_nickname', $results[0]->nickname);
 
-        return redirect('/agree_photo');
+        return redirect('/home');
     }
 
 	public function auto_login(){

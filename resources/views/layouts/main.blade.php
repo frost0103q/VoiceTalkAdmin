@@ -149,7 +149,7 @@
 
 <?php
 if(isset($menu_index)){
-    for($i = 1; $i <= 10;$i++){
+    for($i = 0; $i <= 10;$i++){
         if ($i == $menu_index){
         ?>
         <script>

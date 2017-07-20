@@ -9,6 +9,12 @@
                 </div>
                 <!-- END SIDEBAR TOGGLER BUTTON -->
             </li>
+            <li menu_index="0" class="start">
+                <a href="home">
+                    <i class="fa fa-home"></i>
+                    <span class="title">{{trans('lang.homepage')}}</span>
+                </a>
+            </li>
             <li menu_index="1" class="start">
                 <a href="agree_photo">
                     <i class="fa fa-photo"></i>
