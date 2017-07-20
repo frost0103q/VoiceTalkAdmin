@@ -251,4 +251,13 @@ class AdminNoticeController extends BasicController
         else
             return config('constants.FAIL');
     }
+
+    public function get_mgr_notice_content(HttpRequest $request)
+    {
+        $no = $request->input('no');
+        if (!isset($no))
+            return config('constants.FAIL');
+        $response = ManageNotice::where('no', $no)->first();
+        return $response;
+    }
 }

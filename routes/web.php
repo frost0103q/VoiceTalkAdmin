@@ -133,6 +133,7 @@ Route::post('ajax_opinion_table', 'AdminNoticeController@ajax_opinion_table');
 Route::post('save_opinion', 'AdminNoticeController@save_opinion');
 Route::post('delete_opinion', 'AdminNoticeController@delete_opinion');
 Route::post('ajax_manage_notice_table', 'AdminNoticeController@ajax_manage_notice_table');
+Route::post('get_mgr_notice_content', 'AdminNoticeController@get_mgr_notice_content');
 Route::post('save_manage_notice', 'AdminNoticeController@save_manage_notice');
 Route::post('delete_manage_notice', 'AdminNoticeController@delete_manage_notice');
 

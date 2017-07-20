@@ -147,7 +147,7 @@
                         $('td:eq(0)', row).html(dataIndex + start_index + 1);
                         if (data[2] != "" && data[2] != null)
                             $('td:eq(2)', row).html(data[2] + ' &nbsp;<a onclick="file_download(\'' + data[2] + '\')"><i class="fa fa-download"></i></a>');
-                        var option_html = '<a><i class="fa fa-edit" onclick="manage_notice_edit(' + data[0] + ',\'' + data[1] + '\',\'' + data[2] + '\',\'' + data[7] + '\')"></i>' +
+                        var option_html = '<a><i class="fa fa-edit" onclick="manage_notice_edit(' + data[0] + ')"></i>' +
                                 ' <i class="fa fa-remove" onclick="manage_notice_delete(' + data[0] + ')"></i></a>';
                         $('td:eq(6)', row).html(option_html);
                     },
@@ -207,18 +207,34 @@
         $("#btn_manage_notice_modal").trigger('click');
     });
 
-    function manage_notice_edit(no, title, file_name, content) {
+    function manage_notice_edit(no) {
+
         $("#manage_notice_modal_title").html('<i class="fa fa-edit"></i> {{trans('lang.edit')}}');
-
         $("#manage_notice_no").val(no);
-        $("#manage_notice_title").val(title);
-        $("#manage_notice_content").val(content);
 
-        if (file_name != 'null')
-            $("#manage_notice_file_url").val(file_name);
-        else
-            $("#manage_notice_file_url").val('');
-        $("#btn_manage_notice_modal").trigger('click');
+        $.ajax({
+            url: "get_mgr_notice_content",
+            type: "POST",
+            data: {
+                no: no,
+                _token: "{{csrf_token()}}"
+            },
+            success: function (result) {
+                if (result == "{{config('constants.FAIL')}}") {
+                    toastr["error"]("{{trans('lang.no_display_data')}}", "{{trans('lang.notice')}}");
+                }
+                else {
+                    $("#manage_notice_title").val(result.title);
+                    $("#manage_notice_content").val(result.content);
+
+                    if (result.file_url != 'null')
+                        $("#manage_notice_file_url").val(result.file_url);
+                    else
+                        $("#manage_notice_file_url").val('');
+                    $("#btn_manage_notice_modal").trigger('click');
+                }
+            }
+        });
     }
 
     function manage_notice_delete(no) {
