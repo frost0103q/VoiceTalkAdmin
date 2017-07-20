@@ -12,14 +12,29 @@ return [
         'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
         'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
         'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
+        'ERROR_FAILED_PURCHASE' => ["error" => 12,'message' => 'Failed Purchase Product.'],
+        'ERROR_ALARM' => ["error" => 13,'message' => 'Failed Send Alarm.'],
+        'ERROR_FORBIDDEN_WORD' => ["error" => 14,'message' => 'Include Forbidden word.'],
 
-        'ADMIN_NAME' =>'관리자',
+        'TEST_MODE_LOCAL' => 0,
+        'TEST_MODE_GLOBAL' => 1,
+        'TEST_MODE_DELIVERY' => 2,
 
+        'testmode' => 1,
+
+        'PUSH_MODE_FCM' => 0,
+        'PUSH_MODE_XMPP' => 1,
+
+        'pushmode' => 0,
+
+        'USER_FIRST_POINT' => 300,
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
         'TALK_VOICE_TYPE' => ["일반 목소리", "귀여운 목소리", "중후한 목소리","통통목소리","애교목소리"],
 
-        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0],
+        'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
+
+        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0],
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,
@@ -31,6 +46,12 @@ return [
         'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
+        'FREE_CHARGE_TYPE_NAS'=> 1,
+        'FREE_CHARGE_TYPE_IGAWORKS'=> 2,
+
+        'FREE_CHARGE_RATIO_ADSYNC'=> 1,
+        'FREE_CHARGE_RATIO_NAS'=> 0.5,
+        'FREE_CHARGE_RATIO_IGAWORKS'=> 1,
 
         'INAPP_ITEMS' => [
                             ["name" => 'point_1','price' => 700, 'value' => 700],
@@ -42,31 +63,43 @@ return [
                             ["name" => 'point_7','price' => 70000, 'value' => 70000],
                         ],
 
-        'NOTI_TITLE_SEND_ENVELOPE'=> "쪽지전송",
-        'NOTI_TYPE_SEND_ENVELOPE'=>0,
-        'NOTI_GROUP_LIMIT'=>50,
-
         'USER_RELATION_FLAG_BLOCK_FRIEND'=> 0,
         'USER_RELATION_FLAG_UNBLOCK_FRIEND'=> 1,
         'USER_RELATION_FLAG_ENABLE_ALARM'=> 2,
         'USER_RELATION_FLAG_DISABLE_ALARM'=> 3,
 
-        'CHATMESSAGE_TYPE_NORMAL'   => 0,
-        'CHATMESSAGE_TYPE_REQUEST_CONSULTING'   => 1,
-        'CHATMESSAGE_REQUEST_ACCEPT_CONSULTING'   => 2,
-        'CHATMESSAGE_TYPE_REQUEST_PRESENT'   => 3,
-        'CHATMESSAGE_TYPE_SEND_ENVELOP'   => 4,
-        'CHATMESSAGE_TYPE_ADD_FRIEND'   => 5,
-        'CHATMESSAGE_TYPE_SEND_PRESENT'  =>6,
-        'CHATMESSAGE_TYPE_CASH_QA'  =>7,
+        'NOTI_TYPE_CHATMESSAGE'   => 0,
+        'NOTI_TYPE_REQUEST_CONSULTING'   => 1,
+        'NOTI_TYPE_REQUEST_ACCEPT_CONSULTING'   => 2,
+        'NOTI_TYPE_REQUEST_PRESENT'   => 3,
+        'NOTI_TYPE_SEND_ENVELOP'   => 4,
+        'NOTI_TYPE_ADD_FRIEND'   => 5,
+        'NOTI_TYPE_SEND_PRESENT'  =>6,
+        'NOTI_TYPE_CASH_QA'  =>7,
 
+        'NOTI_TITLE_CONTENT' => [
+                                            ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],
+                                            ["title"=>"상담요청","content"=>"%s님으로부터 상담신청이 들어왔습니다."],
+                                            ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 수락했습니다."],
+                                            ["title"=>"선물조르기","content"=>"%s님으로부터 %uP 조르기가 들어왔습니다."],
+                                            ["title"=>"쪽지전송","content"=>"%s님으로부터 쪽지가 도착했습니다."],
+                                            ["title"=>"친구추가","content"=>"%s님이 당신을 친구추가했습니다."],
+                                            ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],
+                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."]
+                                        ],
+        'NOTI_GROUP_LIMIT'=>50,
+        'INVALID_MODEL_NO'=>0,
         'CHECK_ROLL_POINT'   => 30,
+        'POINT_PER_MIN'=>200,
 
 		'INVALID_EMAIL'   => 1,
 		'INVALID_PASSWORD'   => 2,
 
 		'SUCCESS'   => 'success',
 		'FAIL'   => 'fail',
+
+        'TRUE'   => 1,
+        'FALSE'   => 0,
 
 		'WAIT'   => 2,
 		'AGREE'   => 1,
@@ -78,6 +111,9 @@ return [
 
 		'MALE'	=> 0,
 		'FEMALE'	=> 1,
+
+        'IMAGE'	=> 0,
+        'VOICE'	=> 1,
 
 		'UNVERIFIED' => 0,
 		'VERIFIED' => 1,

@@ -7,6 +7,7 @@ use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
 use LaravelFCM\Response\DownstreamResponse;
 use Log;
+
 /**
  * Class FCMHandler
  * @package App\Services
@@ -38,6 +39,7 @@ class FCMHandler
      *  ]
      */
     private $cache = [];
+
     /**
      * 푸쉬 메시지를 보낼 단말기의 registration_id 목록을 설정합니다.
      *
@@ -49,6 +51,7 @@ class FCMHandler
         $this->to = $to;
         return $this;
     }
+
     /**
      * 푸쉬 메시지로 보낼 데이터 본문을 설정합니다.
      *
@@ -60,6 +63,7 @@ class FCMHandler
         $this->data = $data;
         return $this;
     }
+
     /**
      * 푸쉬 메시지로 보낼 알림 제목과 본문을 설정합니다.
      *
@@ -73,19 +77,21 @@ class FCMHandler
         $this->body = $body;
         return $this;
     }
+
     /**
      * 메시지 전송 실패시 재시도 간격과 회수를 설정합니다.
      *
-     * @param array[int] $intervals
+     * @param array [int] $intervals
      * @return $this
      */
     public function retryIntervals(array $intervals = [])
     {
-        if (! empty($intervals)) {
+        if (!empty($intervals)) {
             $this->retryIntervals = $intervals;
         }
         return $this;
     }
+
     /**
      * 푸쉬 메시지 전송을 라이브러리에 위임하고, 전송 결과를 처리합니다.
      *
@@ -123,6 +129,7 @@ class FCMHandler
         }
         return $response;
     }
+
     /**
      * 푸쉬 메시지를 전송합니다.
      *
@@ -141,6 +148,7 @@ class FCMHandler
             $this->buildPayload()
         );
     }
+
     /**
      * 중복 수신자를 제거한 수신자 목록을 반환합니다.
      *
@@ -150,6 +158,7 @@ class FCMHandler
     {
         return array_unique($this->to);
     }
+
     /**
      * 푸쉬 메시지 전송 옵션을 설정합니다.
      *
@@ -167,6 +176,7 @@ class FCMHandler
 //        $optionBuilder->setDryRun(false);
         return $this->cache['optionBuilder'] = $optionBuilder->build();
     }
+
     /**
      * (단말기의 Notification Center에 표시될) 알림 제목과 본문을 설정합니다.
      *
@@ -181,6 +191,7 @@ class FCMHandler
         $notificationBuilder->setTitle($this->title)->setBody($this->body)->setSound('default');
         return $this->cache['notificationBuilder'] = $notificationBuilder->build();
     }
+
     /**
      * 메시지 본문을 설정합니다.
      *
@@ -195,10 +206,11 @@ class FCMHandler
         $dataBuilder->addData($this->data);
         return $this->cache['dataBuilder'] = $dataBuilder->build();
     }
+
     /**
      * 변경된 단말기의 토큰을 DB에 기록합니다.
      *
-     * @param array[$oldKey => $newKey] $tokens
+     * @param array [$oldKey => $newKey] $tokens
      * @return bool
      */
     protected function updateDevices(array $tokens)
@@ -210,19 +222,22 @@ class FCMHandler
         }
         return true;
     }
+
     /**
      * 유효하지 않은 단말기 토큰을 DB에서 삭제합니다.
      *
-     * @param array[$token] $tokens
+     * @param array [$token] $tokens
      * @return bool
      */
-    protected function deleteDevices(array $tokens) {
+    protected function deleteDevices(array $tokens)
+    {
         foreach ($tokens as $token) {
             $device = Device::wherePushServiceToken($token)->firstOrFail();
             $device->delete();
         }
         return true;
     }
+
     /**
      * 로그를 남깁니다.
      *

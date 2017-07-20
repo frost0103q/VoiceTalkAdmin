@@ -68,7 +68,7 @@ Route::post('/sendEnvelop', 'NotificationsController@sendEnvelop');
 Route::post('/sendGroupEnvelop', 'NotificationsController@sendGroupEnvelop');
 Route::post('/readEnvelop', 'NotificationsController@readEnvelop');
 Route::post('/deleteEnvelop', 'NotificationsController@deleteEnvelop');
-Route::get('/getChatModelList', 'NotificationsController@getChatModelList');
+Route::get('/notificationListInChatRoom', 'NotificationsController@notificationListInChatRoom');
 
 // withdraw api
 Route::post('/withdraw', 'WithdrawController@doWithdraw');
@@ -78,10 +78,6 @@ Route::get('/withdrawList', 'WithdrawController@withdrawList');
 Route::post('/pointHistory', 'PointHistoryController@doPointHistory');
 Route::get('/pointHistoryList', 'PointHistoryController@pointHistoryList');
 
-// xmpp history
-Route::post('/chatHistory', 'ChatHistoryController@doChatHistory');
-Route::get('/chatHistoryList', 'ChatHistoryController@chatHistoryList');
-
 // cash question api
 Route::post('/cashQuestion', 'CashQuestionController@doCashQuestion');
 Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
@@ -90,5 +86,9 @@ Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
 Route::get('/manageNoticeList', 'AdminNoticeController@manageNoticeList');
 Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
 
+
 // free charge api
 Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');
+Route::post('/nas_delivery_point', 'FreeChargeController@nas_delivery_point');
+Route::post('/igaworks_delivery_point', 'FreeChargeController@igaworks_delivery_point');
+Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');

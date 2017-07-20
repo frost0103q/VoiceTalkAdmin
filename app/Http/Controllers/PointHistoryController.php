@@ -20,7 +20,7 @@ use Socialite;
 use URL;
 
 
-class PointHistoryController  extends BasicController
+class PointHistoryController extends BasicController
 {
     /*
      |--------------------------------------------------------------------------
@@ -47,12 +47,12 @@ class PointHistoryController  extends BasicController
     {
         $params = Request::all();
 
-        if(count($params) == 0) {
+        if (count($params) == 0) {
             $params['rows'] = Config::get('config.itemsPerPage.default');
             $params['page'] = 1;
         }
 
-        return view('notifications.index', ["params"=>$params]);
+        return view('notifications.index', ["params" => $params]);
     }
 
 
@@ -67,29 +67,29 @@ class PointHistoryController  extends BasicController
         $page = $request->input('page');
         $user_no = $request->input('user_no');
 
-        if($limit == null) {
+        if ($limit == null) {
             $limit = Config::get('config.itemsPerPage.default');
         }
 
-        if($page == null) {
+        if ($page == null) {
             $params['page'] = 1;
         }
 
         $response = null;
-        if($user_no != null) {
+        if ($user_no != null) {
             $response = PointHistory::where('user_no', $user_no);
         }
-        if($response != null) {
+        if ($response != null) {
             $response = $response->offset($limit * ($page - 1))->limit($limit)->get();
-        }
-        else {
+        } else {
             $response = PointHistory::offset($limit * ($page - 1))->limit($limit)->get();
         }
 
         return response()->json($response);
     }
 
-    public function doPointHistory(HttpRequest $request){
+    public function doPointHistory(HttpRequest $request)
+    {
 
         $oper = $request->input("oper");
         $user_no = $request->input('user_no');
@@ -100,8 +100,8 @@ class PointHistoryController  extends BasicController
 
         $response = config('constants.ERROR_NO');
 
-        if($oper == 'add') {
-            if($user_no == null || $type == null || $point == null) {
+        if ($oper == 'add') {
+            if ($user_no == null || $type == null || $point == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
@@ -113,26 +113,24 @@ class PointHistoryController  extends BasicController
 
             $withdraw->save();
             $response['no'] = $withdraw->no;
-        }
-        else if($oper == 'edit') {
-            if($no == null || ($type == null && $user_no == null)) {
+        } else if ($oper == 'edit') {
+            if ($no == null || ($type == null && $user_no == null)) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
 
             $update_data = [];
-            if($type != null) {
+            if ($type != null) {
                 $update_data['type'] = $type;
             }
-            if($user_no != null) {
+            if ($user_no != null) {
                 $update_data['user_no'] = $user_no;
             }
 
             $results = PointHistory::where('no', $no)
                 ->update($update_data);
-        }
-        else if($oper == 'del') {
-            if($no == null) {
+        } else if ($oper == 'del') {
+            if ($no == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }

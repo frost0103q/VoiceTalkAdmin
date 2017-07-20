@@ -12,6 +12,10 @@ return [
             'google_iab_public_key' => 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhwlgX25ZvA0Kfd8YsVKEXbmL9X05i7nU4yGicusFtISZl48OImWNiS5FRVlgH23jCiwRWcF0yYZfqI8xmrFoCrzOEiliV8LlJF8tZ4vO33zSybBQ91jn+lHn5hAWigKooq936nEolVibxKpX2r7TPBf/UBggfOW0MdlNSTYAa3D+elJN4JvwllBUBVY1h/Ed9+Z1cyx0mJLYaW1isFssfiZEnCgsf0ZZfz6liRsoiGl7GDzZ7Ay4H5RvYxCd2a/8iKY4+fag0Eulp0ETc7QYJGCmdh+h0pjXt1EC0jatWZ4skQIe225s5T4w5KAV7ToB1OPGmFACYN/L8vu2IUpn4QIDAQAB',
         ],
 		'encSaltKey' => env('ENC_SALT_KEY','platformaes256ctrsecure'), // Only keys of sizes 16, 24 or 32 supported
+        'giftN' => [
+            'cid' => 'GFN0360',
+            'ckey' => 'CK12437531',
+        ],
 		'recordPerPage' => 6,
 		'itemsPerPage' => [
 				'default' => 10,
@@ -29,6 +33,4 @@ return [
         'chatServerIp' => '175.126.38.49',
         'chatServerPort' => '5222',
         'chatAppPrefix' => 'voicetalk',
-        'testmode' => 1,                // 0:local, 1: global
-        'pushmode' => 0,               // 0:FCM,   1:XMPP
 ];

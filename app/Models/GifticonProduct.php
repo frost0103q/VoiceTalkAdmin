@@ -10,9 +10,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FreeChargeHistory extends Model
+class GifticonProduct extends Model
 {
-    protected $table = 't_free_charge_history';
+    protected $table = 't_gifticon_product';
 
     protected $primaryKey = 'no';
 }

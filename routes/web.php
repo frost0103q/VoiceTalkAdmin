@@ -19,6 +19,7 @@ Route::get('logout', 'Admin\AdminLoginController@doLogout');
 Route::get('/notifications', 'NotificationsController@index');
 Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
+Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
 

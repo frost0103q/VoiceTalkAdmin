@@ -147,7 +147,7 @@ return [
     'save_success'=>'정확히 보관되었습니다.',
     'reg_interdict_idiom'=>'금지어등록',
     'register'=>'등록하기',
-    'multi_reg_enable_comma'=>'콤마로 녀러 건 등록가능',
+    'multi_reg_enable_comma'=>'콤마로 여러건 등록가능',
     'select_del'=>'선택삭제',
     'select_idiom_del'=>'삭제할 금지어를 선택하세요.',
     'delete_fail'=>'삭제가 실패하였습니다.',

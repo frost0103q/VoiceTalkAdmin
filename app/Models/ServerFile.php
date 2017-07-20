@@ -7,26 +7,26 @@
  */
 
 namespace App\Models;
+
 use Config;
 use Illuminate\Database\Eloquent\Model;
 
-define("TYPE_IMAGE",     0);
-define("TYPE_VOICE",     1);
-
-class ServerFile extends Model {
+class ServerFile extends Model
+{
     protected $table = 't_file';
 
     protected $primaryKey = 'no';
 
 
-    public function uploadFile($file, $type=TYPE_IMAGE) {
+    public function uploadFile($file, $type = 0)
+    {
         $imageName = time() . '.' . $file->getClientOriginalExtension();
-        $uploadDirectory =  Config::get('config.uploadDirectory');
-        $publicDirectory =  Config::get('config.publicDirectory');
-        $uploadURL = url('/')."/".$uploadDirectory."/".$imageName;
-        $move = $file->move(base_path() ."/".$publicDirectory."/". $uploadDirectory, $imageName);
+        $uploadDirectory = Config::get('config.uploadDirectory');
+        $publicDirectory = Config::get('config.publicDirectory');
+        $uploadURL = url('/') . "/" . $uploadDirectory . "/" . $imageName;
+        $move = $file->move(base_path() . "/" . $publicDirectory . "/" . $uploadDirectory, $imageName);
 
-        if($move != null) {
+        if ($move != null) {
             $this->path = $uploadURL;
             $this->type = $type;
             $this->save();

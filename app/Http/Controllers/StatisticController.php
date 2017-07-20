@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\ServerFile;
+use App\Models\SSP;
 use DB;
 use Request;
 use Session;
-use App\Models\ServerFile;
-use App\Models\SSP;
 
 class StatisticController extends BasicController
 {
@@ -42,14 +38,15 @@ class StatisticController extends BasicController
             return redirect("/login");
         }
 
-        $data['menu_index']=7;
-        $data['end_dt']=date('Y-m-d');
-        $data['start_dt']=$this->getChangeDate(date('Y-m-d'),-6);
+        $data['menu_index'] = 7;
+        $data['end_dt'] = date('Y-m-d');
+        $data['start_dt'] = $this->getChangeDate(date('Y-m-d'), -6);
 
-        return view('statistic.index',$data);
+        return view('statistic.index', $data);
     }
-    
-    public function ajax_edwards_table(){
+
+    public function ajax_edwards_table()
+    {
         $table = 't_edwards_ad';
         // Custom Where
         $custom_where = "1=1";
@@ -72,7 +69,7 @@ class StatisticController extends BasicController
         if ($nickname != "")
             $custom_where .= " and user_no in (select no from t_user where nickname like '%" . $nickname . "%') ";
         if ($sex != "-1")
-            $custom_where .= " and user_no in (select no from t_user where sex='".$sex."') ";
+            $custom_where .= " and user_no in (select no from t_user where sex='" . $sex . "') ";
 
 
         global $total_point;
@@ -85,32 +82,30 @@ class StatisticController extends BasicController
         $columns = array(
             array('db' => 'no', 'dt' => 0),
             array('db' => 'user_no', 'dt' => 1,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     return sprintf("%'.05d", $d);
                 }
             ),
             array('db' => 'user_no', 'dt' => 2,
-                'formatter'=>function($d,$row){
+                'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
-                    if($user_model!=null){
-                        $html='<span class="primary-link">'.$user_model->nickname.'('.$user_model->age.')'.'</span><br><span>&nbsp;'.$user_model->point.'P</span>';
+                    if ($user_model != null) {
+                        $html = '<span class="primary-link">' . $user_model->nickname . '(' . $user_model->age . ')' . '</span><br><span>&nbsp;' . $user_model->point . 'P</span>';
                         return $html;
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),
             array('db' => 'user_no', 'dt' => 3,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
-                    if($user_model!=null){
+                    if ($user_model != null) {
                         $results = ServerFile::where('no', $user_model->img_no)->first();
-                        if($results!=null)
+                        if ($results != null)
                             return $results['path'];
                         else
                             return '';
-                    }
-                    else
+                    } else
                         return '';
                 }
             ),
@@ -139,101 +134,102 @@ class StatisticController extends BasicController
         );
     }
 
-    public function ajax_connect_table(){
+    public function ajax_connect_table()
+    {
 
-        global $start_dt,$end_dt;
+        global $start_dt, $end_dt;
 
-        $start_dt=$_POST['start_dt'];
-        $end_dt=$_POST['end_dt'];
-        $sex=$_POST['sex'];
-        $display_length=$_POST['display_length'];
-        $start_record=$_POST['start'];
+        $start_dt = $_POST['start_dt'];
+        $end_dt = $_POST['end_dt'];
+        $sex = $_POST['sex'];
+        $display_length = $_POST['display_length'];
+        $start_record = $_POST['start'];
 
 
-        if($end_dt=="")
-            $end_dt=date('Y-m-d');
-        if($start_dt=="")
-            $start_dt=$this->getChangeDate($end_dt,-6);
+        if ($end_dt == "")
+            $end_dt = date('Y-m-d');
+        if ($start_dt == "")
+            $start_dt = $this->getChangeDate($end_dt, -6);
 
-        $total_cnt = $this->getDayCount($start_dt,$end_dt)+1;
+        $total_cnt = $this->getDayCount($start_dt, $end_dt) + 1;
 
 
         global $custom_where;
-        $custom_where=" 1=1 and created_at>='".$start_dt."' and created_at<'".$this->getChangeDate($end_dt,1)."'";
-        if($sex!="-1")
+        $custom_where = " 1=1 and created_at>='" . $start_dt . "' and created_at<'" . $this->getChangeDate($end_dt, 1) . "'";
+        if ($sex != "-1")
             $custom_where .= "  and user_no in (select no from t_user where sex='" . $sex . "') ";
 
 
         $columns = array();
-        for ($i = 0;$i<$total_cnt;$i++){
-            $date = $this->getChangeDate($start_dt,$i);
+        for ($i = 0; $i < $total_cnt; $i++) {
+            $date = $this->getChangeDate($start_dt, $i);
 
             $columns[] = array(
-                array( 'db' => $date, 'dt' => 0),
-                array( 'db' => $date,
+                array('db' => $date, 'dt' => 0),
+                array('db' => $date,
                     'dt' => 1,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_login_cnt_date($d,$custom_where);
+                        return $this->get_login_cnt_date($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 2,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_cash_cnt_date($d,$custom_where);
+                        return $this->get_cash_cnt_date($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 3,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_plus_point_sum($d,$custom_where);
+                        return $this->get_plus_point_sum($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 4,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_ad_point_date($d,$custom_where);
+                        return $this->get_ad_point_date($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 5,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_withdraw_point_sum($d,$custom_where);
+                        return $this->get_withdraw_point_sum($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 6,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_benefit_point_date($d,$custom_where);
+                        return $this->get_benefit_point_date($d, $custom_where);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 7,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
-                        $male_cnt=$this->get_male_reg_cnt_date($d);
-                        $female_cnt=$this->get_female_reg_cnt_date($d);
-                        $exit_cnt=$this->get_user_exit_cnt_date($d);
-                        return $male_cnt.'+'.$female_cnt.'-'.$exit_cnt.'='.($male_cnt+$female_cnt-$exit_cnt);
+                        $male_cnt = $this->get_male_reg_cnt_date($d);
+                        $female_cnt = $this->get_female_reg_cnt_date($d);
+                        $exit_cnt = $this->get_user_exit_cnt_date($d);
+                        return $male_cnt . '+' . $female_cnt . '-' . $exit_cnt . '=' . ($male_cnt + $female_cnt - $exit_cnt);
                     }
                 ),
-                array( 'db' => $date,
+                array('db' => $date,
                     'dt' => 8,
-                    'formatter' => function($d) {
+                    'formatter' => function ($d) {
                         $d = $d[0];
                         global $custom_where;
-                        return $this->get_present_point_date($d,$custom_where);
+                        return $this->get_present_point_date($d, $custom_where);
                     }
                 )
             );
@@ -241,80 +237,81 @@ class StatisticController extends BasicController
 
         //total row ====================
         $columns[] = array(
-            array( 'db' => trans('lang.sum'), 'dt' => 0),
-            array( 'db' => '',
+            array('db' => trans('lang.sum'), 'dt' => 0),
+            array('db' => '',
                 'dt' => 1,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_login_cnt_date($d,$custom_where,true);
+                    return $this->get_login_cnt_date($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 2,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_cash_cnt_date($d,$custom_where,true);
+                    return $this->get_cash_cnt_date($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 3,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_plus_point_sum($d,$custom_where,true);
+                    return $this->get_plus_point_sum($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 4,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_ad_point_date($d,$custom_where,true);
+                    return $this->get_ad_point_date($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 5,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_withdraw_point_sum($d,$custom_where,true);
+                    return $this->get_withdraw_point_sum($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 6,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
                     global $custom_where;
-                    return $this->get_benefit_point_date($d,$custom_where,true);
+                    return $this->get_benefit_point_date($d, $custom_where, true);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 7,
-                'formatter' => function($d) {
-                    global  $start_dt,$end_dt;
-                    $male_cnt=$this->get_male_reg_cnt_date($d,true,$start_dt,$end_dt);
-                    $female_cnt=$this->get_female_reg_cnt_date($d,true,$start_dt,$end_dt);
-                    $exit_cnt=$this->get_user_exit_cnt_date($d,true,$start_dt,$end_dt);
-                    return $male_cnt.'+'.$female_cnt.'-'.$exit_cnt.'='.($male_cnt+$female_cnt-$exit_cnt);
+                'formatter' => function ($d) {
+                    global $start_dt, $end_dt;
+                    $male_cnt = $this->get_male_reg_cnt_date($d, true, $start_dt, $end_dt);
+                    $female_cnt = $this->get_female_reg_cnt_date($d, true, $start_dt, $end_dt);
+                    $exit_cnt = $this->get_user_exit_cnt_date($d, true, $start_dt, $end_dt);
+                    return $male_cnt . '+' . $female_cnt . '-' . $exit_cnt . '=' . ($male_cnt + $female_cnt - $exit_cnt);
                 }
             ),
-            array( 'db' => '',
+            array('db' => '',
                 'dt' => 8,
-                'formatter' => function($d) {
+                'formatter' => function ($d) {
 
                     global $custom_where;
-                    return $this->get_present_point_date($d,$custom_where,true);
+                    return $this->get_present_point_date($d, $custom_where, true);
                 }
             )
         );
 
         echo json_encode(
-            SSP::simple1( $_POST, $columns, $total_cnt, $display_length, $start_record)
+            SSP::simple1($_POST, $columns, $total_cnt, $display_length, $start_record)
         );
     }
 
-    public function get_login_cnt_date($date,$custom_where,$all_flag=false){
+    public function get_login_cnt_date($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
-            $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE ". $custom_where);
+        if ($all_flag)
+            $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE " . $custom_where);
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE created_at like '%".$date."%' and " . $custom_where);
+            $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE created_at like '%" . $date . "%' and " . $custom_where);
 
         if ($result != null)
             return $result[0]->cnt;
@@ -323,12 +320,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_cash_cnt_date($date,$custom_where,$all_flag=false){
+    public function get_cash_cnt_date($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
+        if ($all_flag)
             $result = DB::select("SELECT COUNT(*) as cnt from t_inapp_purchase_history WHERE  " . $custom_where);
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_inapp_purchase_history WHERE created_at like '%".$date."%' and " . $custom_where);
+            $result = DB::select("SELECT COUNT(*) as cnt from t_inapp_purchase_history WHERE created_at like '%" . $date . "%' and " . $custom_where);
 
         if ($result != null)
             return $result[0]->cnt;
@@ -337,12 +335,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_present_point_date($date,$custom_where,$all_flag=false){
+    public function get_present_point_date($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
+        if ($all_flag)
             $result = DB::select("SELECT SUM(point) as total from t_gifticon_history WHERE  " . $custom_where);
         else
-            $result = DB::select("SELECT SUM(point) as total from t_gifticon_history WHERE created_at like '%".$date."%' and " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_gifticon_history WHERE created_at like '%" . $date . "%' and " . $custom_where);
 
         if ($result != null)
             return abs($result[0]->total);
@@ -351,12 +350,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_ad_point_date($date,$custom_where,$all_flag=false){
+    public function get_ad_point_date($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
+        if ($all_flag)
             $result = DB::select("SELECT SUM(point) as total from t_free_charge_history WHERE   " . $custom_where);
         else
-            $result = DB::select("SELECT SUM(point) as total from t_free_charge_history WHERE  created_at like '%".$date."%' and " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_free_charge_history WHERE  created_at like '%" . $date . "%' and " . $custom_where);
 
         if ($result != null)
             return abs($result[0]->total);
@@ -365,12 +365,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_male_reg_cnt_date($date,$all_flag=false,$start_dt='',$end_dt=''){
+    public function get_male_reg_cnt_date($date, $all_flag = false, $start_dt = '', $end_dt = '')
+    {
 
-        if($all_flag)
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='".$start_dt."' and created_at<'".$this->getChangeDate($end_dt,1)."' and sex='".config('constants.MALE')."'");
+        if ($all_flag)
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='" . $start_dt . "' and created_at<'" . $this->getChangeDate($end_dt, 1) . "' and sex='" . config('constants.MALE') . "'");
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%".$date."%' and sex='".config('constants.MALE')."'");
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%" . $date . "%' and sex='" . config('constants.MALE') . "'");
 
         if ($result != null)
             return $result[0]->cnt;
@@ -379,12 +380,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_female_reg_cnt_date($date,$all_flag=false,$start_dt='',$end_dt=''){
+    public function get_female_reg_cnt_date($date, $all_flag = false, $start_dt = '', $end_dt = '')
+    {
 
-        if($all_flag)
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='".$start_dt."' and created_at<'".$this->getChangeDate($end_dt,1)."' and  sex='".config('constants.FEMALE')."'");
+        if ($all_flag)
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='" . $start_dt . "' and created_at<'" . $this->getChangeDate($end_dt, 1) . "' and  sex='" . config('constants.FEMALE') . "'");
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%".$date."%' and sex='".config('constants.FEMALE')."'");
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at like '%" . $date . "%' and sex='" . config('constants.FEMALE') . "'");
 
         if ($result != null)
             return $result[0]->cnt;
@@ -393,12 +395,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_user_exit_cnt_date($date,$all_flag=false,$start_dt='',$end_dt=''){
+    public function get_user_exit_cnt_date($date, $all_flag = false, $start_dt = '', $end_dt = '')
+    {
 
-        if($all_flag)
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='".$start_dt."' and created_at<'".$this->getChangeDate($end_dt,1)."' and  request_exit_flag='1'");
+        if ($all_flag)
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE created_at>='" . $start_dt . "' and created_at<'" . $this->getChangeDate($end_dt, 1) . "' and  request_exit_flag='1'");
         else
-            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE request_exit_time like '%".$date."%' and request_exit_flag='1'");
+            $result = DB::select("SELECT COUNT(*) as cnt from t_user WHERE request_exit_time like '%" . $date . "%' and request_exit_flag='1'");
 
         if ($result != null)
             return $result[0]->cnt;
@@ -407,12 +410,13 @@ class StatisticController extends BasicController
 
     }
 
-    public function get_plus_point_sum($date,$custom_where,$all_flag=false){
+    public function get_plus_point_sum($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
+        if ($all_flag)
             $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE   point>=0 and " . $custom_where);
         else
-            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE  created_at like '%".$date."%' and point>=0 and " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE  created_at like '%" . $date . "%' and point>=0 and " . $custom_where);
 
         if ($result != null)
             return abs($result[0]->total);
@@ -420,12 +424,13 @@ class StatisticController extends BasicController
             return 0;
     }
 
-    public function get_withdraw_point_sum($date,$custom_where,$all_flag=false){
+    public function get_withdraw_point_sum($date, $custom_where, $all_flag = false)
+    {
 
-        if($all_flag)
+        if ($all_flag)
             $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE   point<0 and " . $custom_where);
         else
-            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE  created_at like '%".$date."%' and point<0 and " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE  created_at like '%" . $date . "%' and point<0 and " . $custom_where);
 
         if ($result != null)
             return abs($result[0]->total);
@@ -433,7 +438,8 @@ class StatisticController extends BasicController
             return 0;
     }
 
-    public function get_benefit_point_date($date,$custom_where,$all_flag=false){
-        return $this->get_plus_point_sum($date,$custom_where,$all_flag) + $this->get_ad_point_date($date,$custom_where,$all_flag) - $this->get_withdraw_point_sum($date,$custom_where,$all_flag);
+    public function get_benefit_point_date($date, $custom_where, $all_flag = false)
+    {
+        return $this->get_plus_point_sum($date, $custom_where, $all_flag) + $this->get_ad_point_date($date, $custom_where, $all_flag) - $this->get_withdraw_point_sum($date, $custom_where, $all_flag);
     }
 }

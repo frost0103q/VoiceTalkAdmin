@@ -7,9 +7,11 @@
  */
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
-class PointHistory extends Model{
+class PointHistory extends Model
+{
     protected $table = 't_pointhistory';
 
     protected $primaryKey = 'no';
