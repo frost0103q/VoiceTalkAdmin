@@ -5,7 +5,7 @@
  */
 ?>
 
-<div class="col-md-3">
+<div class="col-md-3" img_pad_file_no="{{$img_model->no}}">
     <div class="portlet light image-potlet">
         <div class="profile-userpic">
             <img src="{{$img_model->path}}" class="img-responsive" alt="">
@@ -69,5 +69,5 @@
             </div>
         </div>
     </div>
+    <input type="hidden" class="file_no" value="{{$img_model->no}}">
 </div>
-<input type="hidden" class="file_no" value="{{$img_model->no}}">

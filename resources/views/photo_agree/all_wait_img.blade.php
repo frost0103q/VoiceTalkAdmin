@@ -87,6 +87,13 @@
                     $("#profile_img_list").empty();
                     $("#talk_img_list").empty();
 
+                    $("#tab_2_1 .col-md-3").each(function () {
+                        $(this).remove();
+                    });
+                    $("#tab_3_1 .col-md-3").each(function () {
+                        $(this).remove();
+                    });
+
                     $("#tab_2_2 .row").append(profile_img_list_html);
                     $("#tab_3_2 .row").append(talk_img_list_html);
                     toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");

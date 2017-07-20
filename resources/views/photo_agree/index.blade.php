@@ -133,10 +133,14 @@
                         if(cur_status!='{{config('constants.AGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
-                            if(type=='talk')
+                            if(type=='talk'){
                                 $("#tab_3_2 .row").append(result);
-                            else
+                                $("#tab_3_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
+                            else{
                                 $("#tab_2_2 .row").append(result);
+                                $("#tab_2_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
                         }
                     }
                 }
@@ -160,10 +164,14 @@
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
-                            if(type=='talk')
+                            if(type=='talk'){
                                 $("#tab_3_3 .row").append(result);
-                            else
+                                $("#tab_3_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
+                            else{
                                 $("#tab_2_3 .row").append(result);
+                                $("#tab_2_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
                         }
                     }
                 }

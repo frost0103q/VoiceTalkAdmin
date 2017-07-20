@@ -241,8 +241,15 @@ class AgreementController extends BasicController
 
         $img_no_array = explode(',', $img_no_array);
 
-        for ($i = 0; $i < count($img_no_array); $i++) {
-            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        $new_selected_img_array = array();
+
+        foreach ($img_no_array as $item) {
+            if (!in_array($item, $new_selected_img_array))
+                array_push($new_selected_img_array, $item);
+        }
+
+        for ($i = 0; $i < count($new_selected_img_array); $i++) {
+            $results = ServerFile::where('no', $new_selected_img_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
             if (!$results)
                 return config('constants.FAIL');
         }
