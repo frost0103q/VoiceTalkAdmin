@@ -2,7 +2,7 @@
     <div class="col-md-12" style="margin-top: 30px;margin-bottom: 20px">
         <form action="#" class="form-horizontal">
             <div class="form-group">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="control-label">{{trans('lang.period_search')}}</label>
                     <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd">
                         <input type="text" class="form-control" name="from_date" id="e_from_date">

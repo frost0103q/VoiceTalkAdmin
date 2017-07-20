@@ -121,6 +121,7 @@ Route::post('ajax_withdraw_table', 'WithdrawController@ajax_withdraw_table');
 Route::post('ajax_gifticon_table', 'WithdrawController@ajax_gifticon_table');
 Route::post('ajax_present_table', 'WithdrawController@ajax_present_table');
 Route::post('ajax_point_rank_table', 'UsersController@ajax_point_rank_table');
+Route::post('selected_withdraw_change_status', 'WithdrawController@selected_withdraw_change_status');
 
 //statistic manage 
 Route::get('statistic', 'StatisticController@index');

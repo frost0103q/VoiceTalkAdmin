@@ -324,6 +324,10 @@ return [
     'received_user'=>'받은회원',
     'received_point'=>'받은 Point',
     'received_date'=>'받은 날짜',
+    'status_change'=>'상태변경',
+    'select_row_to_change_status'=>'상태변경하려는 행을 선택하세요.',
+    'success_status_change'=>'상태변경이 정확히 진행되었습니다.',
+    'fail_status_change'=>'상태변경이 실패하였습니다.',
 
     //admin notice manage
     'opinion_share'=>'의견공유',
