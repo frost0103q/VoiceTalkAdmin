@@ -82,4 +82,13 @@ class AdminLoginController extends BasicController
 
         return redirect('/agree_photo');
     }
+
+	public function auto_login(){
+		$email = Session::get('u_email');
+		if (isset($email) && $email != null) {
+			die("success");
+		}
+		else
+			die("fail");
+	}
 }

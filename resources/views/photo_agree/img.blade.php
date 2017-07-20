@@ -7,8 +7,7 @@
 
 <div class="col-md-3" img_pad_file_no="{{$img_model->no}}">
     <div class="portlet light image-potlet">
-        <div class="profile-userpic">
-            <img src="{{$img_model->path}}" class="img-responsive" alt="">
+        <div class="profile-userpic center-cropped"  style="background-image: url('{{$img_model->path}}')">
         </div>
         <div class="profile-usertitle">
             <div class="profile-usertitle-name">

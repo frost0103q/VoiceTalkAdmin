@@ -21,7 +21,9 @@ Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
 Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
+//login
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
+Route::post('auto_login', 'Admin\AdminLoginController@auto_login');
 
 // Agreement Pages
 Route::get('agree_photo', 'AgreementController@agree_photo');
