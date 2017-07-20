@@ -1071,7 +1071,6 @@ class UsersController extends BasicController
         $user_no = $_POST['user_no'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
         $chat_content = $_POST['chat_content'];
 
         if ($sex != "")
@@ -1082,10 +1081,8 @@ class UsersController extends BasicController
             $custom_where .= " and nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and email like '%" . $email . "%'";
         if ($chat_content != "")
-            $custom_where .= " and no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
+            $custom_where .= " and subject like '%" . $chat_content . "%'";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,

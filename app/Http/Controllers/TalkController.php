@@ -347,7 +347,7 @@ class TalkController extends BasicController
         if ($email != "")
             $custom_where .= " and email like '%" . $email . "%'";
         if ($chat_content != "")
-            $custom_where .= " and user_no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
+            $custom_where .= " and greeting like '%" . $chat_content . "%'";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,

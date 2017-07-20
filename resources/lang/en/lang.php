@@ -157,6 +157,7 @@ return [
     'push_sending'=>'Push발송',
     'banner_reg'=>'Banner등록',
     'talk_notice'=>'Talk공지',
+    'talk_content'=>'Talk내용',
     'message_notice'=>'Message공지',
     'sms_sending'=>'SMS발송',
     'title'=>'제목',

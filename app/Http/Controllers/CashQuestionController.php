@@ -166,7 +166,7 @@ class CashQuestionController extends BasicController
         $user_no = $params['user_no'];
         $user_nickname = $params['user_nickname'];
         $user_phone_number = $params['user_phone_number'];
-        $user_email = $params['user_email'];
+        /*$user_email = $params['user_email'];*/
         $user_chat_content = $params['user_chat_content'];
 
         // Table's name
@@ -185,10 +185,10 @@ class CashQuestionController extends BasicController
             $custom_where .= " and user_no in (select no from t_user where nickname like '%" . $user_nickname . "%') ";
         if ($user_phone_number != "")
             $custom_where .= " and user_no in (select no from t_user where phone_number like '%" . $user_phone_number . "%') ";
-        if ($user_email != "")
-            $custom_where .= " and user_no in (select no from t_user where email like '%" . $user_email . "%') ";
+        /*if ($user_email != "")
+            $custom_where .= " and user_no in (select no from t_user where email like '%" . $user_email . "%') ";*/
         if ($user_chat_content != "")
-            $custom_where .= " and user_no in (select from_user_no from t_chathistory where content like '%" . $user_chat_content . "%') ";
+            $custom_where .= " and content like '%" . $user_chat_content . "%' ";
 
 
         $columns = array(
