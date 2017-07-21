@@ -38,6 +38,7 @@ Route::get('agree_voice', 'AgreementController@agree_voice');
 
 Route::get('voice_agree', 'AgreementController@voice_agree');
 Route::get('voice_disagree', 'AgreementController@voice_disagree');
+Route::get('all_voice_agree', 'AgreementController@all_voice_agree');
 
 
 // notifiy page

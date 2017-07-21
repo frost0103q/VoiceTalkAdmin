@@ -93,7 +93,7 @@
                     else{
                         toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.AGREE')}}'){
-                            $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
+                            $(obj).closest(".portlet.light.voice-potlet").parent('div').remove();
                             $("#tab_2 .row").append(result);
                         }
                     }
@@ -115,7 +115,7 @@
                     else{
                         toastr["success"]("{{trans('lang.success_disagree')}}", "{{trans('lang.notice')}}");
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
-                            $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
+                            $(obj).closest(".portlet.light.voice-potlet").parent('div').remove();
                             $("#tab_3 .row").append(result);
                         }
                     }

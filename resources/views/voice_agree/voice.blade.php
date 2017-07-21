@@ -6,7 +6,7 @@
 ?>
 
 <div class="col-md-3">
-    <div class="portlet light image-potlet">
+    <div class="portlet light voice-potlet">
         <div class="profile-userpic">
             <img src="{{$voice_model->profile_path}}" class="img-responsive" alt="">
         </div>
@@ -49,6 +49,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" class="file_no" value="{{$voice_model->no}}">
+        <input type="hidden" class="talk_no" value="{{$voice_model->talk_no}}">
     </div>
 </div>
-<input type="hidden" class="file_no" value="{{$voice_model->no}}">
