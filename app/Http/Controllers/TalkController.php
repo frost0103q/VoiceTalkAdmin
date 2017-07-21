@@ -83,12 +83,16 @@ class TalkController extends BasicController
                         });
         }
 
-        if ($order == 0) { // Distance sort
+        if ($order == config('constants.ORDER_DISTANCE')) { // Distance sort
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');
             $query = $query->join('t_user', 't_talk.user_no', '=', 't_user.no')->orderBy($dist);
-        } else {            // Review sort
+        }
+        else if ($order == config('constants.ORDER_RANK')) { // Distance sort
             $review = DB::raw('(select SUM(mark) from t_consultingreview where t_consultingreview.to_user_no=t_talk.user_no)');
             $query = $query ->orderBy($review, 'desc');
+        }
+        else {            // date
+            $query = $query ->orderBy('updated_at', 'desc');
         }
 
         $response = $query->offset($limit * ($page - 1))->limit($limit)->get();

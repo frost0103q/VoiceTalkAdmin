@@ -108,6 +108,10 @@ return [
 		'WAIT'   => 2,
 		'AGREE'   => 1,
 		'DISAGREE'   => 0,
+
+        'ORDER_DISTANCE'   => 0,
+        'ORDER_RANK'   => 1,
+        'ORDER_DATE'   => 2,
 		
 		'TALK_POSSIBLE' => 0,
 		'AWAY'	=> 1,

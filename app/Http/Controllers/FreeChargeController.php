@@ -143,7 +143,7 @@ class FreeChargeController extends BasicController
     }
 
     public function nas_delivery_point(HttpRequest $request) {
-        $seq_id	    = $request->input('sid');	// [SEQ_ID] : 적립 고유 ID
+        $seq_id	    = $request->input('s');	// [SEQ_ID] : 적립 고유 ID
         $user_no	= $request->input('ud');	// 회원 정의 데이터
         $money		= $request->input('r');		// 리워드 금액 (오퍼월에서 참여한 경우에만 값이 있음)
         $ads_id		= $request->input('ai');		// 광고 ID
