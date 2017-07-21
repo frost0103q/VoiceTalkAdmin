@@ -27,7 +27,7 @@
 			<div class="form-actions">
 				<label class="checkbox">
 					<input type="checkbox" id="chk_auto_login"/> {{trans('lang.auto_login')}}</label>
-				<button type="submit" class="btn green-haze pull-right" id="btn_login">
+				<button type="button" class="btn green-haze pull-right" id="btn_login">
 					{{trans('lang.login')}} <i class="m-icon-swapright m-icon-white"></i>
 				</button>
 			</div>
@@ -108,8 +108,9 @@
 		});
 	});
 
-	$("#chk_auto_login").click(function () {
-		if($(this).is(':checked')){
+	$("#btn_login").click(function () {
+
+		if($("#chk_auto_login").is(':checked')){
 			$.ajax({
 				url: "auto_login",
 				type: "POST",
@@ -124,6 +125,8 @@
 				}
 			})
 		}
+
+		$("#loginForm").submit();
 	})
 
 </script>

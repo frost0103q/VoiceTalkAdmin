@@ -48,6 +48,21 @@ class HomeController extends BasicController
         ]);
     }
 
+    public function redraw_statistic()
+    {
+        return view('home.statistic',
+            [
+            'today_connect_cnt' => $this->get_connect_cnt_by_date(date('Y-m-d')),
+            'yesterday_connect_cnt' => $this->get_connect_cnt_by_date($this->getChangeDate(date('Y-m-d'), -1)),
+            'total_connect_cnt' => $this->get_total_connect_cnt(),
+            'max_connect_day_cnt' => $this->get_max_connect_cnt_by_date(),
+            'today_sale' => $this->get_sale_by_date(date('Y-m-d')),
+            'today_withdraw' => $this->get_withdraw_by_date(date('Y-m-d')),
+            'yesterday_sale' => $this->get_sale_by_date($this->getChangeDate(date('Y-m-d'), -1)),
+            'total_withdraw_and_sale' => $this->get_month_withdraw_and_sale()
+        ]);
+    }
+
     public function get_connect_cnt_by_date($date)
     {
         $result = DB::select("SELECT COUNT(*) as cnt from t_login_history WHERE created_at like '%" . $date . "%'");

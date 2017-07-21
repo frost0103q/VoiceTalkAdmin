@@ -21,6 +21,10 @@ Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
 Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
+//home page
+Route::post('redraw_statistic', 'HomeController@redraw_statistic');
+
+
 //login
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
 Route::post('auto_login', 'Admin\AdminLoginController@auto_login');
