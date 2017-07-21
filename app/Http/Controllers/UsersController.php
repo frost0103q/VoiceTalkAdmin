@@ -359,7 +359,7 @@ class UsersController extends BasicController
 
         $idiomCotroller = new IdiomController();
         if ($oper == 'add') {
-            if ($nickname == null || $subject == null) {
+            if ($nickname == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
@@ -371,7 +371,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            if ($idiomCotroller->includeForbidden($nickname) == true || $idiomCotroller->includeForbidden($subject) == true) {
+            if ($idiomCotroller->includeForbidden($nickname) == true) {// || $idiomCotroller->includeForbidden($subject) == true) {
                 $response = config('constants.ERROR_FORBIDDEN_WORD');
                 return response()->json($response);
             }
