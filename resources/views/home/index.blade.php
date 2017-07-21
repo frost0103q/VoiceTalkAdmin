@@ -11,30 +11,37 @@
                     </div>
                 </div>
                 <div class="portlet-body">
-                    <div class="row" style="padding-top: 20px">
-                        <div class="col-md-6">
-                            <div class="note note-success">
-                                <h4 class="block"><strong>{{trans('lang.connect_status')}}</strong></h4>
-                                <p>{{trans('lang.today_connect')}} &nbsp;&nbsp;&nbsp; {{number_format($today_connect_cnt)}}</p>
-                                <p>{{trans('lang.yesterday_connect')}} &nbsp;&nbsp;&nbsp; {{number_format($yesterday_connect_cnt)}}</p>
-                                <p>{{trans('lang.max_day_connect')}} &nbsp;&nbsp;&nbsp; {{($max_connect_day_cnt)}}</p>
-                                <p>{{trans('lang.total_statistic')}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{number_format($total_connect_cnt)}}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="note note-success">
-                                <h4 class="block"><strong>{{trans('lang.sale_status')}}</strong></h4>
-                                <p>{{trans('lang.today_sale')}} &nbsp;&nbsp;&nbsp; {{number_format($today_sale)}}</p>
-                                <p>{{trans('lang.today_withdraw')}} &nbsp;&nbsp;&nbsp; {{number_format($today_withdraw)}}</p>
-                                <p>{{trans('lang.yesterday_sale')}} &nbsp;&nbsp;&nbsp; {{number_format($yesterday_sale)}}</p>
-                                <p>{{trans('lang.month_statistic')}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{number_format($total_withdraw_and_sale)}}</p>
-                            </div>
-                        </div>
+                    <div class="row" id="statistic_pad" style="padding-top: 30px">
+                        @include('home.statistic');
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+
+        $(document).ready(function () {
+           setInterval(function () {
+               redraw_statistic();
+           },3000);
+        });
+
+        function redraw_statistic() {
+            $.ajax({
+                url: "redraw_statistic",
+                type: "post",
+                data: {
+                    temp : "",
+                    _token: "{{csrf_token()}}"
+                },
+                success: function (result) {
+                    $('#statistic_pad').html(result);
+                }
+            });
+        }
+    </script>
 @stop
+
 
 

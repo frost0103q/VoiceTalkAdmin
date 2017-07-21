@@ -420,5 +420,30 @@ class AgreementController extends BasicController
         }
     }
 
+    public function all_voice_agree()
+    {
+        $params = Request::all();
+        $voice_no_array = $params['voice_no_array'];
+
+        if (!isset($voice_no_array))
+            return config('constants.FAIL');
+
+        $voice_no_array = explode(',', $voice_no_array);
+
+        $new_selected_voice_array = array();
+
+        foreach ($voice_no_array as $item) {
+            if (!in_array($item, $new_selected_voice_array))
+                array_push($new_selected_voice_array, $item);
+        }
+
+        for ($i = 0; $i < count($new_selected_voice_array); $i++) {
+            $results = ServerFile::where('no', $new_selected_voice_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+            if (!$results)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
 }
 

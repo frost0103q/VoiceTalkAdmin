@@ -37,7 +37,14 @@ class AdminLoginController extends BasicController
 
     public function index()
     {
-        return view('login.index');
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return view('login.index');
+        }
+        else{
+            return redirect("home");
+        }
     }
 
     public function doLogout()

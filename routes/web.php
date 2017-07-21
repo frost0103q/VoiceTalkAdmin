@@ -21,6 +21,10 @@ Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
 Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
+//home page
+Route::post('redraw_statistic', 'HomeController@redraw_statistic');
+
+
 //login
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
 Route::post('auto_login', 'Admin\AdminLoginController@auto_login');
@@ -38,6 +42,7 @@ Route::get('agree_voice', 'AgreementController@agree_voice');
 
 Route::get('voice_agree', 'AgreementController@voice_agree');
 Route::get('voice_disagree', 'AgreementController@voice_disagree');
+Route::get('all_voice_agree', 'AgreementController@all_voice_agree');
 
 
 // notifiy page
