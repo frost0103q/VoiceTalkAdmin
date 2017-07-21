@@ -314,13 +314,18 @@ class WithdrawController extends BasicController
             $sum_money = 0;
 
         $columns = array(
-            array('db' => 'no', 'dt' => 0),
-            array('db' => 'user_no', 'dt' => 1,
+            array('db' => 'no', 'dt' => 0,
+                'formatter' => function ($d, $row) {
+                    return '<input type="checkbox" class="withdraw_no" value="' . $d . '">';
+                }
+            ),
+            array('db' => 'no', 'dt' => 1),
+            array('db' => 'user_no', 'dt' => 2,
                 'formatter' => function ($d, $row) {
                     return sprintf("%'.05d", $d);
                 }
             ),
-            array('db' => 'user_no', 'dt' => 2,
+            array('db' => 'user_no', 'dt' => 3,
                 'formatter' => function ($d, $row) {
                     $results = User::where('no', $d)->first();
                     if ($results != null)
@@ -329,11 +334,11 @@ class WithdrawController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'money', 'dt' => 3),
-            array('db' => 'wait_money', 'dt' => 4),
-            array('db' => 'account_name', 'dt' => 5),
-            array('db' => 'account_birth', 'dt' => 6),
-            array('db' => 'status', 'dt' => 7,
+            array('db' => 'money', 'dt' => 4),
+            array('db' => 'wait_money', 'dt' => 5),
+            array('db' => 'account_name', 'dt' => 6),
+            array('db' => 'account_birth', 'dt' => 7),
+            array('db' => 'status', 'dt' => 8,
                 'formatter' => function ($d, $row) {
                     if ($d == config('constants.WITHDRAW_WAIT'))
                         return trans('lang.wait');
@@ -343,7 +348,7 @@ class WithdrawController extends BasicController
                         return trans('lang.error');
                 }
             ),
-            array('db' => 'is_verified', 'dt' => 8,
+            array('db' => 'is_verified', 'dt' => 9,
                 'formatter' => function ($d, $row) {
                     if ($d == config('constants.IS_VERIFIED'))
                         return trans('lang.is_verified');
@@ -351,8 +356,8 @@ class WithdrawController extends BasicController
                         return trans('lang.not_verified');
                 }
             ),
-            array('db' => 'created_at', 'dt' => 9),
-            array('db' => 'no', 'dt' => 10,
+            array('db' => 'created_at', 'dt' => 10),
+            array('db' => 'no', 'dt' => 11,
                 'formatter' => function ($d, $row) {
                     global $sum_money;
                     return $sum_money;
@@ -524,9 +529,11 @@ class WithdrawController extends BasicController
                             '<div class="">
                                 <div class="item">
                                     <div class="item-head">
-                                        <div class="item-details">
-                                            <img class="img-circle" src="' . $img_path . '" height="40">
-                                            <a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                                        <div class="item-details">';
+                        if ($img_path != '')
+                            $html .= '<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
+
+                        $html .= '<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
                                             <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	
@@ -562,9 +569,11 @@ class WithdrawController extends BasicController
                             '<div class="">
                                 <div class="item">
                                     <div class="item-head">
-                                        <div class="item-details">
-                                            <img class="img-circle" src="' . $img_path . '" height="40">
-                                            <a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                                        <div class="item-details">';
+                        if ($img_path != '')
+                            $html .= '<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
+
+                        $html .= '<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
                                             <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	
@@ -590,5 +599,21 @@ class WithdrawController extends BasicController
         return json_encode(
             SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
         );
+    }
+
+    public function selected_withdraw_change_status()
+    {
+        $update_data['status'] = $_POST['status'];
+        $selected_withdraw_str = $_POST['selected_withdraw_str'];
+        $selected_withdraw_array = explode(',', $selected_withdraw_str);
+
+        for ($i = 0; $i < count($selected_withdraw_array); $i++) {
+
+            $result = Withdraw::where('no', $selected_withdraw_array[$i])->update($update_data);
+            if (!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
     }
 }

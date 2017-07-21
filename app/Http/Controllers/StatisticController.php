@@ -339,9 +339,9 @@ class StatisticController extends BasicController
     {
 
         if ($all_flag)
-            $result = DB::select("SELECT SUM(point) as total from t_gifticon_history WHERE  " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE type='2' and " . $custom_where);
         else
-            $result = DB::select("SELECT SUM(point) as total from t_gifticon_history WHERE created_at like '%" . $date . "%' and " . $custom_where);
+            $result = DB::select("SELECT SUM(point) as total from t_pointhistory WHERE type='2' and created_at like '%" . $date . "%' and " . $custom_where);
 
         if ($result != null)
             return abs($result[0]->total);

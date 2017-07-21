@@ -122,7 +122,7 @@ class MobilePageController extends BasicController
     {
         $mobile_page = MobilePage::where('type', $type)->first();
 
-        if($mobile_page == null) {
+        if ($mobile_page == null) {
             $mobile_page = new MobilePage();
             $mobile_page->url = $this->get_page_url($type);
             $mobile_page->type = $type;

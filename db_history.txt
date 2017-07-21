@@ -75,4 +75,10 @@
 		t_talk_notice테불에서 마당이름 변경(sender_type->notice_type)
 		t_talk_notice테불에 새마당 추가 link_url(varchar 255)	
 
+-2017-07-21
+	테불변경
+		t_free_charge_history테불에 새마당 추가 seq_id  varchar(255),ad_id  varchar(255)
+		t_mobile_page테불에서 content마당의 자료형을 text형으로 변환
+		t_user테불에 새마당 추가 admin_level  int(1)
+
 	

@@ -12,18 +12,18 @@
                 </div>
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
-                        <li class="active">
+                        {{--<li class="active">
                             <a href="#tab_1" data-toggle="tab">{{trans('lang.opinion_share')}}</a>
-                        </li>
-                        <li>
+                        </li>--}}
+                        <li class="active">
                             <a href="#tab_2" data-toggle="tab">{{trans('lang.manage_notice')}}</a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade active in" id="tab_1">
+                        {{--<div class="tab-pane fade active in" id="tab_1">
                             @include('admin_notice.opinion')
-                        </div>
-                        <div class="tab-pane fade" id="tab_2">
+                        </div>--}}
+                        <div class="tab-pane fade active in" id="tab_2">
                             @include('admin_notice.manage_notice')
                         </div>
                     </div>
@@ -34,12 +34,12 @@
 
     <script>
         $(document).ready(function () {
-            init_tbl_opinion();
-        });
-
-        $(".nav.nav-tabs li:eq(1)").click(function () {
             init_tbl_manage_notice();
         });
+
+        /*$(".nav.nav-tabs li:eq(1)").click(function () {
+            init_tbl_manage_notice();
+        });*/
     </script>
 @stop
 

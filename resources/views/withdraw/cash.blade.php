@@ -2,7 +2,7 @@
     <div class="col-md-12" style="margin-top: 30px;margin-bottom: 20px">
         <form action="#" class="form-horizontal">
             <div class="form-group">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="control-label">{{trans('lang.period_search')}}</label>
                     <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd">
                         <input type="text" class="form-control" name="from_date" id="c_from_date">
@@ -30,7 +30,7 @@
                     <label class="control-label">{{trans('lang.order_number')}}</label>
                     <input class="form-control" placeholder="" type="text" id="c_order_number" name="order_number">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <label class="control-label">{{trans('lang.cash_code')}}</label>
                     <input class="form-control" placeholder="" type="text" id="c_cash_code" name="cach_code">
                 </div>

@@ -17,6 +17,7 @@ return [
     'incorrect_password'=>'비밀번호가 정확하지않습니다.',
 
     //menu
+    'homepage'=>'기본페지',
     'photo_agree'=>'사진승인',
     'voice_agree'=>'Voice 승인',
     'cash_question'=>'결제문의',
@@ -26,6 +27,18 @@ return [
     'statistic_manage'=>'통계관리',
     'admin_notice'=>'운영자계시판',
     'interdict_manage'=>'금지어등록',
+
+    //home page
+    'connect_status'=>'접속자 현황',
+    'today_connect'=>'오늘의 접속',
+    'yesterday_connect'=>'어제의 접속',
+    'max_day_connect'=>'일최고 접속',
+    'total_statistic'=>'전체루적',
+    'sale_status'=>'매출 현황',
+    'today_sale'=>'오늘 매출',
+    'today_withdraw'=>'오늘 출금',
+    'yesterday_sale'=>'어제 매출',
+    'month_statistic'=>'월루적',
 
     //Photo agree
     'wait_all_view'=>'미 승인건 모아보기',
@@ -147,7 +160,7 @@ return [
     'save_success'=>'정확히 보관되었습니다.',
     'reg_interdict_idiom'=>'금지어등록',
     'register'=>'등록하기',
-    'multi_reg_enable_comma'=>'콤마로 녀러 건 등록가능',
+    'multi_reg_enable_comma'=>'콤마로 여러건 등록가능',
     'select_del'=>'선택삭제',
     'select_idiom_del'=>'삭제할 금지어를 선택하세요.',
     'delete_fail'=>'삭제가 실패하였습니다.',
@@ -157,6 +170,7 @@ return [
     'push_sending'=>'Push발송',
     'banner_reg'=>'Banner등록',
     'talk_notice'=>'Talk공지',
+    'talk_content'=>'Talk내용',
     'message_notice'=>'Message공지',
     'sms_sending'=>'SMS발송',
     'title'=>'제목',
@@ -323,6 +337,10 @@ return [
     'received_user'=>'받은회원',
     'received_point'=>'받은 Point',
     'received_date'=>'받은 날짜',
+    'status_change'=>'상태변경',
+    'select_row_to_change_status'=>'상태변경하려는 행을 선택하세요.',
+    'success_status_change'=>'상태변경이 정확히 진행되었습니다.',
+    'fail_status_change'=>'상태변경이 실패하였습니다.',
 
     //admin notice manage
     'opinion_share'=>'의견공유',

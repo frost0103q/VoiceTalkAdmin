@@ -137,17 +137,15 @@ class NoticeController extends BasicController
         $admin_no = Session::get('u_no');
 
         $arr_user = [];
-        if($data["send_type"] == config('constants.ALL_USER')) {
+        if ($data["send_type"] == config('constants.ALL_USER')) {
             $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->get();
-        }
-        else if($data["send_type"] == config('constants.TALK_USER')) {
+        } else if ($data["send_type"] == config('constants.TALK_USER')) {
             $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->where('verified', config('constants.IS_VERIFIED'))->get();
-        }
-        else if($data["send_type"] == config('constants.COMMON_USER')) {
+        } else if ($data["send_type"] == config('constants.COMMON_USER')) {
             $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->where('verified', config('constants.NOT_VERIFIED'))->get();
         }
 
-        for($i = 0; $i < count($arr_user); $i++) {
+        for ($i = 0; $i < count($arr_user); $i++) {
             $user_no = $arr_user[$i]->no;
             $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'), $data);
         }

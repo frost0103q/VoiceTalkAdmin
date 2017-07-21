@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
-use App\Models\ServerFile;
 use App\Models\User;
 use App\Models\UserRelation;
 use Config;
@@ -151,8 +150,8 @@ class NotificationsController extends BasicController
                 $sql = $sql . " AND c.is_read =" . $read_type;
             }
 
-            if($user_no != null) {
-                $sql = $sql." AND c.to_user_no=" . $user_no;
+            if ($user_no != null) {
+                $sql = $sql . " AND c.to_user_no=" . $user_no;
             }
         }
 
@@ -273,14 +272,14 @@ class NotificationsController extends BasicController
 
         $id = $request->input("no");
 
-        if($data != null) {
+        if ($data != null) {
             $data = json_decode($data);
         }
 
         $response = config('constants.ERROR_NO');
 
         if ($oper == 'add') {
-            if($title == null) {
+            if ($title == null) {
                 $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
             }
             $response = $this->addNotification($type, $from_id, $to_id, $title, $content, $data);

@@ -21,11 +21,7 @@
             <input class="form-control" placeholder="" type="text" id="user_phone_number">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.email')}}</label>
-            <input class="form-control" placeholder="" type="text" id="user_email">
-        </div>
-        <div class="col-md-2">
-            <label class="control-label">{{trans('lang.chat_content')}}</label>
+            <label class="control-label">{{trans('lang.subject')}}</label>
             <input class="form-control" placeholder="" type="text" id="user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">
@@ -122,7 +118,6 @@
                             d.user_no=$("#user_no").val();
                             d.nickname=$("#user_nickname").val();
                             d.phone_number=$("#user_phone_number").val();
-                            d.email=$("#user_email").val();
                             d.chat_content=$("#user_chat_content").val();
                         }
                     },

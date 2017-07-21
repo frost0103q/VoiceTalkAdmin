@@ -15,9 +15,9 @@
                         <li class="active">
                             <a href="#tab_1" data-toggle="tab">{{trans('lang.push_sending')}}</a>
                         </li>
-                        <li>
+                        {{--<li>
                             <a href="#tab_2" data-toggle="tab">{{trans('lang.banner_reg')}}</a>
-                        </li>
+                        </li>--}}
                         <li>
                             <a href="#tab_3" data-toggle="tab">{{trans('lang.talk_notice')}}</a>
                         </li>
@@ -32,9 +32,9 @@
                         <div class="tab-pane fade active in" id="tab_1">
                             @include('notice_mgr.push')
                         </div>
-                        <div class="tab-pane fade" id="tab_2">
+                        {{--<div class="tab-pane fade" id="tab_2">
                             @include('notice_mgr.banner')
-                        </div>
+                        </div>--}}
                         <div class="tab-pane fade" id="tab_3">
                             @include('notice_mgr.talk')
                         </div>
@@ -55,13 +55,13 @@
             init_tbl_push();
         });
 
-        $(".nav.nav-tabs li:eq(1)").click(function () {
+        /*$(".nav.nav-tabs li:eq(1)").click(function () {
             init_tbl_banner();
-        });
-        $(".nav.nav-tabs li:eq(2)").click(function () {
+        });*/
+        $(".nav.nav-tabs li:eq(1)").click(function () {
             init_tbl_talk();
         });
-        $(".nav.nav-tabs li:eq(3)").click(function () {
+        $(".nav.nav-tabs li:eq(2)").click(function () {
             init_tbl_sms();
         });
     </script>

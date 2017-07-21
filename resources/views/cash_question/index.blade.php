@@ -15,17 +15,17 @@
                         <li class="active">
                             <a href="#tab_1" data-toggle="tab">{{trans('lang.do_cash_question')}}</a>
                         </li>
-                        <li>
+                        {{--<li>
                             <a href="#tab_2" data-toggle="tab">{{trans('lang.do_declare')}}</a>
-                        </li>
+                        </li>--}}
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
                             @include('cash_question.cash_question')
                         </div>
-                        <div class="tab-pane fade" id="tab_2">
+                        {{--<div class="tab-pane fade" id="tab_2">
                             @include('cash_question.cash_declare')
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
             </div>
@@ -37,9 +37,9 @@
             init_tbl_cash_question();
         });
 
-        $(".nav.nav-tabs li:eq(1)").click(function () {
+        /*$(".nav.nav-tabs li:eq(1)").click(function () {
             init_tbl_declare();
-        });
+        });*/
     </script>
 @stop
 

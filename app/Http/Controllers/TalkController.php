@@ -75,24 +75,23 @@ class TalkController extends BasicController
             $query = $query->where('t_talk.voice_type', $voice_type);
         }
 
-        if($photo == config('constants.TRUE')) {
-            $query = $query->join('t_file', function ($q){
-                            $q->on('t_talk.img_no', 't_file.no');
-                            $q->where('t_file.type',  config('constants.IMAGE'));
-                            $q->where('t_file.checked', config('constants.AGREE'));
-                        });
+        if ($photo == config('constants.TRUE')) {
+            $query = $query->join('t_file', function ($q) {
+                $q->on('t_talk.img_no', 't_file.no');
+                $q->where('t_file.type', config('constants.IMAGE'));
+                $q->where('t_file.checked', config('constants.AGREE'));
+            });
         }
 
         if ($order == config('constants.ORDER_DISTANCE')) { // Distance sort
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');
             $query = $query->join('t_user', 't_talk.user_no', '=', 't_user.no')->orderBy($dist);
-        }
-        else if ($order == config('constants.ORDER_RANK')) { // Distance sort
+        } else if ($order == config('constants.ORDER_RANK')) { // Distance sort
+
             $review = DB::raw('(select SUM(mark) from t_consultingreview where t_consultingreview.to_user_no=t_talk.user_no)');
-            $query = $query ->orderBy($review, 'desc');
-        }
-        else {            // date
-            $query = $query ->orderBy('updated_at', 'desc');
+            $query = $query->orderBy($review, 'desc');
+        } else {            // date
+            $query = $query->orderBy('updated_at', 'desc');
         }
 
         $response = $query->offset($limit * ($page - 1))->limit($limit)->get();
@@ -128,7 +127,7 @@ class TalkController extends BasicController
                     return response()->json($response);
                 }
 
-                if($idiomCotroller->includeForbidden($greeting) == true) {
+                if ($idiomCotroller->includeForbidden($greeting) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -136,7 +135,7 @@ class TalkController extends BasicController
                 // image upload
                 if ($voice_file != null) {
                     $newfile = new ServerFile;
-                    $voice_no = $newfile->uploadFile($voice_file,  config('constants.VOICE'));
+                    $voice_no = $newfile->uploadFile($voice_file, config('constants.VOICE'));
                 } else {
                     $voice_no = -1;
                 }
@@ -172,14 +171,14 @@ class TalkController extends BasicController
                     return response()->json($response);
                 }
 
-                if($idiomCotroller->includeForbidden($greeting) == true) {
+                if ($idiomCotroller->includeForbidden($greeting) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
 
                 if ($photo_file != null) {
                     $newfile = new ServerFile;
-                    $photo_no = $newfile->uploadFile($photo_file,  config('constants.IMAGE'));
+                    $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
                 } else {
                     $photo_no = -1;
                 }
@@ -207,7 +206,7 @@ class TalkController extends BasicController
 
             $update_data = [];
             if ($subject != null) {
-                if($idiomCotroller->includeForbidden($subject) == true) {
+                if ($idiomCotroller->includeForbidden($subject) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -215,7 +214,7 @@ class TalkController extends BasicController
             }
 
             if ($greeting != null) {
-                if($idiomCotroller->includeForbidden($greeting) == true) {
+                if ($idiomCotroller->includeForbidden($greeting) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -252,7 +251,7 @@ class TalkController extends BasicController
                 $update_data['img_no'] = $photo_no;
             }
             if ($nick_name != null) {
-                if($idiomCotroller->includeForbidden($nick_name) == true) {
+                if ($idiomCotroller->includeForbidden($nick_name) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -351,7 +350,7 @@ class TalkController extends BasicController
         if ($email != "")
             $custom_where .= " and email like '%" . $email . "%'";
         if ($chat_content != "")
-            $custom_where .= " and user_no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
+            $custom_where .= " and greeting like '%" . $chat_content . "%'";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,

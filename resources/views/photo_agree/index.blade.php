@@ -5,7 +5,6 @@
     <style>
         .profile-userpic img{
             width: 100%;
-            border-radius: 0% !important;
         }
         .image-potlet{
             background-color: #f5f5f5 !important;
@@ -14,9 +13,13 @@
         .profile-userinfo img {
             float: none;
             margin: 0 auto;
-           /* -webkit-border-radius: 50% !important;
-            -moz-border-radius: 50% !important;
-            border-radius: 50% !important;*/
+        }
+
+        .center-cropped{
+            background-position: center center;
+            background-repeat: no-repeat;
+            overflow:hidden;
+            background-size:cover;
         }
     </style>
 
@@ -96,15 +99,17 @@
     @include('photo_agree.talk_confirm')
     <script>
 
+        $(document).ready(function () {
+            resizeView();
+        });
+
         $(function () {
             $(window).resize(function () {
                 resizeView();
             });
-
-            resizeView();
         });
         function resizeView() {
-            $(".tab-pane.fade.active .img-responsive").each(function () {
+            $(".profile-userpic").each(function () {
                 var height=$(this).width();
                 $(this).css({'height': height + 'px'});
             });
@@ -133,10 +138,14 @@
                         if(cur_status!='{{config('constants.AGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
-                            if(type=='talk')
+                            if(type=='talk'){
                                 $("#tab_3_2 .row").append(result);
-                            else
+                                $("#tab_3_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
+                            else{
                                 $("#tab_2_2 .row").append(result);
+                                $("#tab_2_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
                         }
                     }
                 }
@@ -160,10 +169,14 @@
                         if(cur_status!='{{config('constants.DISAGREE')}}'){
                             $(obj).closest(".portlet.light.image-potlet").parent('div').remove();
 
-                            if(type=='talk')
+                            if(type=='talk'){
                                 $("#tab_3_3 .row").append(result);
-                            else
+                                $("#tab_3_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
+                            else{
                                 $("#tab_2_3 .row").append(result);
+                                $("#tab_2_1 div[img_pad_file_no='"+t_file_no+"']").remove();
+                            }
                         }
                     }
                 }

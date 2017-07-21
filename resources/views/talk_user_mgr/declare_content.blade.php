@@ -25,7 +25,7 @@
             <input class="form-control" placeholder="" type="text" id="declare_user_email">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.chat_content')}}</label>
+            <label class="control-label">{{trans('lang.declare_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="declare_user_chat_content">
         </div>
         <div class="col-md-1" style="padding-top: 7px">

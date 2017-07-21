@@ -263,6 +263,7 @@ class UsersController extends BasicController
         }
 
         $real_number = $this->getRealPhoneNumber($phone_number);
+
         $results = User::where('phone_number', $real_number)->get();
 
         if ($results != null && count($results) > 0) {
@@ -311,7 +312,7 @@ class UsersController extends BasicController
 
         $authcode = $results[0];
         $testmode = config('constants.testmode');
-        if ($testmode !=  config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
+        if ($testmode != config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
             $update_data = [];
             $update_data['verified'] = config("constants.TRUE");
             $update_data['phone_number'] = $authcode->user_phone_number;
@@ -370,7 +371,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            if($idiomCotroller->includeForbidden($nickname) == true || $idiomCotroller->includeForbidden($subject) == true) {
+            if ($idiomCotroller->includeForbidden($nickname) == true || $idiomCotroller->includeForbidden($subject) == true) {
                 $response = config('constants.ERROR_FORBIDDEN_WORD');
                 return response()->json($response);
             }
@@ -408,8 +409,7 @@ class UsersController extends BasicController
             $testmode = config('constants.testmode');
             if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
-            }
-            else {
+            } else {
                 $user->point = config('constants.USER_FIRST_POINT');
             }
 
@@ -431,7 +431,7 @@ class UsersController extends BasicController
                     return response()->json($response);
                 }
 
-                if($idiomCotroller->includeForbidden($nickname) == true) {
+                if ($idiomCotroller->includeForbidden($nickname) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -450,7 +450,7 @@ class UsersController extends BasicController
             if ($user_photo != null) {
                 // image upload
                 $newfile = new ServerFile;
-                $user_photo_no = $newfile->uploadFile($user_photo,  config('constants.IMAGE'));
+                $user_photo_no = $newfile->uploadFile($user_photo, config('constants.IMAGE'));
 
                 if ($user_photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
@@ -461,7 +461,7 @@ class UsersController extends BasicController
             }
 
             if ($subject != null) {
-                if($idiomCotroller->includeForbidden($subject) == true) {
+                if ($idiomCotroller->includeForbidden($subject) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -541,7 +541,7 @@ class UsersController extends BasicController
         $data = [];
         $data['point'] = $point;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_SEND_PRESENT'), $data);
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
         }
         return response()->json($response);
@@ -572,10 +572,9 @@ class UsersController extends BasicController
         $data = [];
         $data['point'] = $point;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_REQUEST_PRESENT'), $data);
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
-        }
-        else {
+        } else {
             $response = config('constants.ERROR_NO');
         }
 
@@ -668,10 +667,10 @@ class UsersController extends BasicController
             $user->enable_alarm_add_friend = $value;
         }
 
-        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE') ) {
-            $user->enable_alarm = config('constants.TRUE') ;
+        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE')) {
+            $user->enable_alarm = config('constants.TRUE');
         } else {
-            $user->enable_alarm = config('constants.FALSE') ;
+            $user->enable_alarm = config('constants.FALSE');
         }
 
         $user->save();
@@ -744,7 +743,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $to_user = $results[0];
-        $point = $time_in_second / 60 *  config('constants.POINT_PER_MIN');
+        $point = $time_in_second / 60 * config('constants.POINT_PER_MIN');
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
         $response['no'] = round($point);
         return response()->json($response);
@@ -912,7 +911,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $user = $results[0];
-        $user->request_exit_flag =  config('constants.TRUE');
+        $user->request_exit_flag = config('constants.TRUE');
         $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
         $user->save();
 
@@ -962,7 +961,8 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
-    public function sendAlarm(HttpRequest $request) {
+    public function sendAlarm(HttpRequest $request)
+    {
         $from_user_no = $request->input('from_user_no');
         $to_user_no = $request->input('to_user_no');
         $type = $request->input('type');
@@ -985,16 +985,15 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
+        if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
             $response = config('constants.ERROR_NOT_VERIFIED_USER');
             return response()->json($response);
         }
 
         $ret = $this->sendAlarmMessage($from_user_no, $to_user_no, $type, json_decode($data));
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
-        }
-        else {
+        } else {
             $response = config('constants.ERROR_NO');
         }
 
@@ -1014,7 +1013,6 @@ class UsersController extends BasicController
         $user_no = $_POST['user_no'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
         $chat_content = $_POST['chat_content'];
 
         if ($sex != "")
@@ -1025,10 +1023,8 @@ class UsersController extends BasicController
             $custom_where .= " and nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and email like '%" . $email . "%'";
         if ($chat_content != "")
-            $custom_where .= " and no in (select from_user_no from t_chathistory where content like '%" . $chat_content . "%') ";
+            $custom_where .= " and subject like '%" . $chat_content . "%'";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,

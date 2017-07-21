@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\ServerFile;
 use App\Models\User;
 use App\Models\UserRelation;
 use Config;
@@ -87,7 +86,7 @@ class UserRelationController extends BasicController
 
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_ADD_FRIEND'));
 
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
         }
 
@@ -144,7 +143,7 @@ class UserRelationController extends BasicController
         }
 
         if ($flag == config('constants.USER_RELATION_FLAG_DISABLE_ALARM')) {
-            $friend->is_alarm =  config('constants.FALSE');
+            $friend->is_alarm = config('constants.FALSE');
         }
 
         $friend->save();
@@ -170,7 +169,7 @@ class UserRelationController extends BasicController
         $arr_friend_no_dict = DB::table('t_user_relation')
             ->select('relation_user_no')
             ->where('user_no', $user_no)
-            ->where('is_friend',  config('constants.TRUE'))->get();
+            ->where('is_friend', config('constants.TRUE'))->get();
 
         $arr_friend_no = array();
         for ($i = 0; $i < count($arr_friend_no_dict); $i++) {

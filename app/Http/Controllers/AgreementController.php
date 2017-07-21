@@ -199,6 +199,7 @@ class AgreementController extends BasicController
 
     public function img_agree()
     {
+
         $params = Request::all();
         $no = $params['t_file_no'];
         $type = $params['type'];
@@ -227,13 +228,13 @@ class AgreementController extends BasicController
         if (!$results)
             return config('constants.FAIL');
         else {
+
             // send Admin Push
             $admin_no = Session::get('u_no');
             if ($type == 'talk') {
                 $talk = Talk::where('img_no', $no)->first();
                 $user_no = $talk->user_no;
-            }
-            else {
+            } else {
                 $user = User::where('img_no', $no)->first();
                 $user_no = $user->no;
             }
@@ -255,8 +256,15 @@ class AgreementController extends BasicController
 
         $img_no_array = explode(',', $img_no_array);
 
-        for ($i = 0; $i < count($img_no_array); $i++) {
-            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        $new_selected_img_array = array();
+
+        foreach ($img_no_array as $item) {
+            if (!in_array($item, $new_selected_img_array))
+                array_push($new_selected_img_array, $item);
+        }
+
+        for ($i = 0; $i < count($new_selected_img_array); $i++) {
+            $results = ServerFile::where('no', $new_selected_img_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
             if (!$results)
                 return config('constants.FAIL');
         }

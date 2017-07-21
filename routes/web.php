@@ -21,7 +21,9 @@ Route::get('setting', 'Admin\AdminSettingController@index');
 Route::get('do_setting', 'Admin\AdminSettingController@doSetting');
 Route::get('phpinfo', 'Admin\AdminSettingController@phpinfo');
 
+//login
 Route::post('login', array('as'=>"do_login", 'uses' => 'Admin\AdminLoginController@doLogin'));
+Route::post('auto_login', 'Admin\AdminLoginController@auto_login');
 
 // Agreement Pages
 Route::get('agree_photo', 'AgreementController@agree_photo');
@@ -121,6 +123,7 @@ Route::post('ajax_withdraw_table', 'WithdrawController@ajax_withdraw_table');
 Route::post('ajax_gifticon_table', 'WithdrawController@ajax_gifticon_table');
 Route::post('ajax_present_table', 'WithdrawController@ajax_present_table');
 Route::post('ajax_point_rank_table', 'UsersController@ajax_point_rank_table');
+Route::post('selected_withdraw_change_status', 'WithdrawController@selected_withdraw_change_status');
 
 //statistic manage 
 Route::get('statistic', 'StatisticController@index');
@@ -133,6 +136,7 @@ Route::post('ajax_opinion_table', 'AdminNoticeController@ajax_opinion_table');
 Route::post('save_opinion', 'AdminNoticeController@save_opinion');
 Route::post('delete_opinion', 'AdminNoticeController@delete_opinion');
 Route::post('ajax_manage_notice_table', 'AdminNoticeController@ajax_manage_notice_table');
+Route::post('get_mgr_notice_content', 'AdminNoticeController@get_mgr_notice_content');
 Route::post('save_manage_notice', 'AdminNoticeController@save_manage_notice');
 Route::post('delete_manage_notice', 'AdminNoticeController@delete_manage_notice');
 

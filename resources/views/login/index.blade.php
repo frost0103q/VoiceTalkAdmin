@@ -26,7 +26,7 @@
 			</div>
 			<div class="form-actions">
 				<label class="checkbox">
-					<input type="checkbox" name="remember" value="1"/> {{trans('lang.auto_login')}}</label>
+					<input type="checkbox" id="chk_auto_login"/> {{trans('lang.auto_login')}}</label>
 				<button type="submit" class="btn green-haze pull-right" id="btn_login">
 					{{trans('lang.login')}} <i class="m-icon-swapright m-icon-white"></i>
 				</button>
@@ -45,6 +45,9 @@
 <script>
 
 	$(document).ready(function() {
+
+		if($("#chk_auto_login").is(':checked'))
+				$(this).trigger('click');
 
 		var error = '<?php if(isset($error)==false){ echo 0;} else {echo $error;}; ?>';
 
@@ -104,6 +107,24 @@
 			}
 		});
 	});
+
+	$("#chk_auto_login").click(function () {
+		if($(this).is(':checked')){
+			$.ajax({
+				url: "auto_login",
+				type: "POST",
+				data: {
+					temp: '',
+					_token: "{{csrf_token()}}"
+				},
+				success: function (result) {
+					if(result=="success"){
+						window.location.href='home';
+					}
+				}
+			})
+		}
+	})
 
 </script>
 @stop

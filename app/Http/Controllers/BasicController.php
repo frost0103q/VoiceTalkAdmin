@@ -18,19 +18,19 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Routing\Controller as Controller;
 use LaravelFCM\Message\OptionsBuilder;
+use Nexmo;
 use Redirect;
 use Request;
 use Session;
+use SMS;
 use Socialite;
 use URL;
-use Nexmo;
-use SMS;
 
 class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function sendAlarmMessage($from_user_no, $to_user_no, $type, $data=null)
+    public function sendAlarmMessage($from_user_no, $to_user_no, $type, $data = null)
     {
         $from_user = User::where('no', $from_user_no)->first();
         if ($from_user == null) {
@@ -96,7 +96,7 @@ class BasicController extends Controller
     private function sendXmppMessage($toUser, $content)
     {
         $testmode = config('constants.testmode');
-        if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
+        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
             $ip = Config::get('config.chatLocalServerIp');
         } else {
             $ip = Config::get('config.chatServerIp');
@@ -239,7 +239,8 @@ class BasicController extends Controller
         return $response;
     }
 
-    public function  getRealPhoneNumber($phone_number) {
+    public function  getRealPhoneNumber($phone_number)
+    {
         $testmode = config('constants.testmode');
 
         if ($testmode == config('constants.TEST_MODE_LOCAL')) {
@@ -250,13 +251,14 @@ class BasicController extends Controller
         return $real_number;
     }
 
-    public function  sendSMS($phone_number, $message, $save = true) {
+    public function  sendSMS($phone_number, $message, $save = true)
+    {
         $testmode = config('constants.testmode');
         $real_number = $this->getRealPhoneNumber($phone_number);
 
         $sender = "";
         if (true) {
-            if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
+            if ($testmode == config('constants.TEST_MODE_LOCAL')) {
                 SMS::send($message, null, function ($sms) use ($real_number) {
                     $sms->from('+8615699581631');
                     $sms->to($real_number);
@@ -276,7 +278,7 @@ class BasicController extends Controller
             $sender = '+8201028684884';
         }
 
-        if($save == true) {
+        if ($save == true) {
             $sms = new \App\Models\SMS();
             $sms->sender_number = $sender;
             $sms->receive_number = $real_number;
@@ -379,6 +381,8 @@ class BasicController extends Controller
 
         $s_time = mktime(0, 0, 0, $s_month, $s_day, $s_year);
         $e_time = mktime(0, 0, 0, $e_month, $e_day, $e_year);
-        return ($e_time - $s_time) / 24 / 60 / 60;
+
+        $days = ($e_time - $s_time) / 24 / 60 / 60;
+        return abs($days);
     }
 }
