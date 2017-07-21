@@ -363,21 +363,21 @@ class BasicController extends Controller
 
     public static function getChangeDate($date, $count)
     {
-        $year = substr($date, 0, 4);
-        $month = substr($date, 5, 2);
-        $day = substr($date, 8);
+        $year = intval(substr($date, 0, 4));
+        $month = intval(substr($date, 5, 2));
+        $day = intval(substr($date, 8));
         $date = date("Y-m-d", mktime(0, 0, 0, $month, $day + $count, $year));
         return $date;
     }
 
     public static function getDayCount($start, $end)
     {
-        $s_year = substr($start, 0, 4);
-        $s_month = substr($start, 5, 2);
-        $s_day = substr($start, 8);
-        $e_year = substr($end, 0, 4);
-        $e_month = substr($end, 5, 2);
-        $e_day = substr($end, 8);
+        $s_year = intval(substr($start, 0, 4));
+        $s_month = intval(substr($start, 5, 2));
+        $s_day = intval(substr($start, 8));
+        $e_year = intval(substr($end, 0, 4));
+        $e_month = intval(substr($end, 5, 2));
+        $e_day = intval(substr($end, 8));
 
         $s_time = mktime(0, 0, 0, $s_month, $s_day, $s_year);
         $e_time = mktime(0, 0, 0, $e_month, $e_day, $e_year);
