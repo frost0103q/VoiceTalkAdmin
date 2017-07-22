@@ -216,7 +216,6 @@
                         else if (data.sex == "{{config('constants.FEMALE')}}")
                             $("#sex").val("{{trans('lang.woman')}}");
                         $("#age").val(data.age);
-                        $("#subject").val(data.subject);
                         if (data.verified == "{{config('constants.VERIFIED')}}")
                             $("#verify").removeClass("hidden");
                         else
