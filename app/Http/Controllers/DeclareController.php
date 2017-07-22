@@ -45,7 +45,6 @@ class DeclareController extends BasicController
         $user_no = $_POST['user_no'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
         $chat_content = $_POST['chat_content'];
 
         if ($sex != "")
@@ -56,8 +55,6 @@ class DeclareController extends BasicController
             $custom_where .= " and from_user_nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and from_user_phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and from_user_email like '%" . $email . "%'";
         if ($chat_content != "") {
             $custom_where .= " and content like '%" . $chat_content . "%'";
         }

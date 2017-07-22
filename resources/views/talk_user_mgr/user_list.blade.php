@@ -20,10 +20,6 @@
             <label class="control-label">{{trans('lang.telnum')}}</label>
             <input class="form-control" placeholder="" type="text" id="user_phone_number">
         </div>
-        <div class="col-md-2">
-            <label class="control-label">{{trans('lang.subject')}}</label>
-            <input class="form-control" placeholder="" type="text" id="user_chat_content">
-        </div>
         <div class="col-md-1" style="padding-top: 7px">
             <br>
             <a class="btn blue" id="btn_user_search"><i class="fa fa-search"></i> {{trans('lang.search')}}</a>
@@ -37,7 +33,6 @@
                 <th>{{trans('lang.user_no')}}</th>
                 <th>{{trans('lang.photo')}}</th>
                 <th>Nickname</th>
-                <th>{{trans('lang.subject')}}</th>
                 <th>{{trans('lang.edit_time')}}</th>
                 <th>{{trans('lang.warn')}}</th>
                 <th>{{trans('lang.force_stop')}}</th>
@@ -118,7 +113,6 @@
                             d.user_no=$("#user_no").val();
                             d.nickname=$("#user_nickname").val();
                             d.phone_number=$("#user_phone_number").val();
-                            d.chat_content=$("#user_chat_content").val();
                         }
                     },
                     "createdRow": function (row, data, dataIndex) {
@@ -134,15 +128,15 @@
                     "pagingType": "bootstrap_full_number",
                     "columnDefs": [{  // set default column settings
                         'orderable': false,
-                        'targets': [0,1,2,3,4,6,7,8]
+                        'targets': [0,1,2,3,5,6,7]
                     },
                         {  // set default column settings
                             'orderable': true,
-                            'targets': [5]
+                            'targets': [4]
                         }],
 
                     "order": [
-                        [5, "desc"]
+                        [4, "desc"]
                     ] // set first column as a default sort by asc
                 });
             }

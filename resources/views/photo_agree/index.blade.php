@@ -37,7 +37,7 @@
                             <a href="#tab_1" data-toggle="tab">{{trans('lang.wait_all_view')}} </a>
                         </li>
                         <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{trans('lang.profile_photo')}} <i class="fa fa-angle-down"></i>
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{trans('lang.photo')}} <i class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
@@ -51,7 +51,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="dropdown">
+                        {{--<li class="dropdown">
                             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">{{trans('lang.talk_photo')}} <i class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu" role="menu">
@@ -65,7 +65,7 @@
                                     <a href="#tab_3_3" tabindex="-1" data-toggle="tab">{{trans('lang.disagree')}} </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li>--}}
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
@@ -100,7 +100,9 @@
     <script>
 
         $(document).ready(function () {
-            resizeView();
+            setTimeout(function () {
+                resizeView();
+            },300);
         });
 
         $(function () {

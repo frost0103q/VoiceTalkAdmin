@@ -17,15 +17,16 @@
     </div>
 
 
+    <!--
     <div class="col-md-12">
         <div class="note note-success">
             <p>
-                {{trans('lang.talk_photo')}}
+                {{--{{trans('lang.talk_photo')}}--}}
             </p>
         </div>
     </div>
     <div id="talk_img_list">
-        @foreach($talk_img as $img_model)
+        {{--@foreach($talk_img as $img_model)
             @if($img_model->checked==config('constants.WAIT'))
                 <?php
                 $type='talk';
@@ -33,8 +34,9 @@
                 ?>
                 @include('photo_agree.img')
             @endif
-        @endforeach
+        @endforeach--}}
     </div>
+    -->
     <div class="col-md-12">
         <button type="button" class="btn blue" id="btn_all_img_agree">{{trans('lang.all_agree_photo')}}</button>
     </div>
@@ -67,7 +69,7 @@
                     $(this).find('input:eq(1)').attr("onclick","img_disagree('"+file_no+"',this,'profile','1')");
                 });
 
-                $("#talk_img_list .image-potlet").each(function () {
+                /*$("#talk_img_list .image-potlet").each(function () {
                     var file_no=$(this).find('input:eq(0)').val();
                     $(this).find('input:eq(0)').attr("checked","");
 
@@ -76,26 +78,26 @@
 
                     $(this).find('input:eq(1)').removeAttr("onclick");
                     $(this).find('input:eq(1)').attr("onclick","img_disagree('"+file_no+"',this,'talk','1')");
-                });
+                });*/
 
                 var profile_img_list_html=$("#profile_img_list").html();
-                var talk_img_list_html=$("#talk_img_list").html();
+                /*var talk_img_list_html=$("#talk_img_list").html();*/
 
                 if(result=='{{config('constants.FAIL')}}')
                     toastr["error"]("{{trans('lang.fail_agree')}}", "{{trans('lang.notice')}}");
                 if(result=='{{config('constants.SUCCESS')}}'){
                     $("#profile_img_list").empty();
-                    $("#talk_img_list").empty();
+                    /*$("#talk_img_list").empty();*/
 
                     $("#tab_2_1 .col-md-3").each(function () {
                         $(this).remove();
                     });
-                    $("#tab_3_1 .col-md-3").each(function () {
+                    /*$("#tab_3_1 .col-md-3").each(function () {
                         $(this).remove();
-                    });
+                    });*/
 
                     $("#tab_2_2 .row").append(profile_img_list_html);
-                    $("#tab_3_2 .row").append(talk_img_list_html);
+                    /*$("#tab_3_2 .row").append(talk_img_list_html);*/
                     toastr["success"]("{{trans('lang.success_agree')}}", "{{trans('lang.notice')}}");
                 }
             }

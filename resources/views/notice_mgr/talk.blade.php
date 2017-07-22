@@ -232,7 +232,7 @@
         $("#talk_notice_type").val("{{config('constants.TOP_NOTICE')}}");
         $("#talk_link_url").val("");
         $("#btn_talk_open_modal").trigger('click');
-    })
+    });
 
     $("#btn_talk_save").click(function () {
         if ($("#talk_content").val() == '') {
@@ -255,8 +255,8 @@
                     toastr["error"]("{{trans('lang.save_fail')}}", "{{trans('lang.notice')}}");
                 }
             }
-        })
-    })
+        });
+    });
 
     $("#btn_talk_search").click(function () {
         tbl_talk.draw();

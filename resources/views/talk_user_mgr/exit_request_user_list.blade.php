@@ -16,10 +16,6 @@
             <label class="control-label">{{trans('lang.telnum')}}</label>
             <input class="form-control" placeholder="" type="text" id="er_user_phone_number">
         </div>
-        <div class="col-md-2">
-            <label class="control-label">{{trans('lang.email')}}</label>
-            <input class="form-control" placeholder="" type="text" id="er_user_email">
-        </div>
         <div class="col-md-1" style="padding-top: 7px">
             <br>
             <a class="btn blue" id="btn_er_user_search"><i class="fa fa-search"></i> {{trans('lang.search')}}</a>
@@ -79,7 +75,6 @@
                             d.sex=$("#er_user_sex").val();
                             d.nickname=$("#er_user_nickname").val();
                             d.phone_number=$("#er_user_phone_number").val();
-                            d.email=$("#er_user_email").val();
                         }
                     },
                     "createdRow": function (row, data, dataIndex) {

@@ -333,7 +333,6 @@ class TalkController extends BasicController
         $user_no = $_POST['user_no'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
         $chat_content = $_POST['chat_content'];
 
         if ($sex != "")
@@ -344,8 +343,6 @@ class TalkController extends BasicController
             $custom_where .= " and user_nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and email like '%" . $email . "%'";
         if ($chat_content != "")
             $custom_where .= " and greeting like '%" . $chat_content . "%'";
 
