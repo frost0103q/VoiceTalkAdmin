@@ -21,10 +21,6 @@
             <input class="form-control" placeholder="" type="text" id="talk_user_phone_number">
         </div>
         <div class="col-md-2">
-            <label class="control-label">{{trans('lang.email')}}</label>
-            <input class="form-control" placeholder="" type="text" id="talk_user_email">
-        </div>
-        <div class="col-md-2">
             <label class="control-label">{{trans('lang.talk_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="talk_user_chat_content">
         </div>
@@ -130,7 +126,6 @@
                             d.user_no = $("#talk_user_no").val();
                             d.nickname = $("#talk_user_nickname").val();
                             d.phone_number = $("#talk_user_phone_number").val();
-                            d.email = $("#talk_user_email").val();
                             d.chat_content = $("#talk_user_chat_content").val();
                         }
                     },

@@ -1013,7 +1013,6 @@ class UsersController extends BasicController
         $user_no = $_POST['user_no'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $chat_content = $_POST['chat_content'];
 
         if ($sex != "")
             $custom_where .= " and sex=$sex";
@@ -1023,8 +1022,6 @@ class UsersController extends BasicController
             $custom_where .= " and nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($chat_content != "")
-            $custom_where .= " and subject like '%" . $chat_content . "%'";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0,
@@ -1055,15 +1052,14 @@ class UsersController extends BasicController
                 }
             ),
             array('db' => 'nickname', 'dt' => 3),
-            array('db' => 'subject', 'dt' => 4),
-            array('db' => 'created_at', 'dt' => 5),
-            array('db' => 'no', 'dt' => 6,
+            array('db' => 'created_at', 'dt' => 4),
+            array('db' => 'no', 'dt' => 5,
                 'formatter' => function ($d, $row) {
                     $results = Warning::where('user_no', $d)->get();
                     return count($results);
                 }
             ),
-            array('db' => 'no', 'dt' => 7,
+            array('db' => 'no', 'dt' => 6,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
                     if ($user_model != null) {
@@ -1074,7 +1070,7 @@ class UsersController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'no', 'dt' => 8,
+            array('db' => 'no', 'dt' => 7,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
                     if ($user_model != null) {
@@ -1396,7 +1392,6 @@ class UsersController extends BasicController
         $sex = $_POST['sex'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
 
         if ($sex != "")
             $custom_where .= " and sex=$sex";
@@ -1404,8 +1399,6 @@ class UsersController extends BasicController
             $custom_where .= " and nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and email like '%" . $email . "%'";
 
         $columns = array(
 
@@ -1494,7 +1487,6 @@ class UsersController extends BasicController
         $sex = $_POST['sex'];
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
-        $email = $_POST['email'];
 
         if ($sex != "")
             $custom_where .= " and sex=$sex";
@@ -1502,9 +1494,7 @@ class UsersController extends BasicController
             $custom_where .= " and nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
-        if ($email != "")
-            $custom_where .= " and email like '%" . $email . "%'";
-
+        
         $columns = array(
 
             array('db' => 'no', 'dt' => 0,
