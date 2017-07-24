@@ -50,7 +50,7 @@ return [
         'FREE_CHARGE_TYPE_IGAWORKS'=> 2,
 
         'FREE_CHARGE_RATIO_ADSYNC'=> 1,
-        'FREE_CHARGE_RATIO_NAS'=> 0.5,
+        'FREE_CHARGE_RATIO_NAS'=> 1,
         'FREE_CHARGE_RATIO_IGAWORKS'=> 1,
 
         'INAPP_ITEMS' => [

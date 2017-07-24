@@ -168,13 +168,13 @@ class FreeChargeController extends BasicController
         }
 
         // ip검사
-        if ($ip != '222.122.49.171') {
+        /*if ($ip != '222.122.49.171') {
             $arr_result['Result'] = false;
             $arr_result['ResultCode'] = 2;
             $arr_result['ResultMsg'] = "유효성 아이피 오류";
             Log::debug($arr_result);
             return response($arr_result, 201);
-        }
+        }*/
 
         // 매체사 처리할 리워드 지급 ..
         $user = User::where('no', $user_no)->first();
