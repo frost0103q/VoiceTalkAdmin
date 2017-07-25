@@ -35,11 +35,12 @@ Route::post('/setAlarmFlag', 'UsersController@setAlarmFlag');
 Route::post('/sendAlarm', 'UsersController@sendAlarm');
 Route::post('/checkRoll', 'UsersController@checkRoll');
 Route::post('/logForVoiceChat', 'UsersController@logForVoiceChat');
-Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
 Route::post('/buyInAppItem', 'UsersController@buyPoint');
 Route::post('/requestExit', 'UsersController@requestExitUser');
 Route::post('/registerDevice', 'UsersController@registerDevice');
 Route::post('/requestPresent', 'UsersController@requestPresent');
+Route::post('/writeReviewConsulting', 'UsersController@writeReviewConsulting');
+Route::get('/hasReview', 'UsersController@isAlreadyReviewed');
 
 // user relation api
 Route::post('/addFriend', 'UserRelationController@addFriend');
@@ -85,7 +86,6 @@ Route::get('/cashQuestionList', 'CashQuestionController@cashQuestionList');
 // mamage notice api
 Route::get('/manageNoticeList', 'AdminNoticeController@manageNoticeList');
 Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
-
 
 // free charge api
 Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');

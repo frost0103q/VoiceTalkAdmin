@@ -27,6 +27,8 @@ return [
 
         'pushmode' => 0,
 
+        'DEFAULT_ADMIN_NO' => 1,
+
         'USER_FIRST_POINT' => 300,
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
@@ -78,6 +80,7 @@ return [
         'NOTI_TYPE_CASH_QA'  =>7,
         'NOTI_TYPE_ADMIN_NORMAL_PUSH'  =>8,
         'NOTI_TYPE_REFUSE_IMAGE'  =>9,
+        'NOTI_TYPE_SUCCESS_FREE_CHARGE'  =>10,
 
         'NOTI_TITLE_CONTENT' => [
                                             ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],
@@ -90,6 +93,7 @@ return [
                                             ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],
                                             ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],
                                             ["title"=>"이미지거절","content"=>"회원님이 등록하신 사진이 게시에 부적합하다 판단되어 연락드립니다. 변경 부탁 드립니다."],
+                                            ["title"=>"관리자","content"=>"무료충전이 완료되었습니다."],
                                         ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,

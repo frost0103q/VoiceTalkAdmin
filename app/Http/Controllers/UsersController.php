@@ -792,6 +792,23 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
+    public function isAlreadyReviewed(HttpRequest $request) {
+        $from_user_no = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+        if ($from_user_no == null || $to_user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $review = ConsultingReview::where('from_user_no', $from_user_no)->where('to_user_no',$to_user_no)->first();
+        if ($review == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $response = config('constants.ERROR_NO');
+        return response()->json($response);
+    }
+
     public function buyPoint(HttpRequest $request)
     {
         $from_user_no = $request->input('user_no');

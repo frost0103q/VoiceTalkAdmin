@@ -139,6 +139,11 @@ class FreeChargeController extends BasicController
         $arr_result['ResultCode'] = 1;
         $arr_result['ResultMsg'] = "success";
         Log::debug($arr_result);
+
+        // send push
+        $admin_no = config('constants.DEFAULT_ADMIN_NO');
+        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
+
         echo json_encode($arr_result);
     }
 
@@ -240,6 +245,10 @@ class FreeChargeController extends BasicController
         $arr_result['ResultKey'] = $ads_key;
         Log::debug($arr_result);
 
+        // send push
+        $admin_no = config('constants.DEFAULT_ADMIN_NO');
+        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
+
         return response($arr_result, 200);
     }
 
@@ -304,6 +313,10 @@ class FreeChargeController extends BasicController
                 $arr_result['ResultCode'] = 1;
                 $arr_result['ResultMsg'] = "success";
                 Log::debug($arr_result);
+
+                // send push
+                $admin_no = config('constants.DEFAULT_ADMIN_NO');
+                $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
 
                 return response($arr_result);
             }
