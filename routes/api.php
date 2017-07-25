@@ -91,4 +91,8 @@ Route::get('/adminSetting', 'AdminNoticeController@adminSetting');
 Route::post('/adsync_delivery_point', 'FreeChargeController@adsync_delivery_point');
 Route::get('/nas_delivery_point', 'FreeChargeController@nas_delivery_point');
 Route::post('/igaworks_delivery_point', 'FreeChargeController@igaworks_delivery_point');
+
+// gift icon
+Route::get('/giftBrandList', 'GifticonController@getGiftBrandList');
+Route::get('/giftList', 'GifticonController@getGiftList');
 Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');

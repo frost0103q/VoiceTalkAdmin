@@ -218,6 +218,13 @@ class UsersController extends BasicController
         $notification_controller = new NotificationsController();
         $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
 
+        DB::table('t_login_history')->insert(
+            [
+                'user_no' => $user->no,
+                'created_at' => date('Y-m-d H:i:s')
+            ]
+        );
+
         return response()->json($user);
     }
 

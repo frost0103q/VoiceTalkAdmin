@@ -76,18 +76,24 @@ class TalkController extends BasicController
         }
 
         if ($photo == config('constants.TRUE')) {
-            $query = $query->join('t_file', function ($q) {
+            /*$query = $query->join('t_file', function ($q) {
                 $q->on('t_talk.img_no', 't_file.no');
                 $q->where('t_file.type', config('constants.IMAGE'));
                 $q->where('t_file.checked', config('constants.AGREE'));
-            });
+            });*/
+
+            $users = User::select('t_user.no')->join('t_file', function ($q) {
+                            $q->on('img_no', 't_file.no');
+                            $q->where('t_file.type', config('constants.IMAGE'));
+                            $q->where('t_file.checked', config('constants.AGREE'));
+                        })->get();
+            $query = $query->whereIn('t_talk.user_no', $users->toArray());
         }
 
         if ($order == config('constants.ORDER_DISTANCE')) { // Distance sort
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');
             $query = $query->join('t_user', 't_talk.user_no', '=', 't_user.no')->orderBy($dist);
         } else if ($order == config('constants.ORDER_RANK')) { // Distance sort
-
             $review = DB::raw('(select SUM(mark) from t_consultingreview where t_consultingreview.to_user_no=t_talk.user_no)');
             $query = $query->orderBy($review, 'desc');
         } else {            // date
