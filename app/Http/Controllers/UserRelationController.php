@@ -32,6 +32,37 @@ class UserRelationController extends BasicController
         return view('welcome');
     }
 
+    public function getUserRelation(HttpRequest $request) {
+        $user_no = $request->input('user_no');
+        $friend_no = $request->input('relation_user_no');
+
+        if ($user_no == null || $friend_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $friend_no)->get();
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $friend_no)->first();
+        if($relation == null) {
+            $relation = new UserRelation();
+            $relation->user_no = $user_no;
+            $relation->relation_user_no = $friend_no;
+        }
+        return response()->json($relation);
+    }
+
     public function addFriend(HttpRequest $request)
     {
         $no = $request->input('user_no');

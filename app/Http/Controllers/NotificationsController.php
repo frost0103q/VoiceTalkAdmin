@@ -406,15 +406,23 @@ class NotificationsController extends BasicController
         $update_data = [];
         $update_data['is_read'] = 1;
 
-        if ($to_user_no != null) {  // read all
-            Notification::where(function ($q) use ($user_no, $to_user_no) {
+        if ($to_user_no != null && $to_user_no != -1) {  // read all
+            $query = Notification::where(function ($q) use ($user_no, $to_user_no) {
                 $q->where(function ($q) use ($user_no, $to_user_no) {
                     $q->where('from_user_no', $user_no)->where('to_user_no', $to_user_no);
                 })
                     ->orWhere(function ($q) use ($user_no, $to_user_no) {
                         $q->where('to_user_no', $user_no)->where('from_user_no', $to_user_no);
                     });
-            })->update($update_data);
+            });
+
+            if($search_type != null) {
+                if( $search_type == config('constants.NOTI_SEARCH_CHAT')) {
+                    $query = $query->where('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
+                }
+            }
+
+            $query->update($update_data);
         } else if ($search_type != null) {
             if ($search_type == -1) { // search_all
                 Notification::where('to_user_no', $user_no)->orWhere('from_user_no', $user_no)->update($update_data);

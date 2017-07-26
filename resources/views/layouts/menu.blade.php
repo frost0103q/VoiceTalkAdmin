@@ -36,7 +36,7 @@
             <li menu_index="4">
                 <a href="talk_user_mgr">
                     <i class="fa fa-list"></i>
-                    <span class="title">Talk/{{trans('lang.user_manage')}}</span>
+                    <span class="title">{{trans('lang.talk')}}/{{trans('lang.user_manage')}}</span>
                 </a>
             </li>
             <li menu_index="5">

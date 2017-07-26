@@ -49,6 +49,7 @@ Route::post('/deleteAllFriend', 'UserRelationController@deleteAllFriend');
 Route::post('/setUserRelation', 'UserRelationController@setUserRelation');
 Route::get('/friendList', 'UserRelationController@getFriendList');
 Route::get('/isBlockingUser', 'UserRelationController@isAlarmBlockingUser');
+Route::get('/getUserRelation', 'UserRelationController@getUserRelation');
 
 // auth api
 Route::post('/requestAuthNum', 'UsersController@requestAuthNumber');

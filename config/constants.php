@@ -101,6 +101,10 @@ return [
         'CHECK_ROLL_POINT'   => 30,
         'POINT_PER_MIN'=>200,
 
+        'NOTI_SEARCH_ALL'  =>-1,
+        'NOTI_SEARCH_FRIEND' => -2,
+        'NOTI_SEARCH_CHAT' => -3,
+
 		'INVALID_EMAIL'   => 1,
 		'INVALID_PASSWORD'   => 2,
 

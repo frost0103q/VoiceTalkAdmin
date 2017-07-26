@@ -10,10 +10,18 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Config;
 
 class UserRelation extends Model
 {
     protected $table = 't_user_relation';
 
     protected $primaryKey = 'no';
+
+    public function __construct()
+    {
+        $this->is_block_friend = config('constants.FALSE');
+        $this->is_alarm = config('constants.TRUE');
+        $this->is_friend = config('constants.FALSE');
+    }
 }
