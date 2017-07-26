@@ -368,7 +368,7 @@ class NotificationsController extends BasicController
         $from_user = $results[0];
         $from_user->fillInfo();
 
-        $query = DB::table('t_user')->select('t_user.no')->where('sex', $sex)->where('no', '!=', $user_no);
+        $query = DB::table('t_user')->select('t_user.no')->where('sex', $sex)->where('no', '!=', $user_no)->where('admin_level', config('constants.NO_ADMIN'));
 
         if ($order == 0) { // distance
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');

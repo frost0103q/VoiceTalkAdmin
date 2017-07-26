@@ -363,6 +363,7 @@ class UsersController extends BasicController
         $longitude = $request->input('longitude');
         $user_photo = $request->file('user_photo');
         $status = $request->input('status');
+        $delete_image = $request->input('del_img');
 
         $idiomCotroller = new IdiomController();
         if ($oper == 'add') {
@@ -465,6 +466,11 @@ class UsersController extends BasicController
                 }
 
                 $update_data['img_no'] = $user_photo_no;
+            }
+            else {
+                    if($delete_image == config('constants.TRUE')) {
+                        $update_data['img_no'] = -1;
+                    }
             }
 
             if ($subject != null) {

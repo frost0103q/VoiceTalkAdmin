@@ -124,8 +124,10 @@ class TalkController extends BasicController
         $type = $request->input('type') == null ? config('constants.TALK_CONSULTING') : $request->input('type');
         $nick_name = $request->input('nickname');
         $age = $request->input('age');
+        $delete_image = $request->input('del_img');
 
         $idiomCotroller = new IdiomController();
+
         if ($oper == 'add') {
             if ($type == config('constants.TALK_CONSULTING')) {
                 if ($greeting == null || $voice_type == null || $user_no == null) {
@@ -146,7 +148,7 @@ class TalkController extends BasicController
                 }
 
 
-                // image upload
+                // voice file upload
                 if ($voice_file != null) {
                     $newfile = new ServerFile;
                     $voice_no = $newfile->uploadFile($voice_file, config('constants.VOICE'));
@@ -154,16 +156,24 @@ class TalkController extends BasicController
                     $voice_no = -1;
                 }
 
+                // image upload
                 if ($photo_file != null) {
                     $newfile = new ServerFile;
                     $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
-                } else {
-                    $photo_no = -1;
-                }
 
-                if ($photo_no == null) {
-                    $response = config('constants.ERROR_UPLOAD_FAILED');
-                    return response()->json($response);
+                    if ($photo_no == null) {
+                        $response = config('constants.ERROR_UPLOAD_FAILED');
+                        return response()->json($response);
+                    }
+
+                    $user->img_no = $photo_no;
+                    $user->save();
+                }
+                else {
+                    if($delete_image == config('constants.TRUE')) {
+                        $user->img_no = -1;
+                        $user->save();
+                    }
                 }
 
                 $talk = new Talk;
@@ -176,11 +186,6 @@ class TalkController extends BasicController
                 $talk->type = $type;
 
                 $talk->save();
-
-                if($photo_no != null) {
-                    $user->img_no = $photo_no;
-                    $user->save();
-                }
 
                 $response['no'] = $talk->no;
             } else {
@@ -201,17 +206,24 @@ class TalkController extends BasicController
                     return response()->json($response);
                 }
 
-
+                // image upload
                 if ($photo_file != null) {
                     $newfile = new ServerFile;
                     $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
-                } else {
-                    $photo_no = -1;
-                }
 
-                if ($photo_no == null) {
-                    $response = config('constants.ERROR_UPLOAD_FAILED');
-                    return response()->json($response);
+                    if ($photo_no == null) {
+                        $response = config('constants.ERROR_UPLOAD_FAILED');
+                        return response()->json($response);
+                    }
+
+                    $user->img_no = $photo_no;
+                    $user->save();
+                }
+                else {
+                    if($delete_image == config('constants.TRUE')) {
+                        $user->img_no = -1;
+                        $user->save();
+                    }
                 }
 
                 $talk = new Talk;
@@ -220,11 +232,6 @@ class TalkController extends BasicController
                 $talk->type = $type;
                 $talk->user_no = $user_no;
                 //$talk->img_no = $photo_no;
-
-                if($photo_no != null) {
-                    $user->img_no = $photo_no;
-                    $user->save();
-                }
 
                 $talk->save();
                 $response['no'] = $talk->no;
@@ -252,9 +259,19 @@ class TalkController extends BasicController
                 $update_data['greeting'] = $greeting;
             }
 
+            if ($nick_name != null) {
+                if ($idiomCotroller->includeForbidden($nick_name) == true) {
+                    $response = config('constants.ERROR_FORBIDDEN_WORD');
+                    return response()->json($response);
+                }
+                $update_data['nickname'] = $nick_name;
+            }
+
+
             if ($voice_type != null) {
                 $update_data['voice_type'] = $voice_type;
             }
+
             if ($voice_file != null) {
                 $newfile = new ServerFile;
                 $voice_no = $newfile->uploadFile($voice_file, config('constants.VOICE'));
@@ -276,34 +293,33 @@ class TalkController extends BasicController
                     return response()->json($response);
                 }
                 $update_data['user_no'] = $user_no;
+
+                if ($photo_file != null) {
+                    $newfile = new ServerFile;
+                    $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
+
+                    if ($photo_no == null) {
+                        $response = config('constants.ERROR_UPLOAD_FAILED');
+                        return response()->json($response);
+                    }
+
+                    //$update_data['img_no'] = $photo_no;
+                    if($user_no == null) {
+                        $talk = Talk::where('no', $no)->first();
+                        $user = User::where('no', $talk->user_no)->first();
+                    }
+
+                    $user->img_no = $photo_no;
+                    $user->save();
+                }
+                else {
+                    if($delete_image == config('constants.TRUE')) {
+                        $user->img_no = -1;
+                        $user->save();
+                    }
+                }
             }
 
-            if ($photo_file != null) {
-                $newfile = new ServerFile;
-                $photo_no = $newfile->uploadFile($photo_file, config('constants.IMAGE'));
-
-                if ($photo_no == null) {
-                    $response = config('constants.ERROR_UPLOAD_FAILED');
-                    return response()->json($response);
-                }
-
-                //$update_data['img_no'] = $photo_no;
-                if($user_no == null) {
-                    $talk = Talk::where('no', $no)->first();
-                    $user = User::where('no', $talk->user_no)->first();
-                }
-
-                $user->img_no = $photo_no;
-                $user->save();
-            }
-
-            if ($nick_name != null) {
-                if ($idiomCotroller->includeForbidden($nick_name) == true) {
-                    $response = config('constants.ERROR_FORBIDDEN_WORD');
-                    return response()->json($response);
-                }
-                $update_data['nickname'] = $nick_name;
-            }
             if ($age != null) {
                 $update_data['age'] = $age;
             }

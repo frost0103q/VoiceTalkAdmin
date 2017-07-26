@@ -206,4 +206,10 @@ return [
 		'USER_NORMAL'=> 0,
 		'USER_REQUEST_EXIT'=> 1,
 		'USER_EXIT'=> 2,
+
+        //user exit status
+        'NO_ADMIN'=> 0,
+        'ADMIN_NORMAL'=> 1,
+        'ADMIN_POLICE'=> 2,
+        'ADMIN_CUSTOMER_CENTER'=> 3,
 ];
