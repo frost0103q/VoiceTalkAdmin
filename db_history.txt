@@ -81,4 +81,10 @@
 		t_mobile_page테불에서 content마당의 자료형을 text형으로 변환
 		t_user테불에 새마당 추가 admin_level  int(1)
 
+-2017-07-29
+	테불수정
+		t_cash_question테불의 commen수정
+		t_chathistory테불 삭제
+		t_gifticon_product테불추가 
+		
 	
