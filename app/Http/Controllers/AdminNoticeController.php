@@ -54,7 +54,7 @@ class AdminNoticeController extends BasicController
             $params['page'] = 1;
         }
 
-        $response = ManageNotice::offset($limit * ($page - 1))->limit($limit)->get();
+        $response = ManageNotice::orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
 
         return response()->json($response);
     }
@@ -220,6 +220,7 @@ class AdminNoticeController extends BasicController
             $data['file_url'] = $params['file_url'];
             $data['writer'] = $writer;
             $data['created_at'] = date('Y-m-d H:i:s');
+            $data['updated_at'] = date('Y-m-d H:i:s');
             $data['read_cnt'] = 0;
 
             $result = ManageNotice::insert($data);

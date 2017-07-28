@@ -8,6 +8,7 @@ use App\Models\Push;
 use App\Models\SMS;
 use App\Models\SSP;
 use App\Models\TalkNotice;
+use App\Models\User;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
 use Request;
@@ -73,12 +74,12 @@ class NoticeController extends BasicController
             array('db' => 'title', 'dt' => 2),
             array('db' => 'send_type', 'dt' => 3,
                 'formatter' => function ($d, $row) {
-                    if ($d == config('constants.PUSH_SEND_MAIN'))
-                        return trans('lang.main');
-                    else if ($d == config('constants.PUSH_SEND_NOTICE'))
-                        return trans('lang.notice_');
-                    else if ($d == config('constants.PUSH_SEND_EVENT'))
-                        return trans('lang.event');
+                    if ($d == config('constants.ALL_USER'))
+                        return trans('lang.all_user');
+                    else if ($d == config('constants.TALK_USER'))
+                        return trans('lang.talk_user');
+                    else if ($d == config('constants.COMMON_USER'))
+                        return trans('lang.common_user');
                 }),
             array('db' => 'content', 'dt' => 4),
             array('db' => 'img_url', 'dt' => 5,
@@ -131,6 +132,24 @@ class NoticeController extends BasicController
             if (!$result)
                 return config('constants.FAIL');
         }
+
+        // send Admin Push
+        $admin_no = Session::get('u_no');
+
+        $arr_user = [];
+        if ($data["send_type"] == config('constants.ALL_USER')) {
+            $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->get();
+        } else if ($data["send_type"] == config('constants.TALK_USER')) {
+            $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->where('verified', config('constants.IS_VERIFIED'))->get();
+        } else if ($data["send_type"] == config('constants.COMMON_USER')) {
+            $arr_user = User::where('admin_level', config('constants.NO_ADMIN'))->where('verified', config('constants.NOT_VERIFIED'))->get();
+        }
+
+        for ($i = 0; $i < count($arr_user); $i++) {
+            $user_no = $arr_user[$i]->no;
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'), $data);
+        }
+
         return config('constants.SUCCESS');
     }
 
@@ -543,6 +562,7 @@ class NoticeController extends BasicController
             if (!$result)
                 return config('constants.FAIL');
         }
+        $this->sendSMS($data["receive_number"], $data["content"], false);
         return config('constants.SUCCESS');
     }
 

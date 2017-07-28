@@ -27,6 +27,8 @@ return [
 
         'pushmode' => 0,
 
+        'DEFAULT_ADMIN_NO' => 1,
+
         'USER_FIRST_POINT' => 300,
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
@@ -34,7 +36,7 @@ return [
 
         'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
 
-        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0],
+        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0, 0],
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,
@@ -44,13 +46,14 @@ return [
         'POINT_HISTORY_TYPE_NORMAL'=> 6,
         'POINT_HISTORY_TYPE_INAPP'=> 7,
         'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
+        'POINT_HISTORY_TYPE_GIFTICON'=> 9,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
         'FREE_CHARGE_TYPE_NAS'=> 1,
         'FREE_CHARGE_TYPE_IGAWORKS'=> 2,
 
         'FREE_CHARGE_RATIO_ADSYNC'=> 1,
-        'FREE_CHARGE_RATIO_NAS'=> 0.5,
+        'FREE_CHARGE_RATIO_NAS'=> 1,
         'FREE_CHARGE_RATIO_IGAWORKS'=> 1,
 
         'INAPP_ITEMS' => [
@@ -76,6 +79,9 @@ return [
         'NOTI_TYPE_ADD_FRIEND'   => 5,
         'NOTI_TYPE_SEND_PRESENT'  =>6,
         'NOTI_TYPE_CASH_QA'  =>7,
+        'NOTI_TYPE_ADMIN_NORMAL_PUSH'  =>8,
+        'NOTI_TYPE_REFUSE_IMAGE'  =>9,
+        'NOTI_TYPE_SUCCESS_FREE_CHARGE'  =>10,
 
         'NOTI_TITLE_CONTENT' => [
                                             ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],
@@ -85,12 +91,19 @@ return [
                                             ["title"=>"쪽지전송","content"=>"%s님으로부터 쪽지가 도착했습니다."],
                                             ["title"=>"친구추가","content"=>"%s님이 당신을 친구추가했습니다."],
                                             ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],
-                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."]
+                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],
+                                            ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],
+                                            ["title"=>"이미지거절","content"=>"회원님이 등록하신 사진이 게시에 부적합하다 판단되어 연락드립니다. 변경 부탁 드립니다."],
+                                            ["title"=>"관리자","content"=>"무료충전이 완료되었습니다."],
                                         ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
         'CHECK_ROLL_POINT'   => 30,
         'POINT_PER_MIN'=>200,
+
+        'NOTI_SEARCH_ALL'  =>-1,
+        'NOTI_SEARCH_FRIEND' => -2,
+        'NOTI_SEARCH_CHAT' => -3,
 
 		'INVALID_EMAIL'   => 1,
 		'INVALID_PASSWORD'   => 2,
@@ -104,6 +117,10 @@ return [
 		'WAIT'   => 2,
 		'AGREE'   => 1,
 		'DISAGREE'   => 0,
+
+        'ORDER_DISTANCE'   => 0,
+        'ORDER_RANK'   => 1,
+        'ORDER_DATE'   => 2,
 		
 		'TALK_POSSIBLE' => 0,
 		'AWAY'	=> 1,
@@ -133,6 +150,7 @@ return [
 		'PUSH_SEND_NOTICE' => 2,
 		'PUSH_SEND_EVENT' => 3,
 
+        'NO_ADMIN' => 0,
 		'TALK_ADMIN' => 1,
 		'TALK_POLICE' => 2,
 
@@ -192,4 +210,10 @@ return [
 		'USER_NORMAL'=> 0,
 		'USER_REQUEST_EXIT'=> 1,
 		'USER_EXIT'=> 2,
+
+        //user exit status
+        'NO_ADMIN'=> 0,
+        'ADMIN_NORMAL'=> 1,
+        'ADMIN_POLICE'=> 2,
+        'ADMIN_CUSTOMER_CENTER'=> 3,
 ];

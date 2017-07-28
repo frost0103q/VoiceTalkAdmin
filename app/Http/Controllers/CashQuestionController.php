@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\CashDeclare;
 use App\Models\CashQuestion;
-use App\Models\Notification;
 use App\Models\SSP;
 use App\Models\User;
 use Config;
@@ -294,7 +293,7 @@ class CashQuestionController extends BasicController
         if ($user_email != "")
             $custom_where .= " and user_no in (select no from t_user where email like '%" . $user_email . "%') ";
         if ($user_chat_content != "")
-            $custom_where .= " and user_no in (select from_user_no from t_chathistory where content like '%" . $user_chat_content . "%') ";
+            $custom_where .= " and user_no in (select from_user_no from t_notification where content like '%" . $user_chat_content . "%') ";
 
 
         $columns = array(

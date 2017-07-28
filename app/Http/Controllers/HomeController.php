@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Session;
 use DB;
+use Session;
 
 class HomeController extends BasicController
 {
@@ -128,6 +128,6 @@ class HomeController extends BasicController
 
     public function get_month_withdraw_and_sale()
     {
-        return $this->get_sale_by_date(date('Y-m'))-$this->get_withdraw_by_date(date('Y-m'));
+        return $this->get_sale_by_date(date('Y-m')) - $this->get_withdraw_by_date(date('Y-m'));
     }
 }

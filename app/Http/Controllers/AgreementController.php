@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServerFile;
+use App\Models\Talk;
 use DB;
 use Request;
 use Session;
@@ -227,6 +228,20 @@ class AgreementController extends BasicController
         if (!$results)
             return config('constants.FAIL');
         else {
+
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            if ($type == 'talk') {
+                $talk = Talk::where('img_no', $no)->first();
+                $user_no = $talk->user_no;
+            } else {
+                $user = User::where('img_no', $no)->first();
+                $user_no = $user->no;
+            }
+            $data = [];
+            $data['type'] = $type;
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_REFUSE_IMAGE'), $data);
+
             return $this->get_img_html($type, $no);
         }
     }

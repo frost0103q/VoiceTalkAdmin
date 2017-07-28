@@ -506,7 +506,7 @@ class WithdrawController extends BasicController
         if ($user_email != "")
             $custom_where .= " and from_user_no in (select no from t_user where email like '%" . $user_email . "%') ";
         if ($user_chat_content != "")
-            $custom_where .= " and from_user_no in (select from_user_no from t_chathistory where content like '%" . $user_chat_content . "%') ";
+            $custom_where .= " and from_user_no in (select from_user_no from t_notification where content like '%" . $user_chat_content . "%') ";
 
         $columns = array(
             array('db' => 'no', 'dt' => 0),
@@ -530,10 +530,10 @@ class WithdrawController extends BasicController
                                 <div class="item">
                                     <div class="item-head">
                                         <div class="item-details">';
-                        if($img_path!='')
-                            $html.='<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
+                        if ($img_path != '')
+                            $html .= '<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
 
-                                            $html.='<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                        $html .= '<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
                                             <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	
@@ -570,10 +570,10 @@ class WithdrawController extends BasicController
                                 <div class="item">
                                     <div class="item-head">
                                         <div class="item-details">';
-                        if($img_path!='')
-                            $html.='<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
+                        if ($img_path != '')
+                            $html .= '<img class="img-circle" src="' . $img_path . '" height="40" width="40">';
 
-                                            $html.='<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
+                        $html .= '<a class="item-name primary-link">' . $user_model->nickname . ' ' . $sex . '</a>
                                             <span class="item-label">&nbsp; ' . sprintf("%'.05d", $user_model->no) . '</span>
                                         </div>									
                                     </div>	

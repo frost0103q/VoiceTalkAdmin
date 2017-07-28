@@ -18,9 +18,11 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Routing\Controller as Controller;
 use LaravelFCM\Message\OptionsBuilder;
+use Nexmo;
 use Redirect;
 use Request;
 use Session;
+use SMS;
 use Socialite;
 use URL;
 
@@ -28,7 +30,7 @@ class BasicController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function sendAlarmMessage($from_user_no, $to_user_no, $type, $data=null)
+    public function sendAlarmMessage($from_user_no, $to_user_no, $type, $data = null)
     {
         $from_user = User::where('no', $from_user_no)->first();
         if ($from_user == null) {
@@ -94,7 +96,7 @@ class BasicController extends Controller
     private function sendXmppMessage($toUser, $content)
     {
         $testmode = config('constants.testmode');
-        if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
+        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
             $ip = Config::get('config.chatLocalServerIp');
         } else {
             $ip = Config::get('config.chatServerIp');
@@ -237,6 +239,88 @@ class BasicController extends Controller
         return $response;
     }
 
+    public function  getRealPhoneNumber($phone_number)
+    {
+        $testmode = config('constants.testmode');
+
+        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
+            $real_number = '+86' . $phone_number;
+        } else {
+            $real_number = '+82' . $phone_number;
+        }
+        return $real_number;
+    }
+
+    public function  sendSMS($phone_number, $message, $save = true)
+    {
+        $testmode = config('constants.testmode');
+        $real_number = $this->getRealPhoneNumber($phone_number);
+
+        $sender = "";
+        if (true) {
+            if ($testmode == config('constants.TEST_MODE_LOCAL')) {
+                SMS::send($message, null, function ($sms) use ($real_number) {
+                    $sms->from('+8615699581631');
+                    $sms->to($real_number);
+                }
+                );
+                $sender = '+861569958163';
+            } else {
+                $this->sendSMSByMunjaNara($phone_number, $message);
+                $sender = '+8207076330105';
+            }
+        } else {
+            Nexmo::message()->send([
+                'to' => $phone_number,
+                'from' => '01028684884',
+                'text' => 'Using the facade to send a message.'
+            ]);
+            $sender = '+8201028684884';
+        }
+
+        if ($save == true) {
+            $sms = new \App\Models\SMS();
+            $sms->sender_number = $sender;
+            $sms->receive_number = $real_number;
+            $sms->content = $message;
+            $sms->save();
+        }
+    }
+
+    public function sendSMSByMunjaNara($hpReceiver, $hpMesg)
+    {
+        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
+        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
+        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
+        // $hpSender = "02-2009-3773";
+        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
+        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
+        //	$hpMesg = "";           		// 메시지
+
+        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
+        $hpMesg = iconv("UTF-8", "EUC-KR", "$hpMesg");
+        /*  ---------------------------------------- */
+        $hpMesg = urlencode($hpMesg);
+        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
+
+        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
+
+        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
+        if (!$fp) echo "$errno : $errstr";
+
+        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
+        $flag = 0;
+        $out = "";
+        while (!feof($fp)) {
+            $row = fgets($fp, 1024);
+
+            if ($flag) $out .= $row;
+            if ($row == "\r\n") $flag = 1;
+        }
+        fclose($fp);
+        return $out;
+    }
+
     public function ajax_upload()
     {
 
@@ -279,26 +363,26 @@ class BasicController extends Controller
 
     public static function getChangeDate($date, $count)
     {
-        $year = substr($date, 0, 4);
-        $month = substr($date, 5, 2);
-        $day = substr($date, 8);
+        $year = intval(substr($date, 0, 4));
+        $month = intval(substr($date, 5, 2));
+        $day = intval(substr($date, 8));
         $date = date("Y-m-d", mktime(0, 0, 0, $month, $day + $count, $year));
         return $date;
     }
 
     public static function getDayCount($start, $end)
     {
-        $s_year = substr($start, 0, 4);
-        $s_month = substr($start, 5, 2);
-        $s_day = substr($start, 8);
-        $e_year = substr($end, 0, 4);
-        $e_month = substr($end, 5, 2);
-        $e_day = substr($end, 8);
+        $s_year = intval(substr($start, 0, 4));
+        $s_month = intval(substr($start, 5, 2));
+        $s_day = intval(substr($start, 8));
+        $e_year = intval(substr($end, 0, 4));
+        $e_month = intval(substr($end, 5, 2));
+        $e_day = intval(substr($end, 8));
 
         $s_time = mktime(0, 0, 0, $s_month, $s_day, $s_year);
         $e_time = mktime(0, 0, 0, $e_month, $e_day, $e_year);
-        
-        $days=($e_time - $s_time) / 24 / 60 / 60;
+
+        $days = ($e_time - $s_time) / 24 / 60 / 60;
         return abs($days);
     }
 }

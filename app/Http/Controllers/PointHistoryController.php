@@ -80,9 +80,9 @@ class PointHistoryController extends BasicController
             $response = PointHistory::where('user_no', $user_no);
         }
         if ($response != null) {
-            $response = $response->offset($limit * ($page - 1))->limit($limit)->get();
+            $response = $response->orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
         } else {
-            $response = PointHistory::offset($limit * ($page - 1))->limit($limit)->get();
+            $response = PointHistory::orderBy('updated_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
         }
 
         return response()->json($response);

@@ -90,12 +90,12 @@ class AdminLoginController extends BasicController
         return redirect('/home');
     }
 
-	public function auto_login(){
-		$email = Session::get('u_email');
-		if (isset($email) && $email != null) {
-			die("success");
-		}
-		else
-			die("fail");
-	}
+    public function auto_login()
+    {
+        $email = Session::get('u_email');
+        if (isset($email) && $email != null) {
+            die("success");
+        } else
+            die("fail");
+    }
 }

@@ -3,10 +3,10 @@
         <div class="col-md-2">
             <label class="control-label">{{trans('lang.push_sending')}}</label>
             <select class="form-control select2me" id="push_send_type_search" name="push_send_type_search">
-                <option value="0">{{trans('lang.all')}}</option>
-                <option value="1">{{trans('lang.main')}}</option>
-                <option value="2">{{trans('lang.notice_')}}</option>
-                <option value="3">{{trans('lang.event')}}</option>
+                <option value="4">{{trans('lang.all_user')}}</option>
+                <option value="3">{{trans('lang.talk_user')}}</option>
+                <option value="2">{{trans('lang.common_user')}}</option>
+               <!-- <option value="3">{{trans('lang.event')}}</option> -->
             </select>
         </div>
         <div class="col-md-2">
@@ -63,9 +63,9 @@
                         <label class="control-label col-md-2">{{trans('lang.send_type')}}</label>
                         <div class="col-md-2">
                             <select class="form-control select2me" id="push_send_type" name="push_send_type">
-                                <option value="1">{{trans('lang.main')}}</option>
-                                <option value="2">{{trans('lang.notice_')}}</option>
-                                <option value="3">{{trans('lang.event')}}</option>
+                                <option value="4">{{trans('lang.all_user')}}</option>
+                                <option value="3">{{trans('lang.talk_user')}}</option>
+                                <option value="2">{{trans('lang.common_user')}}</option>
                             </select>
                         </div>
                     </div>
@@ -257,7 +257,7 @@
         $("#push_title").val("");
         $("#push_content").val("");
         $("#push_img_url").val("");
-        $("#push_send_type").val("1");
+        $("#push_send_type").val("4");
         $("#btn_push_open_modal").trigger('click');
     })
 

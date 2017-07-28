@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\ServerFile;
 use App\Models\User;
 use App\Models\UserRelation;
 use Config;
@@ -31,6 +30,37 @@ class UserRelationController extends BasicController
     public function index()
     {
         return view('welcome');
+    }
+
+    public function getUserRelation(HttpRequest $request) {
+        $user_no = $request->input('user_no');
+        $friend_no = $request->input('relation_user_no');
+
+        if ($user_no == null || $friend_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $user_no)->get();
+
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $friend_no)->get();
+        if ($results == null || count($results) == 0) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $friend_no)->first();
+        if($relation == null) {
+            $relation = new UserRelation();
+            $relation->user_no = $user_no;
+            $relation->relation_user_no = $friend_no;
+        }
+        return response()->json($relation);
     }
 
     public function addFriend(HttpRequest $request)
@@ -87,7 +117,7 @@ class UserRelationController extends BasicController
 
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_ADD_FRIEND'));
 
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
         }
 
@@ -144,7 +174,7 @@ class UserRelationController extends BasicController
         }
 
         if ($flag == config('constants.USER_RELATION_FLAG_DISABLE_ALARM')) {
-            $friend->is_alarm =  config('constants.FALSE');
+            $friend->is_alarm = config('constants.FALSE');
         }
 
         $friend->save();
@@ -170,7 +200,7 @@ class UserRelationController extends BasicController
         $arr_friend_no_dict = DB::table('t_user_relation')
             ->select('relation_user_no')
             ->where('user_no', $user_no)
-            ->where('is_friend',  config('constants.TRUE'))->get();
+            ->where('is_friend', config('constants.TRUE'))->get();
 
         $arr_friend_no = array();
         for ($i = 0; $i < count($arr_friend_no_dict); $i++) {

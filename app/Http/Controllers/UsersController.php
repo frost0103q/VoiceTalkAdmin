@@ -6,7 +6,6 @@ use App\Models\AuthCode;
 use App\Models\ConsultingReview;
 use App\Models\Device;
 use App\Models\InAppPurchaseHistory;
-use App\Models\Notification;
 use App\Models\ServerFile;
 use App\Models\SSP;
 use App\Models\User;
@@ -219,6 +218,13 @@ class UsersController extends BasicController
         $notification_controller = new NotificationsController();
         $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
 
+        DB::table('t_login_history')->insert(
+            [
+                'user_no' => $user->no,
+                'created_at' => date('Y-m-d H:i:s')
+            ]
+        );
+
         return response()->json($user);
     }
 
@@ -245,40 +251,6 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
-    function sendSMS($hpReceiver, $hpMesg)
-    {
-        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
-        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
-        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
-        // $hpSender = "02-2009-3773";
-        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
-        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
-        //	$hpMesg = "";           		// 메시지
-
-        /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
-        $hpMesg = iconv("UTF-8", "EUC-KR", "$hpMesg");
-        /*  ---------------------------------------- */
-        $hpMesg = urlencode($hpMesg);
-        $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
-
-        $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
-
-        $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
-        if (!$fp) echo "$errno : $errstr";
-
-        fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
-        $flag = 0;
-        $out = "";
-        while (!feof($fp)) {
-            $row = fgets($fp, 1024);
-
-            if ($flag) $out .= $row;
-            if ($row == "\r\n") $flag = 1;
-        }
-        fclose($fp);
-        return $out;
-    }
-
     public function requestAuthNumber(HttpRequest $request)
     {
         $no = $request->input('no');
@@ -297,13 +269,8 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $testmode = config('constants.testmode');
+        $real_number = $this->getRealPhoneNumber($phone_number);
 
-        if ($testmode == config('constants.TEST_MODE_LOCAL')) {
-            $real_number = '+86' . $phone_number;
-        } else {
-            $real_number = '+82' . $phone_number;
-        }
         $results = User::where('phone_number', $real_number)->get();
 
         if ($results != null && count($results) > 0) {
@@ -316,23 +283,7 @@ class UsersController extends BasicController
         $sms_message = sprintf(config("constants.SMS_TEXT"), $cert_code);
         $phone_number = str_replace("-", "", $phone_number);
 
-        if (true) {
-            if ($testmode ==  config('constants.TEST_MODE_LOCAL')) {
-                SMS::send($sms_message, null, function ($sms) use ($real_number) {
-                    $sms->from('+8615699581631');
-                    $sms->to($real_number);
-                }
-                );
-            } else {
-                $this->sendSMS($phone_number, $sms_message);
-            }
-        } else {
-            Nexmo::message()->send([
-                'to' => $phone_number,
-                'from' => '01028684884',
-                'text' => 'Using the facade to send a message.'
-            ]);
-        }
+        $this->sendSMS($phone_number, $sms_message);
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;
@@ -368,7 +319,7 @@ class UsersController extends BasicController
 
         $authcode = $results[0];
         $testmode = config('constants.testmode');
-        if ($testmode !=  config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
+        if ($testmode != config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
             $update_data = [];
             $update_data['verified'] = config("constants.TRUE");
             $update_data['phone_number'] = $authcode->user_phone_number;
@@ -412,10 +363,11 @@ class UsersController extends BasicController
         $longitude = $request->input('longitude');
         $user_photo = $request->file('user_photo');
         $status = $request->input('status');
+        $delete_image = $request->input('del_img');
 
         $idiomCotroller = new IdiomController();
         if ($oper == 'add') {
-            if ($nickname == null || $subject == null) {
+            if ($nickname == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
@@ -427,7 +379,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            if($idiomCotroller->includeForbidden($nickname) == true || $idiomCotroller->includeForbidden($subject) == true) {
+            if ($idiomCotroller->includeForbidden($nickname) == true) {// || $idiomCotroller->includeForbidden($subject) == true) {
                 $response = config('constants.ERROR_FORBIDDEN_WORD');
                 return response()->json($response);
             }
@@ -465,8 +417,7 @@ class UsersController extends BasicController
             $testmode = config('constants.testmode');
             if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
-            }
-            else {
+            } else {
                 $user->point = config('constants.USER_FIRST_POINT');
             }
 
@@ -488,7 +439,7 @@ class UsersController extends BasicController
                     return response()->json($response);
                 }
 
-                if($idiomCotroller->includeForbidden($nickname) == true) {
+                if ($idiomCotroller->includeForbidden($nickname) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -507,7 +458,7 @@ class UsersController extends BasicController
             if ($user_photo != null) {
                 // image upload
                 $newfile = new ServerFile;
-                $user_photo_no = $newfile->uploadFile($user_photo,  config('constants.IMAGE'));
+                $user_photo_no = $newfile->uploadFile($user_photo, config('constants.IMAGE'));
 
                 if ($user_photo_no == null) {
                     $response = config('constants.ERROR_UPLOAD_FAILED');
@@ -516,9 +467,14 @@ class UsersController extends BasicController
 
                 $update_data['img_no'] = $user_photo_no;
             }
+            else {
+                    if($delete_image == config('constants.TRUE')) {
+                        $update_data['img_no'] = -1;
+                    }
+            }
 
             if ($subject != null) {
-                if($idiomCotroller->includeForbidden($subject) == true) {
+                if ($idiomCotroller->includeForbidden($subject) == true) {
                     $response = config('constants.ERROR_FORBIDDEN_WORD');
                     return response()->json($response);
                 }
@@ -598,7 +554,7 @@ class UsersController extends BasicController
         $data = [];
         $data['point'] = $point;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_SEND_PRESENT'), $data);
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
         }
         return response()->json($response);
@@ -629,10 +585,9 @@ class UsersController extends BasicController
         $data = [];
         $data['point'] = $point;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_REQUEST_PRESENT'), $data);
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
-        }
-        else {
+        } else {
             $response = config('constants.ERROR_NO');
         }
 
@@ -725,10 +680,10 @@ class UsersController extends BasicController
             $user->enable_alarm_add_friend = $value;
         }
 
-        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE') ) {
-            $user->enable_alarm = config('constants.TRUE') ;
+        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE')) {
+            $user->enable_alarm = config('constants.TRUE');
         } else {
-            $user->enable_alarm = config('constants.FALSE') ;
+            $user->enable_alarm = config('constants.FALSE');
         }
 
         $user->save();
@@ -801,7 +756,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $to_user = $results[0];
-        $point = $time_in_second / 60 *  config('constants.POINT_PER_MIN');
+        $point = $time_in_second / 60 * config('constants.POINT_PER_MIN');
         $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
         $response['no'] = round($point);
         return response()->json($response);
@@ -847,6 +802,23 @@ class UsersController extends BasicController
 
         $consulting_review->save();
 
+        return response()->json($response);
+    }
+
+    public function isAlreadyReviewed(HttpRequest $request) {
+        $from_user_no = $request->input('from_user_no');
+        $to_user_no = $request->input('to_user_no');
+        if ($from_user_no == null || $to_user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $review = ConsultingReview::where('from_user_no', $from_user_no)->where('to_user_no',$to_user_no)->first();
+        if ($review == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+        $response = config('constants.ERROR_NO');
         return response()->json($response);
     }
 
@@ -969,7 +941,7 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $user = $results[0];
-        $user->request_exit_flag =  config('constants.TRUE');
+        $user->request_exit_flag = config('constants.TRUE');
         $user->request_exit_time = AppServiceProvider::getTimeInDefaultFormat();
         $user->save();
 
@@ -1019,7 +991,8 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
-    public function sendAlarm(HttpRequest $request) {
+    public function sendAlarm(HttpRequest $request)
+    {
         $from_user_no = $request->input('from_user_no');
         $to_user_no = $request->input('to_user_no');
         $type = $request->input('type');
@@ -1042,16 +1015,15 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
+        if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
             $response = config('constants.ERROR_NOT_VERIFIED_USER');
             return response()->json($response);
         }
 
         $ret = $this->sendAlarmMessage($from_user_no, $to_user_no, $type, json_decode($data));
-        if($ret == false) {
+        if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
-        }
-        else {
+        } else {
             $response = config('constants.ERROR_NO');
         }
 
