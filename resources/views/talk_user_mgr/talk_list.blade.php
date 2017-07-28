@@ -61,7 +61,7 @@
     <div class="col-md-12" style="padding-top: 30px">
         <div class=" col-md-5">
             <a class="btn blue" id="btn_warning_user_talk">{{trans('lang.warning')}}</a>
-            <a class="btn blue" id="btn_stop_user_talk">{{trans('lang.force_stop')}}</a>
+            <a class="btn blue" id="btn_stop_user_talk">{{trans('lang.force_stop').'/'.trans('lang.force_remove')}}</a>
             <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_talk_img')}}</a>
             <a class="btn blue" id="btn_stop_use_app">{{trans('lang.stop_use_app')}}</a>
             <a class="btn blue" id="btn_delete_talk">{{trans('lang.delete_talk')}}</a>
@@ -287,7 +287,10 @@
                 else {
                     tbl_talk.draw(false);
                     tbl_user.draw(false);
-                    tbl_declare.draw(false);
+                    if(!$("#tbl_declare").hasClass("dataTable"))
+                        init_tbl_declare();
+                    else
+                        tbl_declare.draw(false);
 
                     toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
                 }
