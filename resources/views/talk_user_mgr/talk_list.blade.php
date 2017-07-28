@@ -20,6 +20,14 @@
             <label class="control-label">{{trans('lang.telnum')}}</label>
             <input class="form-control" placeholder="" type="text" id="talk_user_phone_number">
         </div>
+        <div class="col-md-1">
+            <label class="control-label">{{trans('lang.talk_type')}}</label>
+            <select class="form-control select2me" id="talk_type">
+                <option value="">{{trans('lang.all')}}</option>
+                <option value="{{config('constants.TOPIC_TALK')}}">{{trans('lang.topic_talk')}}</option>
+                <option value="{{config('constants.NOMAL_TALK')}}">{{trans('lang.nomal_talk')}}</option>
+            </select>
+        </div>
         <div class="col-md-2">
             <label class="control-label">{{trans('lang.talk_content')}}</label>
             <input class="form-control" placeholder="" type="text" id="talk_user_chat_content">
@@ -38,6 +46,7 @@
                 <th>{{trans('lang.talk_photo')}}</th>
                 <th>Nickname</th>
                 <th>{{trans('lang.content')}}</th>
+                <th>{{trans('lang.talk_type')}}</th>
                 <th>{{trans('lang.talk_reg_time')}}</th>
                 <th>{{trans('lang.reg_time').'/'.trans('lang.recent_connect')}}</th>
                 <th>{{trans('lang.profile_photo')}}</th>
@@ -55,6 +64,7 @@
             <a class="btn blue" id="btn_stop_user_talk">{{trans('lang.force_stop')}}</a>
             <a class="btn blue" id="btn_del_user_photo_talk">{{trans('lang.del_only_talk_img')}}</a>
             <a class="btn blue" id="btn_stop_use_app">{{trans('lang.stop_use_app')}}</a>
+            <a class="btn blue" id="btn_delete_talk">{{trans('lang.delete_talk')}}</a>
         </div>
         <div class="col-md-2">
             <select class="form-control select2me" id="select_stop_days">
@@ -127,13 +137,14 @@
                             d.nickname = $("#talk_user_nickname").val();
                             d.phone_number = $("#talk_user_phone_number").val();
                             d.chat_content = $("#talk_user_chat_content").val();
+                            d.talk_type = $("#talk_type").val();
                         }
                     },
                     "createdRow": function (row, data, dataIndex) {
                         if (data[2] != null)
                             $('td:eq(2)', row).html('<img src="' + data[2] + '" height="50px">');
-                        if (data[7] != null)
-                            $('td:eq(7)', row).html('<img src="' + data[7] + '" height="50px">');
+                        if (data[8] != null)
+                            $('td:eq(8)', row).html('<img src="' + data[8] + '" height="50px">');
                     },
                     "lengthMenu": [
                         [5, 10, 20, -1],
@@ -144,15 +155,15 @@
                     "pagingType": "bootstrap_full_number",
                     "columnDefs": [{  // set default column settings
                         'orderable': false,
-                        'targets': [0, 1, 2, 3, 4, 6, 7,8,9]
+                        'targets': [0, 1, 2, 3, 4,5,7,8,9,10]
                     },
                         {  // set default column settings
                             'orderable': true,
-                            'targets': [5]
+                            'targets': [6]
                         }],
 
                     "order": [
-                        [5, "desc"]
+                        [6, "desc"]
                     ] // set first column as a default sort by asc
                 });
             }
@@ -325,5 +336,39 @@
                 }
             }
         });
-    })
+    });
+
+    $("#btn_delete_talk").click(function () {
+        var selected_talk_str = '';
+        $("#tbl_talk .talk_no").each(function () {
+            if ($(this).is(':checked'))
+                selected_talk_str += $(this).val() + ',';
+        });
+
+        selected_talk_str = selected_talk_str.substr(0, selected_talk_str.length - 1);
+
+        if (selected_talk_str == '') {
+            toastr["error"]("{{trans('lang.select_talk_to_delete')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_talk_str: selected_talk_str,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'selected_talk_delete',
+            success: function (result) {
+                if (result == '{{config('constants.FAIL')}}') {
+                    toastr["error"]("{{trans('lang.fail_operation')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_talk.draw(false);
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
 </script>

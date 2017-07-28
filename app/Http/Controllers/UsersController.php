@@ -1034,7 +1034,7 @@ class UsersController extends BasicController
     {
         $table = 't_user';
         // Custom Where
-        $custom_where = "1=1";
+        $custom_where = " 1=1 ";
 
         // Table's primary key
         $primaryKey = 'no';

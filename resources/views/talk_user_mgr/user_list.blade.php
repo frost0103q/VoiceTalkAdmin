@@ -44,14 +44,21 @@
         </table>
     </div>
     <div class="col-md-12"  style="padding-top: 30px">
-        <div class=" col-md-3">
+        <div class=" col-md-5">
             <a class="btn blue" id="btn_warning_user">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_del_user_photo">{{trans('lang.del_only_photo')}}</a>
+            <a class="btn blue" id="btn_stop_use_app_user">{{trans('lang.stop_use_app')}}</a>
         </div>
-        <label class="control-label col-md-1" style="text-align: right;padding-top: 7px">{{trans('lang.warning_sentence')}}</label>
+        <div class="col-md-2">
+            <select class="form-control select2me" id="select_stop_days_user">
+                <option value="">{{trans('lang.select_stop_app_days')}}</option>
+                <option value="1">{{trans('lang.stop_use_one_days')}}</option>
+                <option value="3">{{trans('lang.stop_use_three_days')}}</option>
+            </select>
+        </div>
         <div class="col-md-2">
             <select class="form-control select2me" id="warning_reason_user">
-                <option value=""></option>
+                <option value="">{{trans('lang.select_warning_type')}}</option>
                 <option value="{{config('constants.SALE_SCREEN')}}">{{trans('lang.sale_screen')}}</option>
                 <option value="{{config('constants.SALE_SEX')}}">{{trans('lang.sale_sex')}}</option>
                 <option value="{{config('constants.HONGBO_TARGET')}}">{{trans('lang.hongbo_target')}}</option>
@@ -71,9 +78,8 @@
                 <option value="{{config('constants.THREAT')}}">{{trans('lang.threat')}}</option>
             </select>
         </div>
-        <label class="control-label col-md-1" for="admin_memo" style="text-align: right;padding-top: 7px">{{trans('lang.admin_memo')}}</label>
         <div class="col-md-3">
-            <input class="form-control" placeholder="" type="text" id="admin_memo_user">
+            <input class="form-control" placeholder="{{trans('lang.admin_memo')}}" type="text" id="admin_memo_user">
         </div>
     </div>
 </div>
@@ -176,6 +182,10 @@
                 }
                 else {
                     tbl_user.draw(false);
+                    if(!$("#tbl_talk").hasClass("dataTable"))
+                        init_tbl_talk();
+                    else
+                        tbl_talk.draw(false);
                     toastr["success"]("{{trans('lang.delete_success')}}", "{{trans('lang.notice')}}");
                 }
             }
@@ -230,6 +240,46 @@
                 }
             }
         });
-    })
+    });
 
+    $("#btn_stop_use_app_user").click(function () {
+        var selected_user_str = '';
+        $("#tbl_user .user_no").each(function () {
+            if ($(this).is(':checked'))
+                selected_user_str += $(this).val() + ',';
+        });
+
+        selected_user_str = selected_user_str.substr(0, selected_user_str.length - 1);
+
+        if (selected_user_str == '') {
+            toastr["error"]("{{trans('lang.select_users')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        var days=$("#select_stop_days_user").val();
+        if(days==""){
+            toastr["error"]("{{trans('lang.select_app_stop_days')}}", "{{trans('lang.notice')}}");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            data: {
+                selected_user_str: selected_user_str,
+                stop_days:days,
+                _token: "{{csrf_token()}}"
+            },
+            url: 'stop_app_use',
+            success: function (result) {
+                if (result == '{{config('constants.FAIL')}}') {
+                    toastr["error"]("{{trans('lang.fail_operation')}}", "{{trans('lang.notice')}}");
+                    return;
+                }
+                else {
+                    tbl_user.draw(false);
+                    toastr["success"]("{{trans('lang.success_warning')}}", "{{trans('lang.notice')}}");
+                }
+            }
+        });
+    });
 </script>

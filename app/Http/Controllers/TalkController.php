@@ -401,6 +401,7 @@ class TalkController extends BasicController
         $nickname = $_POST['nickname'];
         $phone_number = $_POST['phone_number'];
         $chat_content = $_POST['chat_content'];
+        $talk_type = $_POST['talk_type'];
 
         if ($sex != "")
             $custom_where .= " and talk_user_sex=$sex";
@@ -410,6 +411,8 @@ class TalkController extends BasicController
             $custom_where .= " and user_nickname like '%" . $nickname . "%'";
         if ($phone_number != "")
             $custom_where .= " and phone_number like '%" . $phone_number . "%'";
+        if ($talk_type != "")
+            $custom_where .= " and type =$talk_type";
         if ($chat_content != "")
             $custom_where .= " and greeting like '%" . $chat_content . "%'";
 
@@ -435,8 +438,16 @@ class TalkController extends BasicController
             array('db' => 'talk_img_path', 'dt' => 2),
             array('db' => 'user_nickname', 'dt' => 3),
             array('db' => 'greeting', 'dt' => 4),
-            array('db' => 'talk_edit_time', 'dt' => 5),
-            array('db' => 'user_no', 'dt' => 6,
+            array('db' => 'type', 'dt' => 5,
+                'formatter' =>function($d,$row){
+                    if($d==config('constants.TOPIC_TALK'))
+                        return trans('lang.topic_talk');
+                    else
+                        return trans('lang.nomal_talk');
+                }
+            ),
+            array('db' => 'talk_edit_time', 'dt' => 6),
+            array('db' => 'user_no', 'dt' => 7,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
                     if ($user_model != null)
@@ -447,8 +458,8 @@ class TalkController extends BasicController
                     return $reg_time . "/" . $last_login_time;
                 }
             ),
-            array('db' => 'profile_img_path', 'dt' => 7),
-            array('db' => 'user_no', 'dt' => 8,
+            array('db' => 'profile_img_path', 'dt' => 8),
+            array('db' => 'user_no', 'dt' => 9,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
                     if ($user_model != null) {
@@ -459,7 +470,7 @@ class TalkController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'user_no', 'dt' => 9,
+            array('db' => 'user_no', 'dt' => 10,
                 'formatter' => function ($d, $row) {
                     $user_model = DB::table('t_user')->where('no', $d)->first();
                     if ($user_model != null) {
@@ -487,7 +498,6 @@ class TalkController extends BasicController
 
     public function del_selected_talk_img()
     {
-
         $selected_talk_str = $_POST['selected_talk_str'];
         $selected_talk_str_array = explode(',', $selected_talk_str);
 
@@ -498,6 +508,21 @@ class TalkController extends BasicController
             DB::table('t_file')->where('no', $img_no)->delete();
 
             $result = DB::update('update t_talk set img_no = ?, updated_at = ? where no = ?', [-1, date('Y-m-d H:i:s'), $selected_talk_str_array[$i]]);
+            if (!$result)
+                return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function selected_talk_delete()
+    {
+        $selected_talk_str = $_POST['selected_talk_str'];
+        $selected_talk_str_array = explode(',', $selected_talk_str);
+
+        for ($i = 0; $i < count($selected_talk_str_array); $i++) {
+
+            $result=DB::table('t_talk')->where('no', $selected_talk_str_array[$i])->delete();
             if (!$result)
                 return config('constants.FAIL');
         }

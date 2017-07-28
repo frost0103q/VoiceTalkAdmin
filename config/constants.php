@@ -166,6 +166,10 @@ return [
 		'LOST_PW' => 2,
 		'DECLARE_RECEP' => 3,
 
+		//talk type
+		'TOPIC_TALK' => 0,
+		'NOMAL_TALK' => 1,
+
 		//warning sentences type
 		'SALE_SCREEN'=>'1',
 		'SALE_SEX'=>'2',
