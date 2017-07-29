@@ -3,10 +3,10 @@
         <div class="col-md-2">
             <label class="control-label">{{trans('lang.push_sending')}}</label>
             <select class="form-control select2me" id="push_send_type_search" name="push_send_type_search">
-                <option value="4">{{trans('lang.all_user')}}</option>
-                <option value="3">{{trans('lang.talk_user')}}</option>
-                <option value="2">{{trans('lang.common_user')}}</option>
-               <!-- <option value="3">{{trans('lang.event')}}</option> -->
+                <option value="">{{trans('lang.all')}}</option>
+                <option value="{{config('constants.ALL_USER')}}">{{trans('lang.all_user')}}</option>
+                <option value="{{config('constants.TALK_USER')}}">{{trans('lang.talk_user')}}</option>
+                <option value="{{config('constants.COMMON_USER')}}">{{trans('lang.common_user')}}</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -63,9 +63,9 @@
                         <label class="control-label col-md-2">{{trans('lang.send_type')}}</label>
                         <div class="col-md-2">
                             <select class="form-control select2me" id="push_send_type" name="push_send_type">
-                                <option value="4">{{trans('lang.all_user')}}</option>
-                                <option value="3">{{trans('lang.talk_user')}}</option>
-                                <option value="2">{{trans('lang.common_user')}}</option>
+                                <option value="{{config('constants.ALL_USER')}}">{{trans('lang.all_user')}}</option>
+                                <option value="{{config('constants.TALK_USER')}}">{{trans('lang.talk_user')}}</option>
+                                <option value="{{config('constants.COMMON_USER')}}">{{trans('lang.common_user')}}</option>
                             </select>
                         </div>
                     </div>

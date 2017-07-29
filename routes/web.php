@@ -74,6 +74,7 @@ Route::post('ajax_exit_user_table', 'UsersController@ajax_exit_user_table');
 Route::post('del_selected_profile', 'UsersController@del_selected_profile');
 Route::post('selected_user_warning', 'UsersController@selected_user_warning');
 Route::post('del_selected_talk_img', 'TalkController@del_selected_talk_img');
+Route::post('selected_talk_delete', 'TalkController@selected_talk_delete');
 Route::post('del_selected_user_talk', 'TalkController@del_selected_user_talk');
 Route::post('user_force_stop', 'UsersController@user_force_stop');
 Route::post('stop_app_use', 'UsersController@stop_app_use');

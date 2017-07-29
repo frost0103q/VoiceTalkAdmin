@@ -51,7 +51,7 @@
         <div class=" col-md-5">
             <a class="btn blue" id="btn_warning_user_declare">{{trans('lang.warning')}}</a>
             <a class="btn blue" id="btn_del_talk">{{trans('lang.del_talk')}}</a>
-            <a class="btn blue" id="btn_stop_user_declare">{{trans('lang.force_stop')}}</a>
+            <a class="btn blue" id="btn_stop_user_declare">{{trans('lang.force_stop').'/'.trans('lang.force_remove')}}</a>
             <a class="btn blue" id="btn_del_user_photo_declare">{{trans('lang.del_only_photo')}}</a>
         </div>
         <label class="control-label col-md-1" style="text-align: right;padding-top: 7px">{{trans('lang.warning_sentence')}}</label>
@@ -252,7 +252,10 @@
                     return;
                 }
                 else {
-                    tbl_talk.draw(false);
+                    if(!$("#tbl_talk").hasClass("dataTable"))
+                        init_tbl_talk();
+                    else
+                        tbl_talk.draw(false);
                     tbl_user.draw(false);
                     tbl_declare.draw(false);
 

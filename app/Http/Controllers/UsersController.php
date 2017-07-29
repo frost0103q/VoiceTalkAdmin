@@ -1034,7 +1034,7 @@ class UsersController extends BasicController
     {
         $table = 't_user';
         // Custom Where
-        $custom_where = "1=1";
+        $custom_where = " 1=1 ";
 
         // Table's primary key
         $primaryKey = 'no';
@@ -1203,7 +1203,8 @@ class UsersController extends BasicController
 
         for ($i = 0; $i < count($new_selected_array); $i++) {
             $update_data['force_stop_flag'] = 1;
-            $result = User::where('no', $new_selected_array[$i])->update($update_data);
+            $query="UPDATE t_user SET force_stop_flag = IF(force_stop_flag=1,NULL,1) WHERE `no`='".$new_selected_array[$i]."'";
+            $result = DB::update($query);
             if (!$result)
                 return config('constants.FAIL');
         }
