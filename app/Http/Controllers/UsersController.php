@@ -1232,16 +1232,22 @@ class UsersController extends BasicController
         if ($user == null) {
             return;
         }
+
         $data = array();
-        $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $user->app_stop_to_date);
-        if($diff_time > 0) {
+        $noti_type = -1;
+        if($user->app_stop_flag == config('constants.TRUE')) {
+            $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $user->app_stop_to_date);
             $data['date'] = ($diff_time/60 * 60 * 24);
+            $noti_type = config('constants.NOTI_TYPE_ADMIN_APP_STOP');
         }
         else if($user->force_stop_flag == config('constants.TRUE')) {
             $data['date'] = -1;
+            $noti_type = config('constants.NOTI_TYPE_ADMIN_APP_STOP');
         }
 
-        $this->sendAlarmMessage($admin_no, $usr_no, config('constants.NOTI_TYPE_ADMIN_APP_STOP'), $data);
+        if($noti_type != -1) {
+            $this->sendAlarmMessage($admin_no, $usr_no, $noti_type , $data);
+        }
     }
 
     public function user_force_stop()

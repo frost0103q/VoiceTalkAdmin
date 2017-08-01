@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServerFile;
 use App\Models\Talk;
+use App\Models\User;
 use DB;
 use Request;
 use Session;

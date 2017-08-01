@@ -87,20 +87,20 @@ return [
         'NOTI_TYPE_ADMIN_APP_STOP'  =>12,
 
         'NOTI_TITLE_CONTENT' => [
-                                            ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],            // NOTI_TYPE_CHATMESSAGE
-                                            ["title"=>"상담요청","content"=>"%s님으로부터 상담신청이 들어왔습니다."],          // NOTI_TYPE_REQUEST_CONSULTING
-                                            ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 수락했습니다."],            // NOTI_TYPE_REQUEST_ACCEPT_CONSULTING
-                                            ["title"=>"선물조르기","content"=>"%s님으로부터 %uP 조르기가 들어왔습니다."],      // NOTI_TYPE_REQUEST_PRESENT
-                                            ["title"=>"쪽지전송","content"=>"%s님으로부터 쪽지가 도착했습니다."],              // NOTI_TYPE_SEND_ENVELOP
-                                            ["title"=>"친구추가","content"=>"%s님이 당신을 친구추가했습니다."],                // NOTI_TYPE_ADD_FRIEND
-                                            ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],          // NOTI_TYPE_SEND_PRESENT
-                                            ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],              // NOTI_TYPE_CASH_QA
-                                            ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],                // NOTI_TYPE_ADMIN_NORMAL_PUSH
-                                            ["title"=>"이미지거절","content"=>"회원님이 등록하신 사진이 게시에 부적합하다 판단되어 연락드립니다. 변경 부탁 드립니다."],  // NOTI_TYPE_REFUSE_IMAGE
-                                            ["title"=>"관리자","content"=>"무료충전이 완료되었습니다."],                       // NOTI_TYPE_SUCCESS_FREE_CHARGE
-                                            ["title"=>"관리자","content"=>"관리자님이 경고메시지를 보냈습니다. 경고회수[%d]입니다."],               // NOTI_TYPE_ADMIN_WARING
-                                            ["title"=>"관리자","content"=>"관리자님에 앱사용중지 되었습니다."],                 // NOTI_TYPE_ADMIN_APP_STOP
-                                        ],
+                                    ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
+                                    ["title"=>"상담요청","content"=>"%s님으로부터 상담신청이 들어왔습니다."],                  // NOTI_TYPE_REQUEST_CONSULTING
+                                    ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 수락했습니다."],                    // NOTI_TYPE_REQUEST_ACCEPT_CONSULTING
+                                    ["title"=>"선물조르기","content"=>"%s님으로부터 %uP 조르기가 들어왔습니다."],              // NOTI_TYPE_REQUEST_PRESENT
+                                    ["title"=>"쪽지전송","content"=>"%s님으로부터 쪽지가 도착했습니다."],                      // NOTI_TYPE_SEND_ENVELOP
+                                    ["title"=>"친구추가","content"=>"%s님이 당신을 친구추가했습니다."],                        // NOTI_TYPE_ADD_FRIEND
+                                    ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],                  // NOTI_TYPE_SEND_PRESENT
+                                    ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],                      // NOTI_TYPE_CASH_QA
+                                    ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],                        // NOTI_TYPE_ADMIN_NORMAL_PUSH
+                                    ["title"=>"이미지거절","content"=>"등록하신 이미지가 승인거절되었습니다."],                // NOTI_TYPE_REFUSE_IMAGE
+                                    ["title"=>"관리자","content"=>"무료충전이 완료되었습니다."],                              // NOTI_TYPE_SUCCESS_FREE_CHARGE
+                                    ["title"=>"관리자","content"=>"[경고%d회] 부적절한 활동에 대해 경고를 보냅니다."],         // NOTI_TYPE_ADMIN_WARING
+                                    ["title"=>"관리자","content"=>"관리자에 의해 앱사용중지 되었습니다."],                     // NOTI_TYPE_ADMIN_APP_STOP
+                                ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
         'CHECK_ROLL_POINT'   => 30,
