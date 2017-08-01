@@ -562,6 +562,7 @@ class NoticeController extends BasicController
             if (!$result)
                 return config('constants.FAIL');
         }
+        $data["content"] = "[".$data["receive_number"]."]".$data["content"];
         $this->sendSMS($data["receive_number"], $data["content"], false);
         return config('constants.SUCCESS');
     }

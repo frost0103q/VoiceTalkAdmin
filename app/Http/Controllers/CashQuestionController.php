@@ -131,8 +131,9 @@ class CashQuestionController extends BasicController
         if ($cash == null) {
             return;
         }
-
-        $this->sendAlarmMessage($admin_no, $cash->user_no, config('constants.NOTI_TYPE_CASH_QA'));
+        $data = array();
+        $data['content'] = $cash->answer;
+        $this->sendAlarmMessage($admin_no, $cash->user_no, config('constants.NOTI_TYPE_CASH_QA'), $data);
     }
 
 

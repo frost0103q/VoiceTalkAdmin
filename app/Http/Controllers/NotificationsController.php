@@ -245,6 +245,7 @@ class NotificationsController extends BasicController
                 $q->orWhere('type', config('constants.NOTI_TYPE_CASH_QA'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_REFUSE_IMAGE'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_WARING'));
             });
         });
         $response = $response->orderBy('created_militime', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();

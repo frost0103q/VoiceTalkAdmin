@@ -35,7 +35,9 @@ class Notification extends Model
             $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         } else if ($type == config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH')) {
             $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
-        } else if ($type == config('constants.NOTI_TYPE_REFUSE_IMAGE') || $type == config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE')) {
+        } else if ($type == config('constants.NOTI_TYPE_ADMIN_WARING')) {
+            $content = sprintf($noti_content[$type]['content'], $data['cnt']);
+        } else {
             $content = $noti_content[$type]['content'];
         }
 

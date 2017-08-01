@@ -199,10 +199,10 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $user = $results;
+        $cur_time = AppServiceProvider::getTimeInDefaultFormat();
 
         // If it is a exit requested user,
         if ($user->request_exit_flag != config("constants.USER_NORMAL")) {
-            $cur_time = AppServiceProvider::getTimeInDefaultFormat();
             $diff_time = AppServiceProvider::diffTime($cur_time, $user->request_exit_time);
             if ($diff_time > 60 * 60 * 24) { // 1 day
                 $response = config('constants.ERROR_NO_INFORMATION');
@@ -213,11 +213,32 @@ class UsersController extends BasicController
             }
         }
 
+        // If app stop user or in app stop date
+        $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $cur_time);
+        if($user->app_stop_flag == config('constants.TRUE')) {
+            if($diff_time <= 0) {
+                $user->app_stop_to_date = null;
+                $user->app_stop_from_date = null;
+                $user->app_stop_flag = config('constants.FALSE');
+                $user->save();
+            }
+            else {
+                $response = config('constants.ERROR_STOPEED_USER');
+                return response()->json($response);
+            }
+        }
+
+        if($user->force_stop_flag == config('constants.TRUE')) {
+            $response = config('constants.ERROR_STOPEED_USER');
+            return response()->json($response);
+        }
+
         $user->fillInfo();
 
         $notification_controller = new NotificationsController();
         $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
 
+        // log for login history
         DB::table('t_login_history')->insert(
             [
                 'user_no' => $user->no,
@@ -1152,6 +1173,19 @@ class UsersController extends BasicController
         return config('constants.SUCCESS');
     }
 
+    private function sendWarningAlarm($warning_no, $admin_no)
+    {
+        $warning = Warning::where('no', $warning_no)->first();
+
+        if ($warning == null) {
+            return;
+        }
+        $data = array();
+        $cnt = $this->get_declare_cnt( $warning->user_no);
+        $data['cnt'] = $cnt;
+        $this->sendAlarmMessage($admin_no, $warning->user_no, config('constants.NOTI_TYPE_ADMIN_WARING'), $data);
+    }
+
     public function selected_user_warning()
     {
         $selected_user_str = $_POST['selected_user_str'];
@@ -1182,11 +1216,32 @@ class UsersController extends BasicController
                 ]
             );
 
+            $this->sendWarningAlarm($no + 1, Session::get('u_no'));
+
             if (!$result)
                 return config('constants.FAIL');
         }
 
         return config('constants.SUCCESS');
+    }
+
+    private function sendAppStopAlarm($usr_no, $admin_no)
+    {
+        $user = User::where('no', $usr_no)->first();
+
+        if ($user == null) {
+            return;
+        }
+        $data = array();
+        $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $user->app_stop_to_date);
+        if($diff_time > 0) {
+            $data['date'] = ($diff_time/60 * 60 * 24);
+        }
+        else if($user->force_stop_flag == config('constants.TRUE')) {
+            $data['date'] = -1;
+        }
+
+        $this->sendAlarmMessage($admin_no, $usr_no, config('constants.NOTI_TYPE_ADMIN_APP_STOP'), $data);
     }
 
     public function user_force_stop()
@@ -1202,15 +1257,19 @@ class UsersController extends BasicController
         }
 
         for ($i = 0; $i < count($new_selected_array); $i++) {
-            $update_data['force_stop_flag'] = 1;
+            $update_data['force_stop_flag'] = config('constants.TRUE');
             $query="UPDATE t_user SET force_stop_flag = IF(force_stop_flag=1,NULL,1) WHERE `no`='".$new_selected_array[$i]."'";
             $result = DB::update($query);
             if (!$result)
                 return config('constants.FAIL');
+
+            $this->sendAppStopAlarm($new_selected_array[$i], Session::get('u_no'));
         }
 
         return config('constants.SUCCESS');
     }
+
+
 
     public function stop_app_use()
     {
@@ -1227,12 +1286,14 @@ class UsersController extends BasicController
         }
 
         for ($i = 0; $i < count($new_selected_array); $i++) {
-            $update_data['app_stop_flag'] = 1;
+            $update_data['app_stop_flag'] = config('constants.TRUE');
             $update_data['app_stop_from_date'] = date('Y-m-d H:i:s');
             $update_data['app_stop_to_date'] = $this->getChangeDate($update_data['app_stop_from_date'], $stop_days);
             $result = User::where('no', $new_selected_array[$i])->update($update_data);
             if (!$result)
                 return config('constants.FAIL');
+
+            $this->sendAppStopAlarm($new_selected_array[$i], Session::get('u_no'));
         }
 
         return config('constants.SUCCESS');
