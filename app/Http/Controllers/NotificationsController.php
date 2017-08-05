@@ -244,17 +244,29 @@ class NotificationsController extends BasicController
                 $q->orWhere('type', config('constants.NOTI_TYPE_SEND_ENVELOP'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_CASH_QA'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_REFUSE_IMAGE'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_REFUSE_IMAGE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_WARING'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADD_FRIEND'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_REFUSE'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_APP_STOP_REMOVE'));
             });
         });
         $response = $response->orderBy('created_militime', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
 
         for ($i = 0; $i < count($response); $i++) {
-            $user = User::where('no', $response[$i]->from_user_no)->first();
-            $user->fillInfo();
+            if ($response[$i]->from_user_no == $from_user_no) {
+                $user = User::where('no', $response[$i]->to_user_no)->first();
+                $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $response[$i]->to_user_no)->first();
+            } else {
+                $user = User::where('no', $response[$i]->from_user_no)->first();
+                $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $response[$i]->from_user_no)->first();
+            }
 
+            $user->fillInfo();
             $response[$i]->user = $user;
+            $response[$i]->user_relation = $user_relation;
         }
 
         return response()->json($response);

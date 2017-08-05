@@ -132,7 +132,8 @@ class CashQuestionController extends BasicController
             return;
         }
         $data = array();
-        $data['content'] = $cash->answer;
+        $data['content'] = $cash->content;
+        $data['answer'] = $cash->answer;
         $this->sendAlarmMessage($admin_no, $cash->user_no, config('constants.NOTI_TYPE_CASH_QA'), $data);
     }
 

@@ -142,7 +142,9 @@ class FreeChargeController extends BasicController
 
         // send push
         $admin_no = config('constants.DEFAULT_ADMIN_NO');
-        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
+        $data = array();
+        $data['point'] = $nPoint;
+        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
         echo json_encode($arr_result);
     }
@@ -247,7 +249,9 @@ class FreeChargeController extends BasicController
 
         // send push
         $admin_no = config('constants.DEFAULT_ADMIN_NO');
-        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
+        $data = array();
+        $data['point'] = $nPoint;
+        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
         return response($arr_result, 200);
     }
@@ -316,7 +320,9 @@ class FreeChargeController extends BasicController
 
                 // send push
                 $admin_no = config('constants.DEFAULT_ADMIN_NO');
-                $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
+                $data = array();
+                $data['point'] = $nPoint;
+                $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
                 return response($arr_result);
             }

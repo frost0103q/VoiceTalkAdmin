@@ -37,7 +37,7 @@ return [
 
         'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
 
-        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0, 0],
+        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0, 0, 0],
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,
@@ -48,6 +48,7 @@ return [
         'POINT_HISTORY_TYPE_INAPP'=> 7,
         'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
         'POINT_HISTORY_TYPE_GIFTICON'=> 9,
+        'POINT_HISTORY_TYPE_WITDDRAW'=> 10,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
         'FREE_CHARGE_TYPE_NAS'=> 1,
@@ -58,13 +59,13 @@ return [
         'FREE_CHARGE_RATIO_IGAWORKS'=> 1,
 
         'INAPP_ITEMS' => [
-                            ["name" => 'point_1','price' => 700, 'value' => 700],
-                            ["name" => 'point_2','price' => 2100, 'value' => 2100],
-                            ["name" => 'point_3','price' => 3500, 'value' => 3500],
-                            ["name" => 'point_4','price' => 7000, 'value' => 7000],
-                            ["name" => 'point_5','price' => 21000, 'value' => 21000],
-                            ["name" => 'point_6','price' => 35000, 'value' => 35000],
-                            ["name" => 'point_7','price' => 70000, 'value' => 70000],
+                            ["name" => 'inapp_point_1','price' => 700, 'value' => 700],
+                            ["name" => 'inapp_point_2','price' => 2100, 'value' => 2100],
+                            ["name" => 'inapp_point_3','price' => 3500, 'value' => 3500],
+                            ["name" => 'inapp_point_4','price' => 7000, 'value' => 7000],
+                            ["name" => 'inapp_point_5','price' => 21000, 'value' => 21000],
+                            ["name" => 'inapp_point_6','price' => 35000, 'value' => 35000],
+                            ["name" => 'inapp_point_7','price' => 70000, 'value' => 70000],
                         ],
 
         'USER_RELATION_FLAG_BLOCK_FRIEND'=> 0,
@@ -81,10 +82,14 @@ return [
         'NOTI_TYPE_SEND_PRESENT'  =>6,
         'NOTI_TYPE_CASH_QA'  =>7,
         'NOTI_TYPE_ADMIN_NORMAL_PUSH'  =>8,
-        'NOTI_TYPE_REFUSE_IMAGE'  =>9,
+        'NOTI_TYPE_ADMIN_REFUSE_IMAGE'  =>9,
         'NOTI_TYPE_SUCCESS_FREE_CHARGE'  =>10,
         'NOTI_TYPE_ADMIN_WARING'  =>11,
         'NOTI_TYPE_ADMIN_APP_STOP'  =>12,
+        'NOTI_TYPE_ADMIN_IMAGE_AGREE'  =>13,
+        'NOTI_TYPE_ADMIN_VOICE_REFUSE'  =>14,
+        'NOTI_TYPE_ADMIN_VOICE_AGREE'  =>15,
+        'NOTI_TYPE_ADMIN_APP_STOP_REMOVE'  =>16,
 
         'NOTI_TITLE_CONTENT' => [
                                     ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
@@ -96,10 +101,14 @@ return [
                                     ["title"=>"선물보내기","content"=>"%s님이 당신에게 %uP를 선물했습니다."],                  // NOTI_TYPE_SEND_PRESENT
                                     ["title"=>"결제문의","content"=>"%s님이 구글문의답변을 보냈습니다."],                      // NOTI_TYPE_CASH_QA
                                     ["title"=>"관리자","content"=>"%s님으로부터 쪽지가 도착했습니다."],                        // NOTI_TYPE_ADMIN_NORMAL_PUSH
-                                    ["title"=>"이미지거절","content"=>"등록하신 이미지가 승인거절되었습니다."],                // NOTI_TYPE_REFUSE_IMAGE
+                                    ["title"=>"이미지거절","content"=>"등록하신 이미지가 승인거절되었습니다."],                // NOTI_TYPE_ADMIN_REFUSE_IMAGE
                                     ["title"=>"관리자","content"=>"무료충전이 완료되었습니다."],                              // NOTI_TYPE_SUCCESS_FREE_CHARGE
                                     ["title"=>"관리자","content"=>"[경고%d회] 부적절한 활동에 대해 경고를 보냅니다."],         // NOTI_TYPE_ADMIN_WARING
                                     ["title"=>"관리자","content"=>"관리자에 의해 앱사용중지 되었습니다."],                     // NOTI_TYPE_ADMIN_APP_STOP
+                                    ["title"=>"관리자","content"=>"등록하신 이미지가 승인되었습니다."],                       // NOTI_TYPE_ADMIN_IMAGE_AGREE
+                                    ["title"=>"관리자","content"=>"등록하신 음성이 승인거절되었습니다."],                     // NOTI_TYPE_ADMIN_VOICE_REFUSE
+                                    ["title"=>"관리자","content"=>"등록하신 음성이 승인되었습니다."],                         // NOTI_TYPE_ADMIN_VOICE_AGREE
+                                    ["title"=>"관리자","content"=>"앱사용중지해제를 알려드립니다."],                          // NOTI_TYPE_ADMIN_APP_STOP_REMOVE
                                 ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
