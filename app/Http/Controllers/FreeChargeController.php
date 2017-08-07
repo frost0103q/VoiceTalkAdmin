@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FreeChargeHistory;
 use App\Models\User;
+use App\Models\SSP;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
@@ -144,7 +145,7 @@ class FreeChargeController extends BasicController
         $admin_no = config('constants.DEFAULT_ADMIN_NO');
         $data = array();
         $data['point'] = $nPoint;
-        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
+        $this->sendAlarmMessage($admin_no, $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
         echo json_encode($arr_result);
     }
@@ -251,7 +252,7 @@ class FreeChargeController extends BasicController
         $admin_no = config('constants.DEFAULT_ADMIN_NO');
         $data = array();
         $data['point'] = $nPoint;
-        $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
+        $this->sendAlarmMessage($admin_no, $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
         return response($arr_result, 200);
     }
@@ -322,7 +323,7 @@ class FreeChargeController extends BasicController
                 $admin_no = config('constants.DEFAULT_ADMIN_NO');
                 $data = array();
                 $data['point'] = $nPoint;
-                $this->sendAlarmMessage($admin_no,  $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
+                $this->sendAlarmMessage($admin_no, $user->no, config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'), $data);
 
                 return response($arr_result);
             }
@@ -336,5 +337,63 @@ class FreeChargeController extends BasicController
             Log::debug($arr_result);
             return response($arr_result);
         }
+    }
+
+    public function ajax_free_charge_table()
+    {
+        $table = 't_free_charge_history';
+        // Custom Where
+        $custom_where = "1=1";
+
+        // Table's primary key
+        $primaryKey = 'no';
+
+        $nickname = $_POST['nickname'];
+        $received_point = $_POST['received_point'];
+        $charge_type = $_POST['charge_type'];
+
+        if ($nickname != "")
+            $custom_where .= " and user_no in (select no from t_user where nickname like '%" . $nickname . "%') ";
+        if ($charge_type != "-1")
+            $custom_where .= " and type ='" . $charge_type . "'";
+        if ($received_point != "")
+            $custom_where .= " and point = '" . $received_point . "'";
+
+
+        $columns = array(
+            array('db' => 'no', 'dt' => 0),
+            array('db' => 'user_no', 'dt' => 1,
+                'formatter' => function ($d, $row) {
+                    $results = User::where('no', $d)->first();
+                    if ($results != null)
+                        return $results['nickname'];
+                    else
+                        return '';
+                }
+            ),
+            array('db' => 'point', 'dt' => 2),
+            array('db' => 'type', 'dt' => 3,
+                'formatter' => function ($d, $row) {
+                    if ($d == config('constants.FREE_CHARGE_ADSYNC'))
+                        return 'Adsync';
+                    if ($d == config('constants.FREE_CHARGE_NAS'))
+                        return 'NAS';
+                    if ($d == config('constants.FREE_CHARGE_IGAWORKS'))
+                        return 'IGAWorks';
+                }
+            )
+        );
+
+        // SQL server connection information
+        $sql_details = array(
+            'user' => config('constants.DB_USER'),
+            'pass' => config('constants.DB_PW'),
+            'db' => config('constants.DB_NAME'),
+            'host' => config('constants.DB_HOST')
+        );
+
+        return json_encode(
+            SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $custom_where)
+        );
     }
 }

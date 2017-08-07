@@ -13,7 +13,7 @@
                 <div class="portlet-body">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab">{{trans('lang.cash_manage')}}</a>
+                            <a href="#tab_1" data-toggle="tab">{{trans('lang.free_charge_content')}}</a>
                         </li>
                         <li>
                             <a href="#tab_2" data-toggle="tab">{{trans('lang.req_withdraw')}}</a>
@@ -30,7 +30,7 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
-                            @include('withdraw.cash')
+                            @include('withdraw.free_charge')
                         </div>
                         <div class="tab-pane fade" id="tab_2">
                             @include('withdraw.withdraw')
@@ -52,7 +52,7 @@
 
     <script>
         $(document).ready(function () {
-            init_tbl_cash();
+            init_tbl_free_charge();
         });
 
         $(".nav.nav-tabs li:eq(1)").click(function () {

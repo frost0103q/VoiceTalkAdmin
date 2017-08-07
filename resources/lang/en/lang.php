@@ -283,6 +283,8 @@ return [
     'birthday'=>'생년월일',
     'req_date'=>'신청일',
     'cash_manage'=>'결제관리',
+    'free_charge_content'=>'무료충전소내역',
+    'free_charge_store'=>'무료충전소',
     'req_withdraw'=>'출금신청관리',
     'gifticon_buy'=>'기프티콘 구매',
     'point_rank'=>'포인트랭킹',
