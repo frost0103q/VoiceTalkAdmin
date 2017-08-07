@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GifticonProduct;
+use App\Models\GifticonHistory;
 use App\Models\User;
 use Config;
 use DB;
@@ -145,6 +146,20 @@ class GifticonController extends BasicController
             return response()->json($response);
         } else {
             $w_result_json = json_decode($w_result, true);
+
+            $product = GifticonProduct::where('product_id', $goods_id)->first();
+
+            // giftIcon history
+            $gift_history = new GifticonHistory();
+            $gift_history->cupon_number =  $product->product_id;
+            $gift_history->mgr_number = "";
+            $gift_history->pdt_nm =  $product->product_name;
+            $gift_history->user_no =  $user->no;
+            $gift_history->nomal_price =  $product->sell_price;
+            $gift_history->sale_price =  $product->calc_price;
+            $gift_history->real_price =  $product->calc_price;
+            $gift_history->benefit =  ($product->sell_price - $product->calc_price);
+
             if ($w_result_json['rstCode'] != '0') {
                 $w_err_msg = $w_result_json['rstMsg'];
                 $response = config('constants.ERROR_FAILED_PURCHASE');
@@ -155,12 +170,16 @@ class GifticonController extends BasicController
                 $w_order_id = $w_result_json['order_id'];
 
                 //. 상품구매내역에 저장
-                $product = GifticonProduct::where('product_id', $goods_id)->first();
+
                 $product->epin = $w_epin;
                 $product->order_id = $w_order_id;
 
                 // user point 감소
                 $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price));
+
+                $gift_history->mgr_number = $w_order_id;
+                $gift_history->status =  config('constants.GIFTICON_NOMAL');
+                $gift_history->save();
 
                 return response()->json($product);
             }

@@ -11,11 +11,13 @@ use App\Models\SSP;
 use App\Models\User;
 use App\Models\UserDeclare;
 use App\Models\Warning;
+use App\Models\Withdraw;
 use App\Providers\AppServiceProvider;
 use App\Providers\AuthServiceProvider;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Log;
 use Nexmo;
 use Redirect;
 use Request;
@@ -199,10 +201,10 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $user = $results;
+        $cur_time = AppServiceProvider::getTimeInDefaultFormat();
 
         // If it is a exit requested user,
         if ($user->request_exit_flag != config("constants.USER_NORMAL")) {
-            $cur_time = AppServiceProvider::getTimeInDefaultFormat();
             $diff_time = AppServiceProvider::diffTime($cur_time, $user->request_exit_time);
             if ($diff_time > 60 * 60 * 24) { // 1 day
                 $response = config('constants.ERROR_NO_INFORMATION');
@@ -213,11 +215,37 @@ class UsersController extends BasicController
             }
         }
 
+        // If app stop user or in app stop date
+        $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $cur_time);
+        if($user->app_stop_flag == config('constants.TRUE')) {
+            if($diff_time <= 0) {
+                $user->app_stop_to_date = null;
+                $user->app_stop_from_date = null;
+                $user->app_stop_flag = config('constants.FALSE');
+                $user->save();
+            }
+            else {
+                $response = config('constants.ERROR_STOPEED_USER');
+                return response()->json($response);
+            }
+        }
+
+        if($user->force_stop_flag == config('constants.TRUE')) {
+            $response = config('constants.ERROR_STOPEED_USER');
+            return response()->json($response);
+        }
+
         $user->fillInfo();
 
+        // get withdraw point
+        $request_money = Withdraw::where('status', config('constants.WITHDRAW_FINISH'))->where('user_no', $user->no)->sum('money');
+        $user->withdraw_money = $request_money;
+
+        // get unread cnt
         $notification_controller = new NotificationsController();
         $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
 
+        // log for login history
         DB::table('t_login_history')->insert(
             [
                 'user_no' => $user->no,
@@ -825,8 +853,8 @@ class UsersController extends BasicController
     public function buyPoint(HttpRequest $request)
     {
         $from_user_no = $request->input('user_no');
-        $purchase_data = AppServiceProvider::url_decord($request->input('purchase_data'));
-        $data_signature = AppServiceProvider::url_decord($request->input('data_signature'));
+        $purchase_data = $request->input('purchase_data');//AppServiceProvider::url_decord($request->input('purchase_data'));
+        $data_signature = $request->input('data_signature');//AppServiceProvider::url_decord($request->input('data_signature'));
 
         if ($from_user_no == null || $purchase_data == null || $data_signature == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -857,6 +885,10 @@ class UsersController extends BasicController
 
         if ($w_verifyResult != 1) {
             $response = config('constants.ERROR_NO_INFORMATION');
+            Log::debug('=========================In app Verified Failed=========================');
+            Log::debug($purchase_data);
+            Log::debug($data_signature);
+            Log::debug('=========================In app Verified Failed=========================');
             return response()->json($response);
         }
 
@@ -868,6 +900,9 @@ class UsersController extends BasicController
         $results = InAppPurchaseHistory::where('order_id', $w_order_id)->get();
         if ($results != null && count($results) > 0) {
             $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+            Log::debug('=========================In app Verified Failed=========================');
+            Log::debug($w_order_id);
+            Log::debug('=========================In app Verified Failed=========================');
             return response()->json($response);
         }
 
@@ -890,6 +925,14 @@ class UsersController extends BasicController
                 $w_purchase_point = $item['value'];
                 $w_purchase_price = $item['price'];
             }
+        }
+
+        if ($w_purchase_point == 0) {
+            $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+            Log::debug('=========================In app Verified Failed=========================');
+            Log::debug($w_order_id);
+            Log::debug('=========================In app Verified Failed=========================');
+            return response()->json($response);
         }
 
         $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_INAPP'), $w_purchase_point);
@@ -1152,6 +1195,20 @@ class UsersController extends BasicController
         return config('constants.SUCCESS');
     }
 
+    private function sendWarningAlarm($warning_no, $admin_no)
+    {
+        $warning = Warning::where('no', $warning_no)->first();
+
+        if ($warning == null) {
+            return;
+        }
+        $data = array();
+        $cnt = $this->get_declare_cnt( $warning->user_no);
+        $data['cnt'] = $cnt;
+        $data['content'] = $warning->admin_memo;
+        $this->sendAlarmMessage($admin_no, $warning->user_no, config('constants.NOTI_TYPE_ADMIN_WARING'), $data);
+    }
+
     public function selected_user_warning()
     {
         $selected_user_str = $_POST['selected_user_str'];
@@ -1182,6 +1239,8 @@ class UsersController extends BasicController
                 ]
             );
 
+            $this->sendWarningAlarm($no + 1, Session::get('u_no'));
+
             if (!$result)
                 return config('constants.FAIL');
         }
@@ -1202,15 +1261,31 @@ class UsersController extends BasicController
         }
 
         for ($i = 0; $i < count($new_selected_array); $i++) {
-            $update_data['force_stop_flag'] = 1;
+
+            $user = User::where('no', $new_selected_array[$i])->first();
+
+            $update_data['force_stop_flag'] = config('constants.TRUE');
             $query="UPDATE t_user SET force_stop_flag = IF(force_stop_flag=1,NULL,1) WHERE `no`='".$new_selected_array[$i]."'";
             $result = DB::update($query);
             if (!$result)
                 return config('constants.FAIL');
+
+            $data = array();
+            $data['date'] =  AppServiceProvider::getTimeInDefaultFormat();
+            if($user->force_stop_flag == config('constants.TRUE')) {
+                $noti_type = config('constants.NOTI_TYPE_ADMIN_APP_STOP_REMOVE');
+            }
+            else {
+                $noti_type = config('constants.NOTI_TYPE_ADMIN_APP_STOP');
+            }
+
+            $this->sendAlarmMessage(Session::get('u_no'), $user->no, $noti_type , $data);
         }
 
         return config('constants.SUCCESS');
     }
+
+
 
     public function stop_app_use()
     {
@@ -1227,12 +1302,19 @@ class UsersController extends BasicController
         }
 
         for ($i = 0; $i < count($new_selected_array); $i++) {
-            $update_data['app_stop_flag'] = 1;
+            $update_data['app_stop_flag'] = config('constants.TRUE');
             $update_data['app_stop_from_date'] = date('Y-m-d H:i:s');
             $update_data['app_stop_to_date'] = $this->getChangeDate($update_data['app_stop_from_date'], $stop_days);
             $result = User::where('no', $new_selected_array[$i])->update($update_data);
             if (!$result)
                 return config('constants.FAIL');
+
+            $user = User::where('no', $new_selected_array[$i])->first();
+            $diff_time = AppServiceProvider::diffTime($user->app_stop_to_date, $user->app_stop_to_date);
+            $data = array();
+            $data['date'] = ($diff_time/60 * 60 * 24);
+            $noti_type = config('constants.NOTI_TYPE_ADMIN_APP_STOP');
+            $this->sendAlarmMessage(Session::get('u_no'), $user->no, $noti_type , $data);
         }
 
         return config('constants.SUCCESS');

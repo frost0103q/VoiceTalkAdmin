@@ -610,8 +610,17 @@ class WithdrawController extends BasicController
         for ($i = 0; $i < count($selected_withdraw_array); $i++) {
 
             $result = Withdraw::where('no', $selected_withdraw_array[$i])->update($update_data);
+
             if (!$result)
                 return config('constants.FAIL');
+
+            // user point minus
+            if ( $update_data['status'] == config('constants.WITHDRAW_FINISH')) {
+                $withdraw = Withdraw::where('no', $selected_withdraw_array[$i])->first();
+                $user_no = $withdraw->user_no;
+                $user = User::where('no', $user_no)->first();
+                $user->addPoint(config('constants.POINT_HISTORY_TYPE_WITDDRAW'), (-1) * $withdraw->money);
+            }
         }
 
         return config('constants.SUCCESS');

@@ -53,9 +53,13 @@ class AppServiceProvider extends ServiceProvider
 
     public static function diffTime($time1, $time2)
     {
+        if($time1 == null || $time2 == null) {
+            return 0;
+        }
+
         $to_time = strtotime($time1);
         $from_time = strtotime($time2);
-        return round(abs($to_time - $from_time) / 60, 2);
+        return round(($to_time - $from_time) / 60, 2);
     }
 
     public static function getMilliTime()

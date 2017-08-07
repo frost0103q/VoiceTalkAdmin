@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServerFile;
 use App\Models\Talk;
+use App\Models\User;
 use DB;
 use Request;
 use Session;
@@ -211,6 +212,16 @@ class AgreementController extends BasicController
         if (!$results)
             return config('constants.FAIL');
         else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $user = User::where('img_no', $no)->first();
+            $user_no = $user->no;
+
+            $data = [];
+            $data['type'] = $type;
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'), $data);
+
             return $this->get_img_html($type, $no);
         }
     }
@@ -231,16 +242,12 @@ class AgreementController extends BasicController
 
             // send Admin Push
             $admin_no = Session::get('u_no');
-            if ($type == 'talk') {
-                $talk = Talk::where('img_no', $no)->first();
-                $user_no = $talk->user_no;
-            } else {
-                $user = User::where('img_no', $no)->first();
-                $user_no = $user->no;
-            }
+            $user = User::where('img_no', $no)->first();
+            $user_no = $user->no;
+
             $data = [];
             $data['type'] = $type;
-            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_REFUSE_IMAGE'), $data);
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_REFUSE_IMAGE'), $data);
 
             return $this->get_img_html($type, $no);
         }
@@ -267,6 +274,16 @@ class AgreementController extends BasicController
             $results = ServerFile::where('no', $new_selected_img_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
             if (!$results)
                 return config('constants.FAIL');
+
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $user = User::where('img_no', $new_selected_img_array[$i])->first();
+            $user_no = $user->no;
+
+            $data = [];
+            $data['type'] = 'user';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'), $data);
         }
 
         return config('constants.SUCCESS');
@@ -399,6 +416,16 @@ class AgreementController extends BasicController
         if (!$results)
             return config('constants.FAIL');
         else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $file_no)->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'), $data);
+
             return $this->get_voice_html($talk_no);
         }
     }
@@ -416,6 +443,16 @@ class AgreementController extends BasicController
         if (!$results)
             return config('constants.FAIL');
         else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $file_no)->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_REFUSE'), $data);
+
             return $this->get_voice_html($talk_no);
         }
     }
@@ -441,6 +478,15 @@ class AgreementController extends BasicController
             $results = ServerFile::where('no', $new_selected_voice_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
             if (!$results)
                 return config('constants.FAIL');
+
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $new_selected_voice_array[$i])->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'), $data);
         }
 
         return config('constants.SUCCESS');
