@@ -15,17 +15,17 @@
                         <li class="active">
                             <a href="#tab_1" data-toggle="tab">{{trans('lang.connect_statistic')}}</a>
                         </li>
-                        <li>
+                        {{--<li>
                             <a href="#tab_2" data-toggle="tab">{{trans('lang.edwards_ad')}}</a>
-                        </li>
+                        </li>--}}
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade active in" id="tab_1">
                             @include('statistic.connect')
                         </div>
-                        <div class="tab-pane fade" id="tab_2">
+                        {{--<div class="tab-pane fade" id="tab_2">
                             @include('statistic.edwards')
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
             </div>
