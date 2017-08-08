@@ -234,4 +234,9 @@ return [
         'ADMIN_NORMAL'=> 1,
         'ADMIN_POLICE'=> 2,
         'ADMIN_CUSTOMER_CENTER'=> 3,
+
+		//free charge type
+		'FREE_CHARGE_ADSYNC'=> 0,
+		'FREE_CHARGE_NAS'=> 1,
+		'FREE_CHARGE_IGAWORKS'=> 2,
 ];

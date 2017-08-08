@@ -440,6 +440,10 @@ class StatisticController extends BasicController
 
     public function get_benefit_point_date($date, $custom_where, $all_flag = false)
     {
-        return $this->get_plus_point_sum($date, $custom_where, $all_flag) + $this->get_ad_point_date($date, $custom_where, $all_flag) - $this->get_withdraw_point_sum($date, $custom_where, $all_flag);
+        $result = $this->get_plus_point_sum($date, $custom_where, $all_flag) + $this->get_ad_point_date($date, $custom_where, $all_flag) - $this->get_withdraw_point_sum($date, $custom_where, $all_flag);
+        if($result<0)
+            return 0;
+        else
+            return $result;
     }
 }

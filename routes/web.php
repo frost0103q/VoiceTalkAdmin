@@ -125,6 +125,7 @@ Route::post('delete_cash_declare', 'CashQuestionController@delete_cash_declare')
 //withdraw manage
 Route::get('withdraw', 'WithdrawController@index');
 Route::post('ajax_cash_table', 'WithdrawController@ajax_cash_table');
+Route::post('ajax_free_charge_table', 'FreeChargeController@ajax_free_charge_table');
 Route::post('ajax_withdraw_table', 'WithdrawController@ajax_withdraw_table');
 Route::post('ajax_gifticon_table', 'WithdrawController@ajax_gifticon_table');
 Route::post('ajax_present_table', 'WithdrawController@ajax_present_table');
