@@ -9,6 +9,8 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+    <script src="{{ asset('assets/global/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
 
     <!-- Styles -->
     <style>
@@ -73,6 +75,15 @@
 
             <?php echo $content?>
         </div>
+        <div class="col-md-12">
+            <img id="img_url_image" width="100%" height="100%"
+                 src="<?php
+                 $uploadDirectory = Config::get('config.uploadDirectory');
+                 $uploadURL = url('/') . "/" . $uploadDirectory . "/" . $file_url;
+                 echo $uploadURL;?>"
+                 style="margin-bottom: 0px"/>
+        </div>
+
     </div>
 </div>
 </body>

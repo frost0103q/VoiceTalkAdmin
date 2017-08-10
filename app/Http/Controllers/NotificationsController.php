@@ -242,11 +242,13 @@ class NotificationsController extends BasicController
             })->where(function ($q) {
                 $q->where('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_SEND_ENVELOP'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_SEND_PRESENT'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_ADD_FRIEND'));
+                $q->orWhere('type', config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_CASH_QA'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_REFUSE_IMAGE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_WARING'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADD_FRIEND'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_REFUSE'));
                 $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'));

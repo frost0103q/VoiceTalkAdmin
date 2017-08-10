@@ -10,6 +10,7 @@ use App\Models\ServerFile;
 use App\Models\SSP;
 use App\Models\User;
 use App\Models\UserDeclare;
+use App\Models\UserRelation;
 use App\Models\Warning;
 use App\Models\Withdraw;
 use App\Providers\AppServiceProvider;
@@ -177,6 +178,34 @@ class UsersController extends BasicController
         return response()->json($response);
     }
 
+    public function getAlarmDisableUserList(HttpRequest $request)
+    {
+        $limit = $request->input('rows');
+        $page = $request->input('page');
+        $user_no = $request->input('user_no');
+
+        if ($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        if ($limit == null) {
+            $limit = Config::get('config.itemsPerPage.default');
+        }
+
+        if ($page == null) {
+            $params['page'] = 1;
+        }
+
+        $response = UserRelation::select('t_user.*')->where('user_no', $user_no)->join('t_user', function ($q) {
+                                $q->on('t_user.no', 't_user_relation.relation_user_no');
+                                $q->where('t_user_relation.is_alarm',config('constants.FALSE'));
+                            })->offset($limit * ($page - 1))->limit($limit)->get();
+        for($i = 0; $i < count($response); $i++) {
+            $response[$i]->img_file = ServerFile::where('no', $response[$i]->img_no)->first();
+        }
+        return response()->json($response);
+    }
 
     public function getInitInformation(HttpRequest $request)
     {
@@ -238,7 +267,7 @@ class UsersController extends BasicController
         $user->fillInfo();
 
         // get withdraw point
-        $request_money = Withdraw::where('status', config('constants.WITHDRAW_FINISH'))->where('user_no', $user->no)->sum('money');
+        $request_money = Withdraw::where('status', config('constants.WITHDRAW_WAIT'))->where('user_no', $user->no)->sum('money');
         $user->withdraw_money = $request_money;
 
         // get unread cnt

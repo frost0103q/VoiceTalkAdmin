@@ -28,6 +28,7 @@ Route::get('/getInitInformation', 'UsersController@getInitInformation');
 Route::post('/user', 'UsersController@doUser');
 Route::get('/duplicateUser', 'UsersController@duplicateUser');
 Route::get('/getUserList', 'UsersController@getUserList');
+Route::get('/getAlarmDisableUserList', 'UsersController@getAlarmDisableUserList');
 Route::post('/sendPresent', 'UsersController@sendPresent');
 Route::post('/declareUser', 'UsersController@declareUser');
 Route::post('/updateUserLocation', 'UsersController@updateLocation');
