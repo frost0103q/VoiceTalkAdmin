@@ -75,6 +75,12 @@
 
             <?php echo $content?>
         </div>
+
+        <?php
+        $file_url = isset($file_url) ?  $file_url:null;
+        if($file_url != null) {
+
+        ?>
         <div class="col-md-12">
             <img id="img_url_image" width="100%" height="100%"
                  src="<?php
@@ -83,7 +89,9 @@
                  echo $uploadURL;?>"
                  style="margin-bottom: 0px"/>
         </div>
-
+        <?php
+            }
+        ?>
     </div>
 </div>
 </body>
