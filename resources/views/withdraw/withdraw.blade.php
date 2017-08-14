@@ -179,7 +179,7 @@
                 }
                 else {
                     tbl_withdraw.draw(false);
-                    toastr["success"]("{{trans('lang.fail_status_change')}}", "{{trans('lang.notice')}}");
+                    toastr["success"]("{{trans('lang.success_status_change')}}", "{{trans('lang.notice')}}");
                 }
             }
         });
