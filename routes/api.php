@@ -78,6 +78,7 @@ Route::get('/getUserUnreadCnt', 'NotificationsController@getUnReadCnt');
 Route::post('/withdraw', 'WithdrawController@doWithdraw');
 Route::get('/withdrawList', 'WithdrawController@withdrawList');
 Route::get('/getUserWithdrawRequestTotalPoint', 'WithdrawController@getWithdrawRequestTotalPoint');
+Route::get('/getVerifiedWithdraw', 'WithdrawController@getVerifiedWithdraw');
 
 // pointhistory api
 Route::post('/pointHistory', 'PointHistoryController@doPointHistory');
@@ -101,3 +102,8 @@ Route::get('/giftBrandList', 'GifticonController@getGiftBrandList');
 Route::get('/giftList', 'GifticonController@getGiftList');
 Route::get('/giftListByCategory', 'GifticonController@getGiftListByCategory');
 Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');
+
+
+//ansim
+Route::post('/requestAuthRealUser', 'AnsimController@requestAuthRealUser');
+Route::post('/verifyRealUser', 'AnsimController@verifyRealUser');

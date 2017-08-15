@@ -102,7 +102,10 @@ class WithdrawController extends BasicController
 
         $response = null;
         if ($user_no != null) {
-            $response = Withdraw::where('user_no', $user_no);
+            $response = Withdraw::select('t_withdraw.*')->where('t_withdraw.user_no', $user_no)->join('t_ansim', function ($q) {
+                $q->on('t_withdraw.user_no', 't_ansim.user_no');
+                $q->where('t_ansim.status', config('constants.VERIFIED' ));
+            });
         }
         if ($response != null) {
             $response = $response->offset($limit * ($page - 1))->limit($limit)->get();
@@ -121,16 +124,14 @@ class WithdrawController extends BasicController
         $money = $request->input('money');
         $bank_name = $request->input('bank_name');
         $account_number = $request->input('account_number');
-        $account_realname = $request->input('account_realname');
         $account_name = $request->input('account_name');
-        $account_birth = $request->input('account_birth');
 
         $id = $request->input("no");
 
         $response = config('constants.ERROR_NO');
 
         if ($oper == 'add') {
-            if ($user_no == null || $bank_name == null || $account_number == null || $account_realname == null) {
+            if ($user_no == null || $bank_name == null || $account_number == null || $account_name == null) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
@@ -138,30 +139,34 @@ class WithdrawController extends BasicController
             $withdraw = new Withdraw();
             $withdraw->user_no = $user_no;
             $withdraw->money = $money;
+            $withdraw->wait_money = $money;
             $withdraw->bank_name = $bank_name;
             $withdraw->account_number = $account_number;
             $withdraw->account_name = $account_name;
-            $withdraw->account_realname = $account_realname;
-            $withdraw->account_birth = $account_birth;
 
             $withdraw->save();
             $response['no'] = $withdraw->no;
         } else if ($oper == 'edit') {
-            if ($id == null || ($account_realname == null && $account_birth == null)) {
+            if ($id == null || ($money == null && $bank_name == null || $account_number == null || $account_name == null)) {
                 $response = config('constants.ERROR_NO_PARMA');
                 return response()->json($response);
             }
 
             $update_data = [];
-            if ($account_realname != null) {
-                $update_data['account_realname'] = $account_realname;
+            if ($account_name != null) {
+                $update_data['account_name'] = $account_name;
             }
-            if ($account_birth != null) {
-                $update_data['account_birth'] = $account_birth;
+            if ($money != null) {
+                $update_data['money'] = $money;
+            }
+            if ($bank_name != null) {
+                $update_data['bank_name'] = $bank_name;
+            }
+            if ($account_number != null) {
+                $update_data['account_number'] = $account_number;
             }
 
-            $results = Withdraw::where('no', $id)
-                ->update($update_data);
+            $results = Withdraw::where('no', $id)->update($update_data);
         } else if ($oper == 'del') {
             if ($id == null) {
                 $response = config('constants.ERROR_NO_PARMA');
@@ -172,6 +177,29 @@ class WithdrawController extends BasicController
         }
 
         return response()->json($response);
+    }
+
+    public function getVerifiedWithdraw(HttpRequest $request) {
+        $user_no = $request->input('user_no');
+        if ($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $ansim = DB::table('t_ansim')->where('user_no', $user_no)->where('status',config('constants.VERIFIED' ))->first();
+        if($ansim === null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+
+        $withdraw = Withdraw()::where('user_no', $user_no)->where('account_name', $ansim->name)->first();
+        if($withdraw == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        return response()->json($withdraw);
     }
 
     public  function getWithdrawRequestTotalPoint(HttpRequest $request) {
@@ -189,7 +217,11 @@ class WithdrawController extends BasicController
         }
 
         // get unread cnt
-        $request_money = Withdraw::where('status', config('constants.WITHDRAW_WAIT'))->where('user_no', $user_no)->sum('money');
+        $request_money = Withdraw::where('t_withdraw.status', config('constants.WITHDRAW_WAIT'))->where('t_withdraw.user_no', $user_no)
+                            ->join('t_ansim', function ($q) {
+                                $q->on('t_withdraw.user_no', 't_ansim.user_no');
+                                $q->where('t_ansim.status', config('constants.VERIFIED' ));
+                            })->sum('money');
         if($request_money == null || empty($request_money)) {
             $request_money = 0;
         }
