@@ -193,7 +193,7 @@ class WithdrawController extends BasicController
         }
 
 
-        $withdraw = Withdraw()::where('user_no', $user_no)->where('account_name', $ansim->name)->first();
+        $withdraw = Withdraw::where('user_no', $user_no)->where('account_name', $ansim->name)->first();
         if($withdraw == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
