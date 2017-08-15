@@ -72,10 +72,12 @@ Route::post('/sendGroupEnvelop', 'NotificationsController@sendGroupEnvelop');
 Route::post('/readEnvelop', 'NotificationsController@readEnvelop');
 Route::post('/deleteEnvelop', 'NotificationsController@deleteEnvelop');
 Route::get('/notificationListInChatRoom', 'NotificationsController@notificationListInChatRoom');
+Route::get('/getUserUnreadCnt', 'NotificationsController@getUnReadCnt');
 
 // withdraw api
 Route::post('/withdraw', 'WithdrawController@doWithdraw');
 Route::get('/withdrawList', 'WithdrawController@withdrawList');
+Route::get('/getUserWithdrawRequestTotalPoint', 'WithdrawController@getWithdrawRequestTotalPoint');
 
 // pointhistory api
 Route::post('/pointHistory', 'PointHistoryController@doPointHistory');
@@ -97,4 +99,5 @@ Route::post('/igaworks_delivery_point', 'FreeChargeController@igaworks_delivery_
 // gift icon
 Route::get('/giftBrandList', 'GifticonController@getGiftBrandList');
 Route::get('/giftList', 'GifticonController@getGiftList');
+Route::get('/giftListByCategory', 'GifticonController@getGiftListByCategory');
 Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');

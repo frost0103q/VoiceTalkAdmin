@@ -174,6 +174,32 @@ class WithdrawController extends BasicController
         return response()->json($response);
     }
 
+    public  function getWithdrawRequestTotalPoint(HttpRequest $request) {
+        $user_no = $request->input('user_no');
+
+        if ($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $user_no)->first();
+        if ($results == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        // get unread cnt
+        $request_money = Withdraw::where('status', config('constants.WITHDRAW_WAIT'))->where('user_no', $user_no)->sum('money');
+        if($request_money == null || empty($request_money)) {
+            $request_money = 0;
+        }
+
+        $response = config('constants.ERROR_NO');
+        $response['request_money'] = $request_money;
+
+        return response()->json($response);
+    }
+
     public function ajax_cash_table()
     {
         $table = 't_cash_history';

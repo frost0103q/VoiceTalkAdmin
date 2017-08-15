@@ -63,6 +63,48 @@ class GifticonController extends BasicController
         return response()->json($arr_product);
     }
 
+    public function getGiftListByCategory(HttpRequest $request) {
+        $category_no = $request->input('category_no');
+
+        if ($category_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $cid = Config::get('config.giftN')['cid'];
+        $ckey = Config::get('config.giftN')['ckey'];
+
+        $arr_product = GifticonProduct::where('category_no', $category_no)->get();
+
+        for($i = 0; $i  < count($arr_product); $i++) {
+            $product = $arr_product[$i];
+
+            $w_enc = urlencode(md5($ckey . $cid . $product->product_id));
+
+            $w_url = "https://wapi.gift-n.net/getGoodsInfo?cid=" . $cid . "&goods_id=" . $product->product_id. "&enc=" . $w_enc;
+            $w_opt_arr = array(
+                CURLOPT_URL => $w_url,
+                CURLOPT_POST => false,
+                CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                CURLOPT_RETURNTRANSFER => true,
+            );
+            $w_ch = curl_init();
+            curl_setopt_array($w_ch, $w_opt_arr);
+            $w_result = curl_exec($w_ch);
+            curl_close($w_ch);
+            $w_result_json = json_decode($w_result, true);
+
+            if($w_result_json["STATUS"] == 'E') {
+                $arr_product[$i]->img_url = "";
+            }
+            else {
+                $arr_product[$i]->img_url = $w_result_json['IMG_URL'];
+            }
+        }
+
+        return response()->json($arr_product);
+    }
+
     public function getGiftList(HttpRequest $request) {
         $brand_no = $request->input('brand_no');
 

@@ -240,19 +240,7 @@ class NotificationsController extends BasicController
                 $q->where(['from_user_no' => $from_user_no, 'to_user_no' => $to_user_no]);
                 $q->orWhere(['to_user_no' => $from_user_no, 'from_user_no' => $to_user_no]);
             })->where(function ($q) {
-                $q->where('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_SEND_ENVELOP'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_SEND_PRESENT'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADD_FRIEND'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_SUCCESS_FREE_CHARGE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_CASH_QA'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_NORMAL_PUSH'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_REFUSE_IMAGE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_WARING'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_REFUSE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'));
-                $q->orWhere('type', config('constants.NOTI_TYPE_ADMIN_APP_STOP_REMOVE'));
+
             });
         });
         $response = $response->orderBy('created_militime', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
@@ -410,10 +398,10 @@ class NotificationsController extends BasicController
     public function readEnvelop(HttpRequest $request)
     {
         $user_no = $request->input('user_no');
-        $to_user_no = $request->input('to_user_no');
+        $from_user_no = $request->input('from_user_no');
         $search_type = $request->input('search_type');
 
-        if ($user_no == null || ($to_user_no == null && $search_type == null)) {
+        if ($user_no == null || ($from_user_no == null && $search_type == null)) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -421,29 +409,15 @@ class NotificationsController extends BasicController
         $update_data = [];
         $update_data['is_read'] = 1;
 
-        if ($to_user_no != null && $to_user_no != -1) {  // read all
-            $query = Notification::where(function ($q) use ($user_no, $to_user_no) {
-                $q->where(function ($q) use ($user_no, $to_user_no) {
-                    $q->where('from_user_no', $user_no)->where('to_user_no', $to_user_no);
-                })
-                    ->orWhere(function ($q) use ($user_no, $to_user_no) {
-                        $q->where('to_user_no', $user_no)->where('from_user_no', $to_user_no);
-                    });
-            });
-
-            if($search_type != null) {
-                if( $search_type == config('constants.NOTI_SEARCH_CHAT')) {
-                    $query = $query->where('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
-                }
-            }
+        if ($from_user_no != null && $from_user_no != -1) {  // read with to_user_no
+            $query = Notification::where('from_user_no', $from_user_no)->where('to_user_no', $user_no);
 
             $query->update($update_data);
         } else if ($search_type != null) {
-            if ($search_type == -1) { // search_all
-                Notification::where('to_user_no', $user_no)->orWhere('from_user_no', $user_no)->update($update_data);
-            } else if ($search_type == -2) { // search_friend
-                $sql = ' (from_user_no = ' . $user_no . ' and to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
-                $sql = $sql . ' OR (to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+            if ($search_type == -1) { // read all
+                Notification::where('to_user_no', $user_no)->update($update_data);
+            } else if ($search_type == -2) { // read friend all
+                $sql = '(to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
                 Notification::where(DB::raw($sql))->update($update_data);
             }
         }
@@ -468,9 +442,9 @@ class NotificationsController extends BasicController
                 $q->where(function ($q) use ($user_no, $to_user_no) {
                     $q->where('from_user_no', $user_no)->where('to_user_no', $to_user_no);
                 })
-                    ->orWhere(function ($q) use ($user_no, $to_user_no) {
-                        $q->where('to_user_no', $user_no)->where('from_user_no', $to_user_no);
-                    });
+                ->orWhere(function ($q) use ($user_no, $to_user_no) {
+                    $q->where('to_user_no', $user_no)->where('from_user_no', $to_user_no);
+                });
             })->delete();
         } else if ($search_type != null) {
             if ($search_type == -1) { // search_all
@@ -483,6 +457,29 @@ class NotificationsController extends BasicController
         }
 
         $response = config('constants.ERROR_NO');
+        return response()->json($response);
+    }
+
+    public  function getUnReadCnt(HttpRequest $request) {
+        $user_no = $request->input('user_no');
+
+        if ($user_no == null) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $results = User::where('no', $user_no)->first();
+        if ($results == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        // get unread cnt
+        $unread_notification_cnt = $this->getUserUnreadCnt($user_no);
+
+        $response = config('constants.ERROR_NO');
+        $response['unread_cnt'] = $unread_notification_cnt;
+
         return response()->json($response);
     }
 }

@@ -266,14 +266,6 @@ class UsersController extends BasicController
 
         $user->fillInfo();
 
-        // get withdraw point
-        $request_money = Withdraw::where('status', config('constants.WITHDRAW_WAIT'))->where('user_no', $user->no)->sum('money');
-        $user->withdraw_money = $request_money;
-
-        // get unread cnt
-        $notification_controller = new NotificationsController();
-        $user->unread_notification_cnt = $notification_controller->getUserUnreadCnt($user->no);
-
         // log for login history
         DB::table('t_login_history')->insert(
             [
@@ -284,7 +276,6 @@ class UsersController extends BasicController
 
         return response()->json($user);
     }
-
 
     public function duplicateUser(HttpRequest $request)
     {
