@@ -32,5 +32,6 @@ return [
         'chatLocalServerIp' => '192.168.0.121',
         'chatServerIp' => '175.126.38.49',
         'chatServerPort' => '5222',
+        'defaultSender' =>'070-7633-0105',
         'chatAppPrefix' => 'voicetalk',
 ];

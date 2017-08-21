@@ -50,7 +50,7 @@ class AnsimController extends BasicController
         $sex = $request->input('sex');
         $ident_num = $request->input('identi_num');
 
-        if ($user_no == null || $name == null || $birth == null || $address == null || $sex == null || $ident_num == null) {
+        if ($user_no == null || $name == null || $address == null || $sex == null || $ident_num == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }

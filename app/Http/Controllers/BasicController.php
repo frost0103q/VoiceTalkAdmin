@@ -251,12 +251,15 @@ class BasicController extends Controller
         return $real_number;
     }
 
-    public function  sendSMS($phone_number, $message, $save = true)
+    public function  sendSMS($sender, $phone_number, $message, $save = true)
     {
         $testmode = config('constants.testmode');
         $real_number = $this->getRealPhoneNumber($phone_number);
 
-        $sender = "";
+        if($sender == null || empty($sender) == true) {
+            $sender = Config::get('config.defaultSender');
+        }
+
         if (true) {
             if ($testmode == config('constants.TEST_MODE_LOCAL')) {
                 SMS::send($message, null, function ($sms) use ($real_number) {
@@ -266,8 +269,7 @@ class BasicController extends Controller
                 );
                 $sender = '+861569958163';
             } else {
-                $this->sendSMSByMunjaNara($phone_number, $message);
-                $sender = '+8207076330105';
+                $this->sendSMSByMunjaNara($sender, $phone_number, $message);
             }
         } else {
             Nexmo::message()->send([
@@ -287,15 +289,11 @@ class BasicController extends Controller
         }
     }
 
-    public function sendSMSByMunjaNara($hpReceiver, $hpMesg)
+    public function sendSMSByMunjaNara($sender, $hpReceiver, $hpMesg)
     {
         $userid = "wooju0716";          // 문자나라 아이디 wooju0716
         $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
-        $hpSender = "070-7633-0105";     // 보내는분 핸드폰번호 02-1004-1004
-        // $hpSender = "02-2009-3773";
-        //	$hpReceiver = "";       		// 받는분의 핸드폰번호
-        //	$adminPhone = "";       		// 비상시 메시지를 받으실 관리자 핸드폰번호
-        //	$hpMesg = "";           		// 메시지
+        $hpSender = $sender;            // 보내는분 핸드폰번호 02-1004-1004
 
         /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
         $hpMesg = iconv("UTF-8", "EUC-KR", "$hpMesg");

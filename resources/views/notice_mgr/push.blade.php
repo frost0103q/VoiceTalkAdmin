@@ -81,7 +81,7 @@
                             <textarea class="form-control" id="push_content" name="push_content" rows="15" style="background: white"></textarea>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" hidden>
                         <div class="col-md-offset-2 col-md-2">
                             <a class="btn blue start" id="btn_push_img_upload">
                                 <i class="fa fa-upload"></i>
@@ -184,10 +184,12 @@
                     // set the initial value
                     "pageLength": 5,
                     "pagingType": "bootstrap_full_number",
-                    "columnDefs": [{  // set default column settings
+                    "columnDefs": [
+                        {'targets': [5], 'visible': false},
+                        {  // set default column settings
                         'orderable': false,
                         'targets': [0,2,3,4,5,6]
-                    },
+                        },
                         {  // set default column settings
                             'orderable': true,
                             'targets': [1]

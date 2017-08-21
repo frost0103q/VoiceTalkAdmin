@@ -65,6 +65,8 @@ class GifticonController extends BasicController
 
     public function getGiftListByCategory(HttpRequest $request) {
         $category_no = $request->input('category_no');
+        $limit = $request->input('rows');
+        $page = $request->input('page');
 
         if ($category_no == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -74,7 +76,13 @@ class GifticonController extends BasicController
         $cid = Config::get('config.giftN')['cid'];
         $ckey = Config::get('config.giftN')['ckey'];
 
-        $arr_product = GifticonProduct::where('category_no', $category_no)->get();
+         $query = GifticonProduct::where('category_no', $category_no);
+
+         if($page != null && $limit != null) {
+             $query = $query->offset($limit * ($page - 1))->limit($limit);
+         }
+
+        $arr_product = $query ->get();
 
         for($i = 0; $i  < count($arr_product); $i++) {
             $product = $arr_product[$i];
@@ -162,6 +170,9 @@ class GifticonController extends BasicController
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
+
+        $phone = substr ($user->phone_number, 3); // remove +82
+
         //
         // 기프트엔 쿠폰 발행.
         //
@@ -172,7 +183,7 @@ class GifticonController extends BasicController
         $cid = Config::get('config.giftN')['cid'];
         $ckey = Config::get('config.giftN')['ckey'];
         $w_enc = urlencode(md5($ckey . $cid . $goods_id . $w_co_tid));
-        $w_url = "https://wapi.gift-n.net/SendEPin?cid=" . $cid . "&enc=" . $w_enc . "&goods_id=" . $goods_id . "&count=1&title=" . $w_title . "&content=" . $w_content . "&mdn=" . $user->phone_number . "&receive_tel=" . $user->phone_number . "&co_tid=" . $w_co_tid . "&reserved=0";
+        $w_url = "https://wapi.gift-n.net/SendEPin?cid=" . $cid . "&enc=" . $w_enc . "&goods_id=" . $goods_id . "&count=1&title=" . $w_title . "&content=" . $w_content . "&mdn=" . $phone . "&receive_tel=" . $phone . "&co_tid=" . $w_co_tid . "&reserved=0";
         $w_opt_arr = array(
             CURLOPT_URL => $w_url,
             CURLOPT_POST => false,

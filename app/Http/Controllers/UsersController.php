@@ -331,7 +331,7 @@ class UsersController extends BasicController
         $sms_message = sprintf(config("constants.SMS_TEXT"), $cert_code);
         $phone_number = str_replace("-", "", $phone_number);
 
-        $this->sendSMS($phone_number, $sms_message);
+        $this->sendSMS("", $phone_number, $sms_message);
 
         $authcode = new AuthCode();
         $authcode->user_no = $no;
