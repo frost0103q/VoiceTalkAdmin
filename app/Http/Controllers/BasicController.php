@@ -286,8 +286,8 @@ class BasicController extends Controller
 
     public function sendSMSByMunjaNara($sender, $hpReceiver, $hpMesg)
     {
-        $userid = "wooju0716";          // 문자나라 아이디 wooju0716
-        $passwd = "tmdwn0927";          // 문자나라 비밀번호 tmdwn0927
+        $userid = "apptom1313";          // 문자나라 아이디 wooju0716
+        $passwd = "**kaka1919";          // 문자나라 비밀번호 tmdwn0927
         $hpSender = $sender;            // 보내는분 핸드폰번호 02-1004-1004
 
         /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
@@ -322,7 +322,8 @@ class BasicController extends Controller
             $file_extension = pathinfo($_FILES['uploadfile']['name'], PATHINFO_EXTENSION);
 
             $uploaddir = dirname(__DIR__) . "/../../public/uploads/";
-            $file = $uploaddir . "/" . $filename;
+            $filename = time(). $filename;
+            $file = $uploaddir . "/" .$filename;
 
             if (move_uploaded_file($_FILES['uploadfile']['tmp_name'], $file)) {
                 if (file_exists($file)) {
@@ -332,6 +333,7 @@ class BasicController extends Controller
                 return config('constants.FAIL');
             }
         }
+
         return config('constants.SUCCESS');
     }
 

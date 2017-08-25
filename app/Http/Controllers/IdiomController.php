@@ -73,16 +73,14 @@ class IdiomController extends BasicController
         return $include;
     }
 
-    public function getIdimList(HttpRequest $request) {
+    public function getIdiomList() {
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if ($interdict_idiom == null) {
             return false;
         }
 
         $arr_idiom = explode(",", $interdict_idiom->content);
-        $response = config('constants.ERROR_NO');
-        $response['arr_idiom'] = $arr_idiom;
-        return response()->json($response);
+        return $arr_idiom;
     }
 
     public function save_interdict_idiom()

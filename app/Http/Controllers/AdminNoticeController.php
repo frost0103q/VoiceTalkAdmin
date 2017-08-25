@@ -65,6 +65,10 @@ class AdminNoticeController extends BasicController
         $response = [];
         $response['mobile_page'] = MobilePage::all("type", "url");
         $response['talk_notice_list'] = TalkNotice::all("notice_type", "link_url", "content");
+
+        $controller = new IdiomController();
+        $response['idiom_list'] = $controller->getIdiomList();
+
         return response()->json($response);
     }
 
