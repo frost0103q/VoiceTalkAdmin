@@ -45,7 +45,7 @@ return [
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'voicetalk'),
             'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', 'root'),
+            'password' => env('DB_PASSWORD', 'votalk!@12fca'),
             'charset' => 'utf8mb4',//'utf8',
             'collation' => 'utf8mb4_general_ci',//'utf8_general_ci',
             'prefix' => '',

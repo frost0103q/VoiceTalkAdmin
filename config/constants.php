@@ -153,7 +153,7 @@ return [
 		'IOS'	=> 1,
 
 		'DB_USER' => 'root',
-		'DB_PW'	=> 'root',
+		'DB_PW'	=> 'votalk!@12fca',
 		'DB_NAME' => 'voicetalk',
 		'DB_HOST'	=> 'localhost',
 

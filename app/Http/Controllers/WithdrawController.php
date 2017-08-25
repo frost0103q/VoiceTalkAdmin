@@ -395,8 +395,7 @@ class WithdrawController extends BasicController
             array('db' => 'money', 'dt' => 4),
             array('db' => 'wait_money', 'dt' => 5),
             array('db' => 'account_name', 'dt' => 6),
-            array('db' => 'account_birth', 'dt' => 7),
-            array('db' => 'status', 'dt' => 8,
+            array('db' => 'status', 'dt' => 7,
                 'formatter' => function ($d, $row) {
                     if ($d == config('constants.WITHDRAW_WAIT'))
                         return trans('lang.wait');
@@ -406,16 +405,17 @@ class WithdrawController extends BasicController
                         return trans('lang.error');
                 }
             ),
-            array('db' => 'is_verified', 'dt' => 9,
+            array('db' => 'user_no', 'dt' => 8,
                 'formatter' => function ($d, $row) {
-                    if ($d == config('constants.IS_VERIFIED'))
+                    $results = DB::table('t_ansim')->where('user_no', $d)->first();
+                    if ($results != null && $results->status == config('constants.VERIFIED'))
                         return trans('lang.is_verified');
-                    if ($d == config('constants.NOT_VERIFIED'))
+                    else
                         return trans('lang.not_verified');
                 }
             ),
-            array('db' => 'created_at', 'dt' => 10),
-            array('db' => 'no', 'dt' => 11,
+            array('db' => 'created_at', 'dt' => 9),
+            array('db' => 'no', 'dt' => 10,
                 'formatter' => function ($d, $row) {
                     global $sum_money;
                     return $sum_money;

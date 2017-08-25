@@ -253,32 +253,27 @@ class BasicController extends Controller
 
     public function  sendSMS($sender, $phone_number, $message, $save = true)
     {
-        $testmode = config('constants.testmode');
         $real_number = $this->getRealPhoneNumber($phone_number);
 
         if($sender == null || empty($sender) == true) {
-            $sender = Config::get('config.defaultSender');
+             $sender = Config::get('config.defaultSender');
         }
 
-        if (true) {
-            if ($testmode == config('constants.TEST_MODE_LOCAL')) {
-                SMS::send($message, null, function ($sms) use ($real_number) {
-                    $sms->from('+8615699581631');
-                    $sms->to($real_number);
-                }
-                );
-                $sender = '+861569958163';
-            } else {
-                $this->sendSMSByMunjaNara($sender, $phone_number, $message);
+        /*************************************************************************
+            SMS::send($message, null, function ($sms) use ($real_number) {
+                $sms->from('+8615699581631');
+                $sms->to($real_number);
             }
-        } else {
+         *************************************************************************/
+        /*************************************************************************
             Nexmo::message()->send([
                 'to' => $phone_number,
                 'from' => '01028684884',
                 'text' => 'Using the facade to send a message.'
             ]);
-            $sender = '+8201028684884';
-        }
+         *************************************************************************/
+
+        $this->sendSMSByMunjaNara($sender, $phone_number, $message);
 
         if ($save == true) {
             $sms = new \App\Models\SMS();

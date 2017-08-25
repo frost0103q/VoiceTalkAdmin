@@ -48,7 +48,7 @@
             </div>
             <div class="modal-body">
                 <form id="sms_edit_form" class="form-horizontal" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
+                    <div class="form-group" hidden>
                         <label class="control-label col-md-2">{{trans('lang.sender_number')}}</label>
                         <div class="col-md-4">
                             <input type="text" class="form-control" placeholder="" id="sms_sender_number" name="sms_sender_number">

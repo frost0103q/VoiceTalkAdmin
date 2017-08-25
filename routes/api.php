@@ -107,3 +107,5 @@ Route::post('/request_gift_icon', 'GifticonController@requestGiftIcon');
 //ansim
 Route::post('/requestAuthRealUser', 'AnsimController@requestAuthRealUser');
 Route::post('/verifyRealUser', 'AnsimController@verifyRealUser');
+
+Route::get('/getIdimList', 'IdiomController@getIdimList');

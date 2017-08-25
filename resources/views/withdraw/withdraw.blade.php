@@ -52,7 +52,6 @@
                 <th>{{trans('lang.req_amount')}}</th>
                 <th>{{trans('lang.wait_amount')}}</th>
                 <th>{{trans('lang.cash_owner')}}</th>
-                <th>{{trans('lang.birthday')}}</th>
                 <th>{{trans('lang.withdraw_status')}}</th>
                 <th>{{trans('lang.verify_status')}}</th>
                 <th>{{trans('lang.req_date')}}</th>
@@ -124,19 +123,19 @@
                     },
                     "createdRow": function (row, data, dataIndex) {
                         $('td:eq(1)', row).html(dataIndex + start_index + 1);
-                        $("#total_withdraw_amount").text(data[11]);
+                        $("#total_withdraw_amount").text(data[10]);
                     },
                     "columnDefs": [{
                         'orderable': false,
-                        'targets': [0, 1, 2,3,4,5,6,7,8,9]
+                        'targets': [0, 1, 2,3,4,5,6,7,8]
                     },
                         {
                             'orderable': true,
-                            'targets': [10]
+                            'targets': [9]
                         }],
 
                     "order": [
-                        [10, "desc"]
+                        [9, "desc"]
                     ]
                 });
             }

@@ -12,6 +12,7 @@ use App\Models\User;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
 use Request;
+use Config;
 use Session;
 
 class NoticeController extends BasicController
@@ -545,7 +546,7 @@ class NoticeController extends BasicController
         if (!isset($flag))
             return config('constants.FAIL');
 
-        $data["sender_number"] = $request->input('sms_sender_number');
+        $data["sender_number"] = Config::get('config.defaultSender');
         $data["receive_number"] = $request->input('sms_receive_number');
         $data["content"] = $request->input('sms_content');
 
