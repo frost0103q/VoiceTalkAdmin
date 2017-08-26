@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Routing\Controller as Controller;
+use Illuminate\Support\Facades\Log;
 use LaravelFCM\Message\OptionsBuilder;
 use Nexmo;
 use Redirect;
@@ -272,7 +273,7 @@ class BasicController extends Controller
                 'text' => 'Using the facade to send a message.'
             ]);
          *************************************************************************/
-
+        Log::debug( "sendSMS ==>"."$sender : $phone_number");
         $this->sendSMSByMunjaNara($sender, $phone_number, $message);
 
         if ($save == true) {
@@ -287,7 +288,7 @@ class BasicController extends Controller
     public function sendSMSByMunjaNara($sender, $hpReceiver, $hpMesg)
     {
         $userid = "apptom1313";          // 문자나라 아이디 wooju0716
-        $passwd = "**kaka1919";          // 문자나라 비밀번호 tmdwn0927
+        $passwd = "kakavotalk";          // 문자나라 비밀번호 tmdwn0927
         $hpSender = $sender;            // 보내는분 핸드폰번호 02-1004-1004
 
         /*  UTF-8 글자셋 이용으로 한글이 깨지는 경우에만 주석을 푸세요. */
@@ -297,9 +298,12 @@ class BasicController extends Controller
         $endAlert = 0;  // 전송완료알림창 ( 1:띄움, 0:안띄움 )
 
         $url = "/MSG/send/web_admin_send.htm?userid=$userid&passwd=$passwd&sender=$hpSender&receiver=$hpReceiver&encode=1&end_alert=$endAlert&message=$hpMesg";
-
+        Log::debug( "send SMS Parameter ==>"."$url");
         $fp = fsockopen("211.233.20.184", 80, $errno, $errstr, 10);
-        if (!$fp) echo "$errno : $errstr";
+        if (!$fp) {
+            echo "$errno : $errstr";
+            Log::debug( "sendSMS ==>"."$errno : $errstr");
+        }
 
         fwrite($fp, "GET $url HTTP/1.0\r\nHost: 211.233.20.184\r\n\r\n");
         $flag = 0;
@@ -311,6 +315,7 @@ class BasicController extends Controller
             if ($row == "\r\n") $flag = 1;
         }
         fclose($fp);
+        Log::debug( "sendSMS  Result ==>"."$out");
         return $out;
     }
 

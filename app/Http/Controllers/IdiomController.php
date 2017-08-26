@@ -76,10 +76,11 @@ class IdiomController extends BasicController
     public function getIdiomList() {
         $interdict_idiom = DB::table('t_interdict_idiom')->first();
         if ($interdict_idiom == null) {
-            return false;
+            return array();
         }
 
         $arr_idiom = explode(",", $interdict_idiom->content);
+
         return $arr_idiom;
     }
 
