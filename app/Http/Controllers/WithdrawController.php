@@ -380,11 +380,6 @@ class WithdrawController extends BasicController
             array('db' => 'no', 'dt' => 1),
             array('db' => 'user_no', 'dt' => 2,
                 'formatter' => function ($d, $row) {
-                    return sprintf("%'.05d", $d);
-                }
-            ),
-            array('db' => 'user_no', 'dt' => 3,
-                'formatter' => function ($d, $row) {
                     $results = User::where('no', $d)->first();
                     if ($results != null)
                         return $results['nickname'];
@@ -392,9 +387,10 @@ class WithdrawController extends BasicController
                         return '';
                 }
             ),
-            array('db' => 'money', 'dt' => 4),
-            array('db' => 'wait_money', 'dt' => 5),
-            array('db' => 'account_name', 'dt' => 6),
+            array('db' => 'money', 'dt' => 3),
+            array('db' => 'account_name', 'dt' => 4),
+            array('db' => 'account_number', 'dt' => 5),
+            array('db' => 'bank_name', 'dt' => 6),
             array('db' => 'status', 'dt' => 7,
                 'formatter' => function ($d, $row) {
                     if ($d == config('constants.WITHDRAW_WAIT'))

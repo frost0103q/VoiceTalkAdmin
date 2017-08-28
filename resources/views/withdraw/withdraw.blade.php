@@ -47,11 +47,11 @@
             <tr>
                 <th></th>
                 <th>{{trans('lang.number')}}</th>
-                <th>{{trans('lang.user_no')}}</th>
                 <th>Nickname</th>
                 <th>{{trans('lang.req_amount')}}</th>
-                <th>{{trans('lang.wait_amount')}}</th>
                 <th>{{trans('lang.cash_owner')}}</th>
+                <th>{{trans('lang.account_number')}}</th>
+                <th>{{trans('lang.bank_name')}}</th>
                 <th>{{trans('lang.withdraw_status')}}</th>
                 <th>{{trans('lang.verify_status')}}</th>
                 <th>{{trans('lang.req_date')}}</th>

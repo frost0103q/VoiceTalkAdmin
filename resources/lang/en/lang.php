@@ -342,6 +342,8 @@ return [
     'not_verified'=>'미인증',
     'nomal'=>'정상',
     'send_user'=>'보낸회원',
+    'bank_name'=>'은행명',
+    'account_number'=>'계좌번호',
     'send_point'=>'보낸 Point',
     'send_date'=>'보낸 날짜',
     'received_user'=>'받은회원',
