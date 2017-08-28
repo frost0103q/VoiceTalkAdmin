@@ -51,20 +51,18 @@ class BasicController extends Controller
             return false;
         }
 
+        if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == config('constants.DISABLE')) {
+            return false;
+        }
+
+        if ($type == config('constants.NOTI_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
+            return false;
+        }
+
         $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
 
-        if ($user_relation != null) {
-            if ($user_relation->is_alarm == config('constants.DISABLE')) {
-                return false;
-            }
-
-            if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == config('constants.DISABLE')) {
-                return false;
-            }
-
-            if ($type == config('constants.NOTI_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
-                return false;
-            }
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            return false;
         }
 
         $push_mode = config('constants.pushmode');
