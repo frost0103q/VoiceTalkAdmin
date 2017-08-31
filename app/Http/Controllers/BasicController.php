@@ -83,12 +83,7 @@ class BasicController extends Controller
             $this->sendXmppMessage($to_user_no, json_encode($message));
         }
 
-        $remove_point = true;
-        if ($type == config('constants.NOTI_TYPE_SEND_PRESENT')) {
-            $remove_point = false;
-        }
-
-        $this->addNotification($type, $from_user_no, $to_user_no, $message->title, $message->content, $data, $remove_point);
+        $this->addNotification($type, $from_user_no, $to_user_no, $message->title, $message->content, $data);
         return true;
     }
 
@@ -192,7 +187,7 @@ class BasicController extends Controller
         return true;
     }
 
-    public function addNotification($type, $from_user, $to_user, $title, $content, $data, $need_point = true)
+    public function addNotification($type, $from_user, $to_user, $title, $content, $data)
     {
         if ($from_user == null || $to_user == null || $content == null) {
             $response = config('constants.ERROR_NO_PARMA');
@@ -227,12 +222,14 @@ class BasicController extends Controller
 
         $notification->save();
 
-        if ($need_point == true) {
-            $ret = $from_user_obj->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'));
+        // 건당 차감
+        if ($type == config('constants.NOTI_TYPE_SEND_ENVELOP')) {
+            $ret = $from_user_obj->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
             if ($ret == false) {
                 $response = config('constants.ERROR_NOT_ENOUGH_POINT');
             }
         }
+
 
         $response['no'] = $notification->no;
         return $response;

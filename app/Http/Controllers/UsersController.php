@@ -88,58 +88,6 @@ class UsersController extends BasicController
         return $results;
     }
 
-    private function sendPoint($from_user, $to_user, $point, $type = 0)
-    {
-        $no = $from_user;
-        $friend_no = $to_user;
-
-        if ($no == null || $friend_no == null || $point == null) {
-            return config('constants.ERROR_NO_PARMA');
-        }
-
-        $response = config('constants.ERROR_NO');
-        $results = User::where('no', $no)->get();
-
-        if ($results == null || count($results) == 0) {
-            return config('constants.ERROR_NO_INFORMATION');
-        }
-
-        $from = $results[0];
-        if ($from->point < $point) {
-            return config('constants.ERROR_NOT_ENOUGH_POINT');
-        }
-
-        $results = User::where('no', $friend_no)->get();
-        if ($results == null || count($results) == 0) {
-            return config('constants.ERROR_NO_INFORMATION');
-        }
-        $to = $results[0];
-
-
-        $ret = true;
-        if ($type == config('constants.POINT_HISTORY_TYPE_SEND_PRESENT')) {
-            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), (-1) * $point);
-            if ($ret == true) {
-                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
-            }
-        } else if ($type == config('constants.POINT_HISTORY_TYPE_CHAT')) {
-            $ret = $from->addPoint($type, (-1) * $point);
-            if ($ret == true) {
-                $ret = $to->addPoint($type, $point);
-            }
-        } else {
-            $ret = $from->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), (-1) * $point);
-            if ($ret == true) {
-                $ret = $to->addPoint(config('constants.POINT_HISTORY_TYPE_NORMAL'), $point);
-            }
-        }
-
-        if ($ret == false) {
-            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
-        }
-        return $response;
-    }
-
     /******************************************************************
      *
      * Public Functions
@@ -470,7 +418,7 @@ class UsersController extends BasicController
             }
 
             $user->save();
-            $user->addPoint(config('constants.POINT_HISTORY_TYPE_SIGN_UP'));
+            $user->addPoint(config('constants.POINT_HISTORY_TYPE_SIGN_UP'), 1);
             $response = $this->getUserInfo($user->no);
         } else if ($oper == 'edit') {
             if ($no == null) {
@@ -587,20 +535,29 @@ class UsersController extends BasicController
         $friend_no = $request->input('to_user_no');
         $point = $request->input('point');
 
-        $response = $this->sendPoint($no, $friend_no, $point, config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'));
-
-        if ($response['error'] != 0) {
-            return response()->json($response);
-        }
-
+        $response = config('constants.ERROR_NO');
         $results = User::where('no', $no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
         }
         $from_user = $results[0];
 
+        $results = User::where('no', $friend_no)->get();
+        if ($results == null || count($results) == 0) {
+            return config('constants.ERROR_NO_INFORMATION');
+        }
+        $to_user = $results[0];
+
+        $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), $point);
+        if($ret == false) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+            return response()->json($response);
+        }
+
+        $ret = $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+
         $data = [];
-        $data['point'] = $point;
+        $data['point'] = $ret;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_SEND_PRESENT'), $data);
         if ($ret == false) {
             $response = config('constants.ERROR_ALARM');
@@ -763,13 +720,13 @@ class UsersController extends BasicController
 
             $diff = abs(strtotime($curdatetime) - strtotime($dbdatetime));
             if ($diff / 60 > (24 * 60)) {
-                $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'));
+                $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'), 1);
                 $response['no'] = config('constants.POINT_ADD_RULE')[config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')];
                 $user->check_roll_time = $curdatetime;
                 $user->save();
             }
         } else {
-            $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'));
+            $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'), 1);
             $response['no'] = config('constants.POINT_ADD_RULE')[config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')];
             $user->check_roll_time = $curdatetime;
             $user->save();
@@ -804,9 +761,18 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $to_user = $results[0];
-        $point = $time_in_second / 60 * config('constants.POINT_PER_MIN');
-        $response = $this->sendPoint($from_user_no, $to_user_no, $point, config('constants.POINT_HISTORY_TYPE_CHAT'));
-        $response['no'] = round($point);
+        $min = $time_in_second / 60;
+
+        $type =  config('constants.POINT_HISTORY_TYPE_CHAT');
+
+        $ret = $from_user->addPoint($type, (-1)*$min);
+        if ($ret == false) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
+        $ret = $to_user->addPoint($type,  $min);
+        $response['no'] = round($ret);
         return response()->json($response);
     }
 

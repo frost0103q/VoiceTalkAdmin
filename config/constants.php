@@ -37,7 +37,7 @@ return [
 
         'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
 
-        'POINT_ADD_RULE'=>[30, -20, 0, 0, -200, 300, 0, 0, 0, 0, 0],
+        'POINT_ADD_RULE'=>[30, -20, -1, 1, 200, 300, 0, 1, 1, 1, 1],
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,

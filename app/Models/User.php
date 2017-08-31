@@ -15,21 +15,10 @@ class User extends Model
         $this->img_file = ServerFile::where('no', $this->img_no)->first();
     }
 
-    public function addPoint($type, $min_point = 0)
+    public function addPoint($type, $multiple = 0)
     {
         $pointRule = config('constants.POINT_ADD_RULE');
-        $real_point = $pointRule[$type];
-
-        if ($type == config('constants.POINT_HISTORY_TYPE_CHAT')) {
-            $real_point = $min_point;
-        } else if ($type == config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE') || $type == config('constants.POINT_HISTORY_TYPE_SIGN_UP')
-            || $type == config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')
-        ) {
-            $real_point = $real_point;
-        } else {
-            $real_point = $min_point;
-        }
-
+        $real_point = $pointRule[$type] * $multiple;
         $temp_point = $this->point + $real_point;
 
         if ($temp_point < 0) {
@@ -47,7 +36,7 @@ class User extends Model
 
         $point_history->save();
 
-        return true;
+        return $real_point;
     }
 
     public function devices()
