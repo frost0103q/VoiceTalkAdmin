@@ -17,6 +17,7 @@ return [
         'ERROR_CALL_BLOCK_USER' => ["error" => 14,'message' => '전화신청 차단한 유저입니다.'],
         'ERROR_ADD_FRIEND_BLOCK_USER' => ["error" => 15,'message' => '친구추가 차단한 유저입니다.'],
         'ERROR_NOW_CONSULTING_USER' => ["error" => 16,'message' => '상담중인 유저입니다.'],
+        'ERROR_BLOCKED_USER_BY_ME' => ["error" => 17,'message' => '알림차단된 유저입니다.'],
 
         'TEST_MODE_LOCAL' => 0,
         'TEST_MODE_GLOBAL' => 1,

@@ -149,13 +149,13 @@ class UserRelationController extends BasicController
 
         if ($results == null) {
             $friend = new UserRelation();
+            $friend->is_friend = config('constants.FALSE');
         } else {
             $friend = $results;
         }
 
         $friend->user_no = $user_no;
         $friend->relation_user_no = $relation_user_no;
-        $friend->is_friend = config('constants.FALSE');
 
         if ($flag == config('constants.USER_RELATION_FLAG_BLOCK_FRIEND')) {
             $friend->is_block_friend = config('constants.TRUE');

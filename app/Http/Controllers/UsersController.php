@@ -1058,7 +1058,7 @@ class UsersController extends BasicController
             }
 
             // 상담중일때
-            if($to_user->status != config('constants.USER_STATUS_ENABLE')) {
+            if($to_user->status == config('constants.USER_STATUS_CONSULTING')) {
                 $response['no'] = $to_user->status;
                 $response = config('constants.ERROR_NOW_CONSULTING_USER');
                 return response()->json($response);

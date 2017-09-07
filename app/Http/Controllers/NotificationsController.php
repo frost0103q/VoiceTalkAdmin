@@ -85,16 +85,7 @@ class NotificationsController extends BasicController
     public function getNotificationList($search_type, $read_type, $user_no, $limit, $page)
     {
 
-        $sql = "select * , (
-                                SELECT
-                                    count(*)
-                                FROM
-                                    t_notification d
-                                WHERE
-                                    d.is_read = 0
-                                AND c.from_user_no = d.from_user_no
-                                AND c.to_user_no = d.to_user_no
-                              ) AS unread_cnt FROM ";
+        $sql = "select * , (SELECT count(*) FROM t_notification d WHERE d.is_read = 0 AND c.from_user_no = d.from_user_no AND c.to_user_no = d.to_user_no ) AS unread_cnt FROM ";
 
         if ($user_no != null) {
             $sql = $sql . "(
@@ -111,7 +102,7 @@ class NotificationsController extends BasicController
                                     from_user_no = " . $user_no . "
                                 OR to_user_no = " . $user_no . "
                                 GROUP BY
-                                    from_user_no
+                                    from_user_no, to_user_no
                             ) b ON a.created_militime = b.latest
                         ) c";
         } else {
@@ -126,7 +117,7 @@ class NotificationsController extends BasicController
                                 FROM
                                     t_notification
                                 GROUP BY
-                                    from_user_no
+                                    from_user_no, to_user_no
                                 ) b ON a.created_militime = b.latest
                             ) c";
         }

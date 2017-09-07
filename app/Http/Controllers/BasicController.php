@@ -65,6 +65,12 @@ class BasicController extends Controller
             return config('constants.ERROR_BLOCKED_USER');
         }
 
+        UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
+
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            return config('constants.ERROR_BLOCKED_USER_BY_ME');
+        }
+
         $push_mode = config('constants.pushmode');
 
         if ($push_mode == config('constants.PUSH_MODE_FCM')) {
