@@ -1,21 +1,22 @@
 <?php
 return [
-		'ERROR_NO'=> ["error" => 0, 'message' => 'Success'],
-		'ERROR_NO_PARMA' => ["error" => 1,'message' => 'No Parameters'],
-		'ERROR_DUPLICATE_ACCOUNT' => ["error" => 2,'message' => 'Duplicate Account'],
-		'ERROR_NO_INFORMATION' => ["error" => 3,'message' => 'No Match Information'],
-		'ERROR_NO_MATCH_PASSWORD' => ["error" => 4,'message' => 'No Match Password'],
-        'ERROR_UPLOAD_FAILED' => ["error" => 5,'message' => 'Upload Failed'],
-        'ERROR_ALREADY_ADDED' => ["error" => 6,'message' => 'Already Added'],
-        'ERROR_NOT_ENOUGH_POINT' => ["error" => 7,'message' => 'Not Enough Point'],
-        'ERROR_NOT_ENABLE_SELF_REVIEW' => ["error" => 8,'message' => 'Cannot review self'],
-        'ERROR_BLOCKED_USER' => ["error" => 9,'message' => 'You are a blocked user.'],
-        'ERROR_REQUESTED_EXIT_USER' => ["error" => 10,'message' => 'You are a requested exit user.'],
-        'ERROR_NOT_VERIFIED_USER' => ["error" => 11,'message' => 'Not verified user.'],
-        'ERROR_FAILED_PURCHASE' => ["error" => 12,'message' => 'Failed Purchase Product.'],
-        'ERROR_ALARM' => ["error" => 13,'message' => 'Failed Send Alarm.'],
-        'ERROR_FORBIDDEN_WORD' => ["error" => 14,'message' => 'Include Forbidden word.'],
-        'ERROR_STOPEED_USER' => ["error" => 15,'message' => 'You are are stoped user.'],
+		'ERROR_NO'=> ["error" => 0, 'message' => '성공되었습니다.'],
+		'ERROR_NO_PARMA' => ["error" => 1,'message' => '유효한 파라미터가 아닙니다.'],
+		'ERROR_DUPLICATE_ACCOUNT' => ["error" => 2,'message' => '중복된 계정입니다.'],
+		'ERROR_NO_INFORMATION' => ["error" => 3,'message' => '정보가 존재하지 않습니다.'],
+		'ERROR_NO_MATCH_PASSWORD' => ["error" => 4,'message' => '비밀번호가 맞지 않습니다.'],
+        'ERROR_UPLOAD_FAILED' => ["error" => 5,'message' => '파일 업로드 실패되었습니다.'],
+        'ERROR_NOT_ENOUGH_POINT' => ["error" => 6,'message' => '포인트가 부족합니다.'],
+        'ERROR_BLOCKED_USER' => ["error" => 7,'message' => '알림차단된 유저입니다.'],
+        'ERROR_REQUESTED_EXIT_USER' => ["error" => 8,'message' => '탈퇴신청한 유저입니다.'],
+        'ERROR_NOT_VERIFIED_USER' => ["error" => 9,'message' => '인증되지 않은 유저입니다.'],
+        'ERROR_FAILED_PURCHASE' => ["error" => 10,'message' => '구입 실패되었습니다.'],
+        'ERROR_FORBIDDEN_WORD' => ["error" => 11,'message' => '금지어가 포함되어 있습니다.'],
+        'ERROR_STOPEED_USER' => ["error" => 12,'message' => '강퇴처리된 유저입니다.'],
+        'ERROR_BLOCK_USER' => ["error" => 13,'message' => '알림차단한 유저입니다.'],
+        'ERROR_CALL_BLOCK_USER' => ["error" => 14,'message' => '전화신청 차단한 유저입니다.'],
+        'ERROR_ADD_FRIEND_BLOCK_USER' => ["error" => 15,'message' => '친구추가 차단한 유저입니다.'],
+        'ERROR_NOW_CONSULTING_USER' => ["error" => 16,'message' => '상담중인 유저입니다.'],
 
         'TEST_MODE_LOCAL' => 0,
         'TEST_MODE_GLOBAL' => 1,
@@ -37,18 +38,16 @@ return [
 
         'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
 
-        'POINT_ADD_RULE'=>[30, -20, -1, 1, 200, 300, 0, 1, 1, 1, 1],
+        'POINT_ADD_RULE'=>[30, -20, 1, 200, 300, 1, 1, 1, 1],   // 9가지 종류만 가능
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
-        'POINT_HISTORY_TYPE_SEND_PRESENT'=> 2,
-        'POINT_HISTORY_TYPE_RECEIVE_PRESENT'=> 3,
-        'POINT_HISTORY_TYPE_CHAT'=> 4,
-        'POINT_HISTORY_TYPE_SIGN_UP'=> 5,
-        'POINT_HISTORY_TYPE_NORMAL'=> 6,
-        'POINT_HISTORY_TYPE_INAPP'=> 7,
-        'POINT_HISTORY_TYPE_FREE_CHARGE'=> 8,
-        'POINT_HISTORY_TYPE_GIFTICON'=> 9,
-        'POINT_HISTORY_TYPE_WITDDRAW'=> 10,
+        'POINT_HISTORY_TYPE_PRESENT'=> 2,            // -이면 전송, +이면 받기
+        'POINT_HISTORY_TYPE_CHAT'=> 3,               // -이면 대화차감, +이면 대화적립
+        'POINT_HISTORY_TYPE_SIGN_UP'=> 4,
+        'POINT_HISTORY_TYPE_INAPP'=> 5,
+        'POINT_HISTORY_TYPE_FREE_CHARGE'=> 6,
+        'POINT_HISTORY_TYPE_GIFTICON'=> 7,
+        'POINT_HISTORY_TYPE_WITDDRAW'=> 8,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
         'FREE_CHARGE_TYPE_NAS'=> 1,
@@ -90,6 +89,7 @@ return [
         'NOTI_TYPE_ADMIN_VOICE_REFUSE'  =>14,
         'NOTI_TYPE_ADMIN_VOICE_AGREE'  =>15,
         'NOTI_TYPE_ADMIN_APP_STOP_REMOVE'  =>16,
+        'NOTI_TYPE_REQUEST_CONSULTING_REFUSE'  =>17,
 
         'NOTI_TITLE_CONTENT' => [
                                     ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
@@ -109,6 +109,7 @@ return [
                                     ["title"=>"관리자","content"=>"등록하신 음성이 승인거절되었습니다."],                     // NOTI_TYPE_ADMIN_VOICE_REFUSE
                                     ["title"=>"관리자","content"=>"등록하신 음성이 승인되었습니다."],                         // NOTI_TYPE_ADMIN_VOICE_AGREE
                                     ["title"=>"관리자","content"=>"앱사용중지해제를 알려드립니다."],                          // NOTI_TYPE_ADMIN_APP_STOP_REMOVE
+                                    ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 거절했습니다."],                   // NOTI_TYPE_REQUEST_CONSULTING_REFUSE
                                 ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
@@ -239,4 +240,9 @@ return [
 		'FREE_CHARGE_ADSYNC'=> 0,
 		'FREE_CHARGE_NAS'=> 1,
 		'FREE_CHARGE_IGAWORKS'=> 2,
+
+        //user status
+        'USER_STATUS_ENABLE'=> 0,
+        'USER_STATUS_AWAY'=> 1,
+        'USER_STATUS_CONSULTING'=> 2,
 ];

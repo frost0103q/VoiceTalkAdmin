@@ -99,7 +99,7 @@ class UserRelationController extends BasicController
 
         $results = UserRelation::where('user_no', $no)->where('relation_user_no', $friend_no)->first();
         if ($results != null && $results->is_friend == config('constants.TRUE')) {
-            $response = config('constants.ERROR_ALREADY_ADDED');
+            $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
             return response()->json($response);
         }
 
@@ -117,11 +117,7 @@ class UserRelationController extends BasicController
 
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_ADD_FRIEND'));
 
-        if ($ret == false) {
-            $response = config('constants.ERROR_ALARM');
-        }
-
-        return response()->json($response);
+        return response()->json($ret);
     }
 
     public function setUserRelation(HttpRequest $request)

@@ -548,21 +548,18 @@ class UsersController extends BasicController
         }
         $to_user = $results[0];
 
-        $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_PRESENT'), $point);
+        $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_PRESENT'), (-1)*$point);
         if($ret == false) {
             $response = config('constants.ERROR_NOT_ENOUGH_POINT');
             return response()->json($response);
         }
 
-        $ret = $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_RECEIVE_PRESENT'), $point);
+        $ret = $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_PRESENT'), $point);
 
         $data = [];
         $data['point'] = $ret;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_SEND_PRESENT'), $data);
-        if ($ret == false) {
-            $response = config('constants.ERROR_ALARM');
-        }
-        return response()->json($response);
+        return response()->json($ret);
     }
 
     public function requestPresent(HttpRequest $request)
@@ -590,13 +587,7 @@ class UsersController extends BasicController
         $data = [];
         $data['point'] = $point;
         $ret = $this->sendAlarmMessage($from_user->no, $friend_no, config('constants.NOTI_TYPE_REQUEST_PRESENT'), $data);
-        if ($ret == false) {
-            $response = config('constants.ERROR_ALARM');
-        } else {
-            $response = config('constants.ERROR_NO');
-        }
-
-        return response()->json($response);
+        return response()->json($ret);
     }
 
     public function declareUser(HttpRequest $request)
@@ -715,17 +706,22 @@ class UsersController extends BasicController
         $user = $results[0];
         $response['no'] = config('constants.INVALID_MODEL_NO');
         $curdatetime = AppServiceProvider::getTimeInDefaultFormat(); //current datetime
-        if ($user->check_roll_time != null) {
-            $dbdatetime = $user->check_roll_time;//datetime from database: "2014-05-18 18:10:18"
 
+        $is_ok = false;
+        if ($user->check_roll_time != null) {
+            $dbdatetime = $user->check_roll_time; //datetime from database: "2014-05-18 18:10:18"
+
+            // 1인안에 1번 check했으면 pass하기.
             $diff = abs(strtotime($curdatetime) - strtotime($dbdatetime));
             if ($diff / 60 > (24 * 60)) {
-                $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'), 1);
-                $response['no'] = config('constants.POINT_ADD_RULE')[config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')];
-                $user->check_roll_time = $curdatetime;
-                $user->save();
+                $is_ok = true;
             }
-        } else {
+        }
+        else {
+            $is_ok = true;
+        }
+
+        if($is_ok == true) {
             $user->addPoint(config('constants.POINT_HISTORY_TYPE_ROLL_CHECK'), 1);
             $response['no'] = config('constants.POINT_ADD_RULE')[config('constants.POINT_HISTORY_TYPE_ROLL_CHECK')];
             $user->check_roll_time = $curdatetime;
@@ -788,7 +784,7 @@ class UsersController extends BasicController
         }
 
         if ($from_user_no == $to_user_no) {
-            $response = config('constants.ERROR_NOT_ENABLE_SELF_REVIEW');
+            $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
 
@@ -1032,6 +1028,13 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
+        if($type != config('constants.NOTI_TYPE_REQUEST_CONSULTING')
+            && $type != config('constants.NOTI_TYPE_REQUEST_ACCEPT_CONSULTING')
+            && $type != config('constants.NOTI_TYPE_REQUEST_CONSULTING_REFUSE')) {
+            $response = config('constants.ERROR_NO_PARMA');
+            return response()->json($response);
+        }
+
         $from_user = User::where('no', $from_user_no)->first();
         if ($from_user == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
@@ -1044,19 +1047,27 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->verified == config('constants.FALSE')) {
-            $response = config('constants.ERROR_NOT_VERIFIED_USER');
-            return response()->json($response);
+
+        // 상담신청할때
+        if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING')) {
+            
+            //상담회원 즉 인증된 회원이 아닐때
+            if($to_user->verified == config('constants.UNVERIFIED')) {
+                $response = config('constants.ERROR_NOT_VERIFIED_USER');
+                return response()->json($response);
+            }
+
+            // 상담중일때
+            if($to_user->status != config('constants.USER_STATUS_ENABLE')) {
+                $response['no'] = $to_user->status;
+                $response = config('constants.ERROR_NOW_CONSULTING_USER');
+                return response()->json($response);
+            }
         }
 
         $ret = $this->sendAlarmMessage($from_user_no, $to_user_no, $type, json_decode($data));
-        if ($ret == false) {
-            $response = config('constants.ERROR_ALARM');
-        } else {
-            $response = config('constants.ERROR_NO');
-        }
 
-        return response()->json($response);
+        return response()->json($ret);
     }
 
     public function ajax_user_table()

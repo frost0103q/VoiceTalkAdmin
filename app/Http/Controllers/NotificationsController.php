@@ -336,11 +336,15 @@ class NotificationsController extends BasicController
         $to_user = $results[0];
 
         $data = [];
-        $data['content'] = $content;
-        $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
 
-        $response = config('constants.ERROR_NO');
-        return response()->json($response);
+        $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+        if ($ret == false) {
+            return config('constants.ERROR_NOT_ENOUGH_POINT');
+        }
+
+        $data['content'] = $content;
+        $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
+        return response()->json($ret);
     }
 
     public function sendGroupEnvelop(HttpRequest $request)

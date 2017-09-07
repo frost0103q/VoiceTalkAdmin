@@ -35,34 +35,34 @@ class BasicController extends Controller
     {
         $from_user = User::where('no', $from_user_no)->first();
         if ($from_user == null) {
-            return false;
+            return config('constants.ERROR_NO_INFORMATION');
         }
 
         $message = Notification::getInstance($type, $from_user, $data);
 
         $results = User::where('no', $to_user_no)->get();
         if ($results == null || count($results) == 0) {
-            return false;
+            return config('constants.ERROR_NO_INFORMATION');
         }
 
         $to_user = $results[0];
 
         if ($to_user->enable_alarm == config('constants.DISABLE')) {
-            return false;
+            return config('constants.ERROR_BLOCK_USER');
         }
 
         if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == config('constants.DISABLE')) {
-            return false;
+            return config('constants.ERROR_CALL_BLOCK_USER');
         }
 
         if ($type == config('constants.NOTI_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
-            return false;
+            return config('constants.ERROR_ADD_FRIEND_BLOCK_USER');
         }
 
         $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
 
         if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
-            return false;
+            return config('constants.ERROR_BLOCKED_USER');
         }
 
         $push_mode = config('constants.pushmode');
@@ -84,7 +84,7 @@ class BasicController extends Controller
         }
 
         $this->addNotification($type, $from_user_no, $to_user_no, $message->title, $message->content, $data);
-        return true;
+        return config('constants.ERROR_NO');
     }
 
     private function sendXmppMessage($toUser, $content)
@@ -198,8 +198,8 @@ class BasicController extends Controller
         $results = User::where('no', $from_user)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
-        }
-        $from_user_obj = $results[0];
+        };
+
         $results = User::where('no', $to_user)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
@@ -221,15 +221,6 @@ class BasicController extends Controller
         }
 
         $notification->save();
-
-        // 건당 차감
-        if ($type == config('constants.NOTI_TYPE_SEND_ENVELOP')) {
-            $ret = $from_user_obj->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
-            if ($ret == false) {
-                $response = config('constants.ERROR_NOT_ENOUGH_POINT');
-            }
-        }
-
 
         $response['no'] = $notification->no;
         return $response;
