@@ -328,11 +328,23 @@ class NotificationsController extends BasicController
 
         $data = [];
 
+        // 알림끄기한 유저에게는 쪽지를 보낼수 없고, 리력도 남지 않도록 처리
+        $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $user_no)->first();
+
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            return config('constants.ERROR_BLOCKED_USER');
+        }
+
+        $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $to_user_no)->first();
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            return config('constants.ERROR_BLOCK_USER');
+        }
+
         $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
         if ($ret == false) {
             return config('constants.ERROR_NOT_ENOUGH_POINT');
         }
-
+        
         $data['content'] = $content;
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
         return response()->json($ret);
@@ -382,7 +394,12 @@ class NotificationsController extends BasicController
 
         for ($i = 0; $i < count($results); $i++) {
             $to_user_no = $results[$i]->no;
-            $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
+            $ret = $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
+
+            $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+            if ($ret == false) {
+                return config('constants.ERROR_NOT_ENOUGH_POINT');
+            }
         }
 
         $results = User::where('no', $from_user->no)->get();

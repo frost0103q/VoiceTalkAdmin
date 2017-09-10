@@ -108,9 +108,9 @@ class WithdrawController extends BasicController
             });
         }
         if ($response != null) {
-            $response = $response->offset($limit * ($page - 1))->limit($limit)->get();
+            $response = $response->orderBy('created_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
         } else {
-            $response = Withdraw::offset($limit * ($page - 1))->limit($limit)->get();
+            $response = Withdraw::orderBy('created_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
         }
 
         return response()->json($response);
@@ -130,6 +130,18 @@ class WithdrawController extends BasicController
 
         $response = config('constants.ERROR_NO');
 
+        $user = User::where('no', $user_no)->first();
+        if ($user == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        $request_point = $this->getWithdrawRequest($user_no);
+        if(($user->point - $request_point) < $money) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+            return response()->json($response);
+        }
+
         if ($oper == 'add') {
             if ($user_no == null || $bank_name == null || $account_number == null || $account_name == null) {
                 $response = config('constants.ERROR_NO_PARMA');
@@ -143,6 +155,14 @@ class WithdrawController extends BasicController
             $withdraw->bank_name = $bank_name;
             $withdraw->account_number = $account_number;
             $withdraw->account_name = $account_name;
+
+            $ansim = DB::table('t_ansim')->where('user_no', $user_no)->where('status',config('constants.VERIFIED' ))->first();
+            if($ansim === null) {
+                $withdraw->ansim_verified = config('constants.UNVERIFIED' );
+            }
+            else {
+                $withdraw->ansim_verified = config('constants.VERIFIED' );
+            }
 
             $withdraw->save();
             $response['no'] = $withdraw->no;
@@ -202,6 +222,19 @@ class WithdrawController extends BasicController
         return response()->json($withdraw);
     }
 
+    public function getWithdrawRequest($user_no) {
+        $request_money = Withdraw::where('t_withdraw.status', config('constants.WITHDRAW_WAIT'))->where('t_withdraw.user_no', $user_no)->where('t_withdraw.ansim_verified', config('constants.TRUE'))
+            ->join('t_ansim', function ($q) {
+                $q->on('t_withdraw.user_no', 't_ansim.user_no');
+                $q->where('t_ansim.status', config('constants.VERIFIED' ));
+            })->sum('money');
+        if($request_money == null || empty($request_money)) {
+            $request_money = 0;
+        }
+
+        return $request_money;
+    }
+
     public  function getWithdrawRequestTotalPoint(HttpRequest $request) {
         $user_no = $request->input('user_no');
 
@@ -210,26 +243,15 @@ class WithdrawController extends BasicController
             return response()->json($response);
         }
 
-        $results = User::where('no', $user_no)->first();
-        if ($results == null) {
+        $user = User::where('no', $user_no)->first();
+        if ($user == null) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
-        // get unread cnt
-        $request_money = Withdraw::where('t_withdraw.status', config('constants.WITHDRAW_WAIT'))->where('t_withdraw.user_no', $user_no)
-                            ->join('t_ansim', function ($q) {
-                                $q->on('t_withdraw.user_no', 't_ansim.user_no');
-                                $q->where('t_ansim.status', config('constants.VERIFIED' ));
-                            })->sum('money');
-        if($request_money == null || empty($request_money)) {
-            $request_money = 0;
-        }
+        $user->request_money = $this->getWithdrawRequest($user_no);
 
-        $response = config('constants.ERROR_NO');
-        $response['request_money'] = $request_money;
-
-        return response()->json($response);
+        return response()->json($user);
     }
 
     public function ajax_cash_table()
@@ -401,10 +423,10 @@ class WithdrawController extends BasicController
                         return trans('lang.error');
                 }
             ),
-            array('db' => 'user_no', 'dt' => 8,
+            array('db' => 'ansim_verified', 'dt' => 8,
                 'formatter' => function ($d, $row) {
-                    $results = DB::table('t_ansim')->where('user_no', $d)->first();
-                    if ($results != null && $results->status == config('constants.VERIFIED'))
+                    // $results = DB::table('t_ansim')->where('user_no', $d)->first();
+                    if ($d == config('constants.VERIFIED'))
                         return trans('lang.is_verified');
                     else
                         return trans('lang.not_verified');
@@ -674,6 +696,9 @@ class WithdrawController extends BasicController
                 $user_no = $withdraw->user_no;
                 $user = User::where('no', $user_no)->first();
                 $user->addPoint(config('constants.POINT_HISTORY_TYPE_WITDDRAW'), (-1) * $withdraw->money);
+
+                $admin_no = Session::get('u_no');
+                $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_WARING'), $data);
             }
         }
 

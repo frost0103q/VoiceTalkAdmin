@@ -17,7 +17,6 @@ return [
         'ERROR_CALL_BLOCK_USER' => ["error" => 14,'message' => '전화신청 차단한 유저입니다.'],
         'ERROR_ADD_FRIEND_BLOCK_USER' => ["error" => 15,'message' => '친구추가 차단한 유저입니다.'],
         'ERROR_NOW_CONSULTING_USER' => ["error" => 16,'message' => '상담중인 유저입니다.'],
-        'ERROR_BLOCKED_USER_BY_ME' => ["error" => 17,'message' => '알림차단된 유저입니다.'],
 
         'TEST_MODE_LOCAL' => 0,
         'TEST_MODE_GLOBAL' => 1,
@@ -91,6 +90,7 @@ return [
         'NOTI_TYPE_ADMIN_VOICE_AGREE'  =>15,
         'NOTI_TYPE_ADMIN_APP_STOP_REMOVE'  =>16,
         'NOTI_TYPE_REQUEST_CONSULTING_REFUSE'  =>17,
+        'NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'  =>18,
 
         'NOTI_TITLE_CONTENT' => [
                                     ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
@@ -111,6 +111,7 @@ return [
                                     ["title"=>"관리자","content"=>"등록하신 음성이 승인되었습니다."],                         // NOTI_TYPE_ADMIN_VOICE_AGREE
                                     ["title"=>"관리자","content"=>"앱사용중지해제를 알려드립니다."],                          // NOTI_TYPE_ADMIN_APP_STOP_REMOVE
                                     ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 거절했습니다."],                   // NOTI_TYPE_REQUEST_CONSULTING_REFUSE
+                                    ["title"=>"관리자","content"=>"축하합니다!! 출금이 완료 되었습니다."],                   // NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE
                                 ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,

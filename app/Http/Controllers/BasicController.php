@@ -47,46 +47,39 @@ class BasicController extends Controller
 
         $to_user = $results[0];
 
-        if ($to_user->enable_alarm == config('constants.DISABLE')) {
-            return config('constants.ERROR_BLOCK_USER');
-        }
-
-        if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING') && $to_user->enable_alarm_call_request == config('constants.DISABLE')) {
-            return config('constants.ERROR_CALL_BLOCK_USER');
-        }
-
+        $can_send_push = true;
         if ($type == config('constants.NOTI_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
-            return config('constants.ERROR_ADD_FRIEND_BLOCK_USER');
+            $can_send_push = false;
         }
 
         $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
-
         if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
-            return config('constants.ERROR_BLOCKED_USER');
+            $can_send_push = false;
         }
 
-        UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
-
+        $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
         if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
-            return config('constants.ERROR_BLOCKED_USER_BY_ME');
+            $can_send_push = false;
         }
 
         $push_mode = config('constants.pushmode');
 
-        if ($push_mode == config('constants.PUSH_MODE_FCM')) {
-            $title = config('app.name');
-            if ($message->title != null) {
-                $title = $message->title;
-            }
+        if($can_send_push == true) {
+            if ($push_mode == config('constants.PUSH_MODE_FCM')) {
+                $title = config('app.name');
+                if ($message->title != null) {
+                    $title = $message->title;
+                }
 
-            $content = $message;
-            if ($message->content != null) {
-                $content = $message->content;
-            }
+                $content = $message;
+                if ($message->content != null) {
+                    $content = $message->content;
+                }
 
-            $this->sendFCMMessage($to_user, $title, $content, $message->toArray());
-        } else if ($push_mode == config('constants.PUSH_MODE_XMPP')) {
-            $this->sendXmppMessage($to_user_no, json_encode($message));
+                $this->sendFCMMessage($to_user, $title, $content, $message->toArray());
+            } else if ($push_mode == config('constants.PUSH_MODE_XMPP')) {
+                $this->sendXmppMessage($to_user_no, json_encode($message));
+            }
         }
 
         $this->addNotification($type, $from_user_no, $to_user_no, $message->title, $message->content, $data);

@@ -145,7 +145,7 @@ class UsersController extends BasicController
             $params['page'] = 1;
         }
 
-        $response = UserRelation::select('t_user.*')->where('user_no', $user_no)->join('t_user', function ($q) {
+        $response = UserRelation::select('t_user.*')->where('user_no', $user_no)->join('t_user_relation', function ($q) {
                                 $q->on('t_user.no', 't_user_relation.relation_user_no');
                                 $q->where('t_user_relation.is_alarm',config('constants.FALSE'));
                             })->offset($limit * ($page - 1))->limit($limit)->get();
@@ -548,6 +548,19 @@ class UsersController extends BasicController
         }
         $to_user = $results[0];
 
+        // 차단한 유저에게는 전송불가하도록 처리
+        $user_relation = UserRelation::where('user_no', $no)->where('relation_user_no', $friend_no)->first();
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            $response = config('constants.ERROR_BLOCK_USER');
+            return response()->json($response);
+        }
+
+        $user_relation = UserRelation::where('user_no', $friend_no)->where('relation_user_no', $no)->first();
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            $response = config('constants.ERROR_BLOCKED_USER');
+            return response()->json($response);
+        }
+
         $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_PRESENT'), (-1)*$point);
         if($ret == false) {
             $response = config('constants.ERROR_NOT_ENOUGH_POINT');
@@ -582,6 +595,19 @@ class UsersController extends BasicController
         $results = User::where('no', $friend_no)->get();
         if ($results == null || count($results) == 0) {
             return config('constants.ERROR_NO_INFORMATION');
+        }
+
+        // 차단한 유저에게는 전송불가하도록 처리
+        $user_relation = UserRelation::where('user_no', $no)->where('relation_user_no', $friend_no)->first();
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            $response = config('constants.ERROR_BLOCK_USER');
+            return response()->json($response);
+        }
+
+        $user_relation = UserRelation::where('user_no', $friend_no)->where('relation_user_no', $no)->first();
+        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+            $response = config('constants.ERROR_BLOCKED_USER');
+            return response()->json($response);
         }
 
         $data = [];
@@ -674,12 +700,6 @@ class UsersController extends BasicController
             $user->enable_alarm_call_request = $value;
         } else if ($flag == 2) { // add_friend
             $user->enable_alarm_add_friend = $value;
-        }
-
-        if ($user->enable_alarm_call_request == config('constants.TRUE') || $user->enable_alarm_add_friend == config('constants.TRUE')) {
-            $user->enable_alarm = config('constants.TRUE');
-        } else {
-            $user->enable_alarm = config('constants.FALSE');
         }
 
         $user->save();
@@ -1061,6 +1081,12 @@ class UsersController extends BasicController
             if($to_user->status == config('constants.USER_STATUS_CONSULTING')) {
                 $response['no'] = $to_user->status;
                 $response = config('constants.ERROR_NOW_CONSULTING_USER');
+                return response()->json($response);
+            }
+
+            // 알림을 끄고 있을때
+            if ($to_user->enable_alarm_call_request == config('constants.DISABLE')) {
+                $response = config('constants.ERROR_CALL_BLOCK_USER');
                 return response()->json($response);
             }
         }

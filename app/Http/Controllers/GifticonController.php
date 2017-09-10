@@ -171,6 +171,21 @@ class GifticonController extends BasicController
             return response()->json($response);
         }
 
+        $product = GifticonProduct::where('product_id', $goods_id)->first();
+        if ($product == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        // 포인트검사
+        $withdraw_controller = new WithdrawController();
+        $user_enable_point = $withdraw_controller->getWithdrawRequest($user_no);
+        $user_enable_point = $user->point  - $user_enable_point;
+        if($user_enable_point < 0) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+            return response()->json($response);
+        }
+
         $phone = substr ($user->phone_number, 3); // remove +82
 
         //
@@ -200,8 +215,6 @@ class GifticonController extends BasicController
         } else {
             $w_result_json = json_decode($w_result, true);
 
-            $product = GifticonProduct::where('product_id', $goods_id)->first();
-
             // giftIcon history
             $gift_history = new GifticonHistory();
             $gift_history->cupon_number =  $product->product_id;
@@ -228,7 +241,12 @@ class GifticonController extends BasicController
                 $product->order_id = $w_order_id;
 
                 // user point 감소
-                $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price));
+                $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price));
+
+                if($ret == false) {
+                    $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+                    return response()->json($response);
+                }
 
                 $gift_history->mgr_number = $w_order_id;
                 $gift_history->status =  config('constants.GIFTICON_NOMAL');

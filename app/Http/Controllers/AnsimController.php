@@ -9,6 +9,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Withdraw;
 use Config;
 use DB;
 use Illuminate\Http\Request as HttpRequest;
@@ -90,8 +91,9 @@ class AnsimController extends BasicController
         $address = $request->input('address');
         $sex = $request->input('sex');
         $ident_num = $request->input('identi_num');
+        $withdraw_no = $request->input('withdraw_no');
 
-        if ($user_no == null || $name == null || $address == null || $sex == null || $ident_num == null) {
+        if ($user_no == null || $name == null || $ident_num == null || $withdraw_no == null) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
@@ -107,6 +109,7 @@ class AnsimController extends BasicController
                 'name' => $name,
                 'address' => $address,
                 'sex' => $sex,
+                'birth' => $birth,
                 'ident_num' => $ident_num,
                 'status' =>config('constants.VERIFIED'),
             ];
@@ -116,6 +119,8 @@ class AnsimController extends BasicController
             else {
                 DB::table('t_ansim')->where('user_no', $user_no)->update($update_array);
             }
+
+            Withdraw::where('no', $withdraw_no)->update(array('ansim_verified' => config('constants.TRUE')));
 
             return response()->json($response);
         }
