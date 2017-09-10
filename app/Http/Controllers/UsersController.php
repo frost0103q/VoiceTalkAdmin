@@ -145,7 +145,7 @@ class UsersController extends BasicController
             $params['page'] = 1;
         }
 
-        $response = UserRelation::select('t_user.*')->where('user_no', $user_no)->join('t_user_relation', function ($q) {
+        $response = UserRelation::select('t_user.*')->where('user_no', $user_no)->join('t_user', function ($q) {
                                 $q->on('t_user.no', 't_user_relation.relation_user_no');
                                 $q->where('t_user_relation.is_alarm',config('constants.FALSE'));
                             })->offset($limit * ($page - 1))->limit($limit)->get();
@@ -789,6 +789,13 @@ class UsersController extends BasicController
 
         $ret = $to_user->addPoint($type,  $min);
         $response['no'] = round($ret);
+
+        // add notification
+        $data = [];
+        $data['time'] = $time_in_second;
+        $data['point'] = $ret;
+        $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_COMPLETE_CONSULTING'), $data);
+
         return response()->json($response);
     }
 

@@ -192,18 +192,22 @@ class NotificationsController extends BasicController
 
         for ($i = 0; $i < count($response); $i++) {
             $notification = $response[$i];
+            $other_user_relation = null;
             if ($notification->from_user_no == $user_no) {
                 $response[$i]->unread_cnt = 0;
                 $user = User::where('no', $notification->to_user_no)->first();
                 $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->to_user_no)->first();
+                $other_user_relation = UserRelation::where('user_no', $notification->to_user_no)->where('relation_user_no', $user_no)->first();
             } else {
                 $user = User::where('no', $notification->from_user_no)->first();
                 $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->from_user_no)->first();
+                $other_user_relation = UserRelation::where('user_no', $notification->from_user_no)->where('relation_user_no', $user_no)->first();
             }
 
             $user->fillInfo();
             $response[$i]->user = $user;
             $response[$i]->user_relation = $user_relation;
+            $response[$i]->other_user_relation = $other_user_relation;
         }
 
         return response()->json($response);
@@ -379,6 +383,29 @@ class NotificationsController extends BasicController
         $from_user->fillInfo();
 
         $query = DB::table('t_user')->select('t_user.no')->where('sex', $sex)->where('no', '!=', $user_no)->where('admin_level', config('constants.NO_ADMIN'));
+
+        // 유저를 차단한 유저와 유저가 차단한 유저들을 제외하기
+        $disable_results = UserRelation::where(function ($q) use ($user_no) {
+                                $q->where(function ($q) use ($user_no) {
+                                    $q->where('user_no', $user_no)->where('is_alarm', config('constants.DISABLE'));
+                                })
+                                ->orWhere(function ($q) use ($user_no) {
+                                    $q->where('relation_user_no', $user_no)->where('is_alarm', config('constants.DISABLE'));
+                                });
+                            })->get();
+        $disable_array = [];
+        for ($i = 0; $i < count($disable_results); $i++) {
+            if($results->user_no = $user_no) {
+                array_push($disable_array, $results[$i]->relation_user_no);
+            }
+            else {
+                array_push($disable_array, $results[$i]->user_no);
+            }
+        }
+
+        if(count($disable_array) > 0) {
+            $query->where('no', 'not in', $disable_array);
+        }
 
         if ($order == 0) { // distance
             $dist = DB::raw('(ROUND(6371 * ACOS(COS(RADIANS(' . $cur_lat . ')) * COS(RADIANS(t_user.latitude)) * COS(RADIANS(t_user.longitude) - RADIANS(' . $cur_lng . ')) + SIN(RADIANS(' . $cur_lat . ')) * SIN(RADIANS(t_user.latitude))),2))');

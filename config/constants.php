@@ -91,6 +91,7 @@ return [
         'NOTI_TYPE_ADMIN_APP_STOP_REMOVE'  =>16,
         'NOTI_TYPE_REQUEST_CONSULTING_REFUSE'  =>17,
         'NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'  =>18,
+        'NOTI_TYPE_COMPLETE_CONSULTING'  =>19,
 
         'NOTI_TITLE_CONTENT' => [
                                     ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
@@ -112,6 +113,7 @@ return [
                                     ["title"=>"관리자","content"=>"앱사용중지해제를 알려드립니다."],                          // NOTI_TYPE_ADMIN_APP_STOP_REMOVE
                                     ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 거절했습니다."],                   // NOTI_TYPE_REQUEST_CONSULTING_REFUSE
                                     ["title"=>"관리자","content"=>"축하합니다!! 출금이 완료 되었습니다."],                   // NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE
+                                    ["title"=>"상담통화","content"=>"상담통화가 종료되었습니다."],                           // NOTI_TYPE_COMPLETE_CONSULTING
                                 ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
