@@ -102,10 +102,11 @@ class WithdrawController extends BasicController
 
         $response = null;
         if ($user_no != null) {
-            $response = Withdraw::select('t_withdraw.*')->where('t_withdraw.user_no', $user_no)->join('t_ansim', function ($q) {
-                $q->on('t_withdraw.user_no', 't_ansim.user_no');
-                $q->where('t_ansim.status', config('constants.VERIFIED' ));
-            });
+            $response = Withdraw::select('t_withdraw.*')->where('t_withdraw.user_no', $user_no)->where('t_withdraw.ansim_verified', config('constants.VERIFIED' ))
+                                                    ->join('t_ansim', function ($q) {
+                                                    $q->on('t_withdraw.user_no', 't_ansim.user_no');
+                                                    $q->where('t_ansim.status', config('constants.VERIFIED' ));
+                                                });
         }
         if ($response != null) {
             $response = $response->orderBy('created_at', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
@@ -132,6 +133,11 @@ class WithdrawController extends BasicController
 
         $user = User::where('no', $user_no)->first();
         if ($user == null) {
+            $response = config('constants.ERROR_NO_INFORMATION');
+            return response()->json($response);
+        }
+
+        if($money <= 0) {
             $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
@@ -224,10 +230,10 @@ class WithdrawController extends BasicController
 
     public function getWithdrawRequest($user_no) {
         $request_money = Withdraw::where('t_withdraw.status', config('constants.WITHDRAW_WAIT'))->where('t_withdraw.user_no', $user_no)->where('t_withdraw.ansim_verified', config('constants.TRUE'))
-            ->join('t_ansim', function ($q) {
-                $q->on('t_withdraw.user_no', 't_ansim.user_no');
-                $q->where('t_ansim.status', config('constants.VERIFIED' ));
-            })->sum('money');
+                                            ->join('t_ansim', function ($q) {
+                                                $q->on('t_withdraw.user_no', 't_ansim.user_no');
+                                                $q->where('t_ansim.status', config('constants.VERIFIED' ));
+                                            })->sum('money');
         if($request_money == null || empty($request_money)) {
             $request_money = 0;
         }

@@ -98,34 +98,48 @@ class AnsimController extends BasicController
             return response()->json($response);
         }
 
-        $auth = $this ->ansimCheck($name, $ident_num);
-
-        if($auth == true) {
-            $response = config('constants.ERROR_NO');
-            $ansim = DB::table('t_ansim')->where('user_no', $user_no)->first();
-            $update_array =  [
-                'user_no' => $user_no,
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => $name,
-                'address' => $address,
-                'sex' => $sex,
-                'birth' => $birth,
-                'ident_num' => $ident_num,
-                'status' =>config('constants.VERIFIED'),
-            ];
-            if($ansim == null) {
-                DB::table('t_ansim')->insert($update_array);
+        // 이미 있는것인가 체크
+        $ansim = DB::table('t_ansim')->where('name', $name)->where('ident_num', $ident_num)->first();
+        if($ansim != null) {
+            if($ansim->user_no != $user_no) {
+                $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
+                return response()->json($response);
             }
             else {
-                DB::table('t_ansim')->where('user_no', $user_no)->update($update_array);
+                Withdraw::where('no', $withdraw_no)->update(array('ansim_verified' => config('constants.TRUE')));
+                $response = config('constants.ERROR_NO');
+                return response()->json($response);
             }
+        }
 
-            Withdraw::where('no', $withdraw_no)->update(array('ansim_verified' => config('constants.TRUE')));
+        $auth = $this ->ansimCheck($name, $ident_num);
 
+        if($auth == false) {
+            $response = config('constants.ERROR_NO_INFORMATION');
             return response()->json($response);
         }
 
-        $response = config('constants.ERROR_NO_INFORMATION');
+        $ansim = DB::table('t_ansim')->where('user_no', $user_no)->first();
+        $update_array =  [
+            'user_no' => $user_no,
+            'created_at' => date('Y-m-d H:i:s'),
+            'name' => $name,
+            'address' => $address,
+            'sex' => $sex,
+            'birth' => $birth,
+            'ident_num' => $ident_num,
+            'status' =>config('constants.VERIFIED'),
+        ];
+
+        if($ansim == null) {
+            DB::table('t_ansim')->insert($update_array);
+        }
+        else {
+            DB::table('t_ansim')->where('user_no', $user_no)->update($update_array);
+        }
+
+        Withdraw::where('no', $withdraw_no)->update(array('ansim_verified' => config('constants.TRUE')));
+        $response = config('constants.ERROR_NO');
         return response()->json($response);
     }
 

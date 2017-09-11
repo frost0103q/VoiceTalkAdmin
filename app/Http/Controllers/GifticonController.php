@@ -181,7 +181,7 @@ class GifticonController extends BasicController
         $withdraw_controller = new WithdrawController();
         $user_enable_point = $withdraw_controller->getWithdrawRequest($user_no);
         $user_enable_point = $user->point  - $user_enable_point;
-        if($user_enable_point < 0) {
+        if($user_enable_point < $product->calc_price) {
             $response = config('constants.ERROR_NOT_ENOUGH_POINT');
             return response()->json($response);
         }
