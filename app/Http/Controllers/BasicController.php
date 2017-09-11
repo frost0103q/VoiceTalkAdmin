@@ -48,20 +48,37 @@ class BasicController extends Controller
         $to_user = $results[0];
 
         $can_send_push = true;
-        if ($type == config('constants.NOTI_TYPE_ADD_FRIEND') && $to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
-            $can_send_push = false;
+        if ($type == config('constants.NOTI_TYPE_ADD_FRIEND')) {
+            if($to_user->enable_alarm_add_friend == config('constants.DISABLE')) {
+                $can_send_push = false;
+            }
+            else {
+                $can_send_push = true;
+            }
         }
-
-        $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
-        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
-            $can_send_push = false;
+        else if ($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING')) {
+            if( $to_user->enable_alarm_call_request == config('constants.DISABLE')){
+                $can_send_push = false;
+            }
+            else {
+                $can_send_push = true;
+            }
         }
-
-        $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
-        if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
-            $can_send_push = false;
+        else if ($type == config('constants.NOTI_TYPE_REQUEST_ACCEPT_CONSULTING') || $type == config('constants.NOTI_TYPE_REQUEST_CONSULTING_REFUSE')) {
+            $can_send_push = true;
         }
+        else {
+            $user_relation = UserRelation::where('user_no', $to_user_no)->where('relation_user_no', $from_user_no)->first();
+            if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+                $can_send_push = false;
+            }
 
+            $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $to_user_no)->first();
+            if ($user_relation != null && $user_relation->is_alarm == config('constants.DISABLE')) {
+                $can_send_push = false;
+            }
+
+        }
         $push_mode = config('constants.pushmode');
 
         if($can_send_push == true) {

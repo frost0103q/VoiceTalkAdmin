@@ -704,7 +704,9 @@ class WithdrawController extends BasicController
                 $user->addPoint(config('constants.POINT_HISTORY_TYPE_WITDDRAW'), (-1) * $withdraw->money);
 
                 $admin_no = Session::get('u_no');
-                $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_WARING'), $data);
+                $data = [];
+                $data['point'] = $withdraw->money;
+                $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'), $data);
             }
         }
 
