@@ -91,12 +91,6 @@ class UserRelationController extends BasicController
 
         $to_user = $results[0];
 
-        $relation = UserRelation::where('user_no', $friend_no)->where('relation_user_no', $no)->first();
-        if ($relation != null && $relation->is_block_friend == config('constants.TRUE')) {
-            $response = config('constants.ERROR_BLOCKED_USER');
-            return response()->json($response);
-        }
-
         $results = UserRelation::where('user_no', $no)->where('relation_user_no', $friend_no)->first();
         if ($results != null && $results->is_friend == config('constants.TRUE')) {
             $response = config('constants.ERROR_DUPLICATE_ACCOUNT');
@@ -157,14 +151,6 @@ class UserRelationController extends BasicController
         $friend->user_no = $user_no;
         $friend->relation_user_no = $relation_user_no;
 
-        if ($flag == config('constants.USER_RELATION_FLAG_BLOCK_FRIEND')) {
-            $friend->is_block_friend = config('constants.TRUE');
-        }
-
-        if ($flag == config('constants.USER_RELATION_FLAG_UNBLOCK_FRIEND')) {
-            $friend->is_block_friend = config('constants.FALSE');
-        }
-
         if ($flag == config('constants.USER_RELATION_FLAG_ENABLE_ALARM')) {
             $friend->is_alarm = config('constants.TRUE');
         }
@@ -175,6 +161,13 @@ class UserRelationController extends BasicController
 
         $friend->save();
         $response['no'] = $friend->no;
+
+        if ($flag == config('constants.USER_RELATION_FLAG_ENABLE_ALARM')) {
+            $this->sendAlarmMessage($user_no, $relation_user_no, config('constants.NOTI_TYPE_ALARM_ENABLE'));
+        }
+        if ($flag == config('constants.USER_RELATION_FLAG_DISABLE_ALARM')) {
+            $this->sendAlarmMessage($user_no, $relation_user_no, config('constants.NOTI_TYPE_ALARM_DISABLE'));
+        }
 
         return response()->json($response);
     }

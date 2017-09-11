@@ -37,7 +37,11 @@ class Notification extends Model
             $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
         } else if ($type == config('constants.NOTI_TYPE_ADMIN_WARING')) {
             $content = sprintf($noti_content[$type]['content'], $data['cnt']);
-        } else {
+        }
+        else if ($type == config('constants.NOTI_TYPE_ALARM_ENABLE') || $type == config('constants.NOTI_TYPE_ALARM_DISABLE')) {
+            $content = sprintf($noti_content[$type]['content'], $from_user->nickname);
+        }
+        else {
             $content = $noti_content[$type]['content'];
         }
 

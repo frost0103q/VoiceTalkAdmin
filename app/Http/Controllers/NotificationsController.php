@@ -129,8 +129,8 @@ class NotificationsController extends BasicController
                 $include_where = true;
             }
         } else if ($search_type == -2 && $user_no != null) { // search_friend
-            $sql = $sql . ' where ((c.from_user_no = ' . $user_no . ' and c.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
-            $sql = $sql . '       OR (c.to_user_no = ' . $user_no . ' and c.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0)))';
+            $sql = $sql . ' where ((c.from_user_no = ' . $user_no . ' and c.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1))';
+            $sql = $sql . '       OR (c.to_user_no = ' . $user_no . ' and c.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1)))';
             $include_where = true;
         }
 
@@ -395,11 +395,12 @@ class NotificationsController extends BasicController
                             })->get();
         $disable_array = [];
         for ($i = 0; $i < count($disable_results); $i++) {
-            if($results->user_no = $user_no) {
-                array_push($disable_array, $results[$i]->relation_user_no);
+            $disable_user = $disable_results[$i];
+            if($disable_user->user_no == $user_no) {
+                array_push($disable_array, $disable_user->relation_user_no);
             }
             else {
-                array_push($disable_array, $results[$i]->user_no);
+                array_push($disable_array, $disable_user->user_no);
             }
         }
 
@@ -419,14 +420,18 @@ class NotificationsController extends BasicController
         $data = [];
         $data['content'] = $content;
 
-        for ($i = 0; $i < count($results); $i++) {
-            $to_user_no = $results[$i]->no;
-            $ret = $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
-
-            $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+        $success_cnt = count($results);
+        if($success_cnt > 0) {
+            $from_user = User::where('no', $user_no)->first();
+            $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), $success_cnt);
             if ($ret == false) {
                 return config('constants.ERROR_NOT_ENOUGH_POINT');
             }
+        }
+
+        for ($i = 0; $i < count($results); $i++) {
+            $to_user_no = $results[$i]->no;
+            $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
         }
 
         $results = User::where('no', $from_user->no)->get();
@@ -456,7 +461,7 @@ class NotificationsController extends BasicController
             if ($search_type == -1) { // read all
                 Notification::where('to_user_no', $user_no)->update($update_data);
             } else if ($search_type == -2) { // read friend all
-                $sql = '(to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+                $sql = '(to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1))';
                 Notification::where(DB::raw($sql))->update($update_data);
             }
         }
@@ -489,8 +494,8 @@ class NotificationsController extends BasicController
             if ($search_type == -1) { // search_all
                 Notification::where('to_user_no', $user_no)->orWhere('from_user_no', $user_no)->delete();
             } else if ($search_type == -2) { // search_friend
-                $sql = ' (from_user_no = ' . $user_no . ' and to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
-                $sql = $sql . ' OR (to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1 AND t_user_relation.is_block_friend = 0))';
+                $sql = ' (from_user_no = ' . $user_no . ' and to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1))';
+                $sql = $sql . ' OR (to_user_no = ' . $user_no . ' and from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1))';
                 Notification::where(DB::raw($sql))->delete();
             }
         }

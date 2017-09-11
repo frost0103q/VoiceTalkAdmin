@@ -67,8 +67,6 @@ return [
                             ["name" => 'inapp_point_7','price' => 70000, 'value' => 70000],
                         ],
 
-        'USER_RELATION_FLAG_BLOCK_FRIEND'=> 0,
-        'USER_RELATION_FLAG_UNBLOCK_FRIEND'=> 1,
         'USER_RELATION_FLAG_ENABLE_ALARM'=> 2,
         'USER_RELATION_FLAG_DISABLE_ALARM'=> 3,
 
@@ -92,6 +90,8 @@ return [
         'NOTI_TYPE_REQUEST_CONSULTING_REFUSE'  =>17,
         'NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'  =>18,
         'NOTI_TYPE_COMPLETE_CONSULTING'  =>19,
+        'NOTI_TYPE_ALARM_ENABLE'  =>20,
+        'NOTI_TYPE_ALARM_DISABLE'  =>21,
 
         'NOTI_TITLE_CONTENT' => [
                                     ["title"=>"일반채팅","content"=>"%s님으로부터 메시지가 도착했습니다."],                    // NOTI_TYPE_CHATMESSAGE
@@ -114,6 +114,8 @@ return [
                                     ["title"=>"상담요청승인","content"=>"%s님이 상담신청을 거절했습니다."],                   // NOTI_TYPE_REQUEST_CONSULTING_REFUSE
                                     ["title"=>"관리자","content"=>"축하합니다!! 출금이 완료 되었습니다."],                   // NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE
                                     ["title"=>"상담통화","content"=>"상담통화가 종료되었습니다."],                           // NOTI_TYPE_COMPLETE_CONSULTING
+                                    ["title"=>"차단","content"=>"%s님이 당신을 차단해제했습니다."],                          // NOTI_TYPE_ALARM_ENABLE
+                                    ["title"=>"차단","content"=>"%s님이 당신을 차단했습니다."],                             // NOTI_TYPE_ALARM_DISABLE
                                 ],
         'NOTI_GROUP_LIMIT'=>50,
         'INVALID_MODEL_NO'=>0,
@@ -132,6 +134,9 @@ return [
 
         'TRUE'   => 1,
         'FALSE'   => 0,
+
+        'DISABLE'   => 0,
+        'ENABLE'   => 1,
 
 		'WAIT'   => 2,
 		'AGREE'   => 1,

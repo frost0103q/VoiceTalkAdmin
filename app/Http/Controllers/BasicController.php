@@ -64,7 +64,8 @@ class BasicController extends Controller
                 $can_send_push = true;
             }
         }
-        else if ($type == config('constants.NOTI_TYPE_REQUEST_ACCEPT_CONSULTING') || $type == config('constants.NOTI_TYPE_REQUEST_CONSULTING_REFUSE')) {
+        else if ($type == config('constants.NOTI_TYPE_REQUEST_ACCEPT_CONSULTING') || $type == config('constants.NOTI_TYPE_REQUEST_CONSULTING_REFUSE')
+                || $type == config('constants.NOTI_TYPE_ALARM_ENABLE') || $type == config('constants.NOTI_TYPE_ALARM_DISABLE')) {
             $can_send_push = true;
         }
         else {

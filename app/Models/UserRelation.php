@@ -20,7 +20,6 @@ class UserRelation extends Model
 
     public function __construct()
     {
-        $this->is_block_friend = config('constants.FALSE');
         $this->is_alarm = config('constants.TRUE');
         $this->is_friend = config('constants.FALSE');
     }

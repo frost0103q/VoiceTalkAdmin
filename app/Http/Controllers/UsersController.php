@@ -375,7 +375,7 @@ class UsersController extends BasicController
                 return response()->json($response);
             }
 
-            if ($idiomCotroller->includeForbidden($nickname) == true) {// || $idiomCotroller->includeForbidden($subject) == true) {
+            if ($idiomCotroller->includeForbidden($nickname) == true) {
                 $response = config('constants.ERROR_FORBIDDEN_WORD');
                 return response()->json($response);
             }
