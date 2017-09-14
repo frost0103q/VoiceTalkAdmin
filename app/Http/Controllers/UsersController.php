@@ -693,10 +693,7 @@ class UsersController extends BasicController
 
         $user = $results[0];
 
-        if ($flag == 0) {  // alarm
-            $user->enable_alarm_call_request = $value;
-            $user->enable_alarm_add_friend = $value;
-        } else if ($flag == 1) { // call_request
+        if ($flag == 1) { // call_request
             $user->enable_alarm_call_request = $value;
         } else if ($flag == 2) { // add_friend
             $user->enable_alarm_add_friend = $value;
