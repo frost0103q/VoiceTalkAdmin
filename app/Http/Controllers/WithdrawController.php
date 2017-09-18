@@ -689,12 +689,27 @@ class WithdrawController extends BasicController
         $selected_withdraw_str = $_POST['selected_withdraw_str'];
         $selected_withdraw_array = explode(',', $selected_withdraw_str);
 
+        $isExistFailed = false;
         for ($i = 0; $i < count($selected_withdraw_array); $i++) {
+            $withdraw = Withdraw::where('no', $selected_withdraw_array[$i])->first();
+            if (!$withdraw) {
+                continue;
+            }
+
+            if($withdraw->status ==  $update_data['status']) {
+                continue;
+            }
+
+            if($withdraw->status !=  config('constants.WITHDRAW_WAIT')) {
+                continue;
+            }
 
             $result = Withdraw::where('no', $selected_withdraw_array[$i])->update($update_data);
 
-            if (!$result)
-                return config('constants.FAIL');
+            if (!$result) {
+                $isExistFailed = true;
+                continue;
+            }
 
             // user point minus
             if ( $update_data['status'] == config('constants.WITHDRAW_FINISH')) {
@@ -708,6 +723,10 @@ class WithdrawController extends BasicController
                 $data['point'] = $withdraw->money;
                 $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'), $data);
             }
+        }
+
+        if($isExistFailed == true) {
+            return config('constants.FAIL');
         }
 
         return config('constants.SUCCESS');
