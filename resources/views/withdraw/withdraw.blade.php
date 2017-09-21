@@ -173,7 +173,7 @@
             url: 'selected_withdraw_change_status',
             success: function (result) {
                 if(result=='{{config('constants.FAIL')}}'){
-                    toastr["error"]("{{trans('lang.success_status_change')}}", "{{trans('lang.notice')}}");
+                    toastr["error"]("{{trans('lang.fail_status_change')}}", "{{trans('lang.notice')}}");
                     return;
                 }
                 else {

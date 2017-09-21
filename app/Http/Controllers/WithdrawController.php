@@ -704,6 +704,12 @@ class WithdrawController extends BasicController
                 continue;
             }
 
+            // 안심인증안되었으면 포인트처리뿐아니라 완료처리도 되지 않도록 하기
+            if($withdraw->ansim_verified ==  config('constants.UNVERIFIED') &&  $update_data['status'] == config('constants.WITHDRAW_FINISH')) {
+                $isExistFailed = true;
+                continue;
+            }
+
             $result = Withdraw::where('no', $selected_withdraw_array[$i])->update($update_data);
 
             if (!$result) {
