@@ -703,6 +703,7 @@ class WithdrawController extends BasicController
             }
 
             if($withdraw->status !=  config('constants.WITHDRAW_WAIT')) {
+                $isExistFailed = true;
                 continue;
             }
 

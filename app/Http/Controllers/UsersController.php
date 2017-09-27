@@ -1093,6 +1093,20 @@ class UsersController extends BasicController
                 $response = config('constants.ERROR_CALL_BLOCK_USER');
                 return response()->json($response);
             }
+
+            // 알림차단했을때
+            $my_relation = UserRelation::where('user_no', $from_user->no)->where('relation_user_no', $to_user->no)->first();
+            if ($my_relation != null && $my_relation->is_alarm == config('constants.DISABLE')) {
+                $response = config('constants.ERROR_BLOCK_USER');
+                return response()->json($response);
+            }
+
+            // 알림차단당했을때
+            $other_relation = UserRelation::where('user_no', $from_user->no)->where('relation_user_no', $to_user->no)->first();
+            if ($other_relation != null && $other_relation->is_alarm == config('constants.DISABLE')) {
+                $response = config('constants.ERROR_BLOCKED_USER');
+                return response()->json($response);
+            }
         }
 
         $ret = $this->sendAlarmMessage($from_user_no, $to_user_no, $type, json_decode($data));
