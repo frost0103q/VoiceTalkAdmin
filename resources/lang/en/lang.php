@@ -274,7 +274,7 @@ return [
     'cash_finish'=>'결제완료',
     'cash_stop'=>'결제중단',
     'cash_owner'=>'예금주',
-    'cash_account'=>'례금계좌',
+    'cash_account'=>'계좌번호',
     'total_cash_by_condition'=>'조건에 맞는 총매출',
     'rank'=>'순위',
     'number'=>'번호',

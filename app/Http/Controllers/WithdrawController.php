@@ -377,6 +377,7 @@ class WithdrawController extends BasicController
         $user_no = $_POST['user_no'];
         $account_name = $_POST['account_name'];
         $bank_name = $_POST['bank_name'];
+        $veified = $_POST['verified'];
 
         if ($start_dt != "")
             $custom_where .= " and created_at>='" . $start_dt . "'";
@@ -390,7 +391,8 @@ class WithdrawController extends BasicController
             $custom_where .= " and account_name like '%" . $account_name . "%'";
         if ($bank_name != "")
             $custom_where .= " and bank_name like '%" . $bank_name . "%'";
-
+        if ($veified != "-1")
+            $custom_where .= " and ansim_verified ='" . $veified . "'";
 
         global $sum_money;
         $total_money = DB::select('SELECT sum(money) as total from t_withdraw WHERE ' . $custom_where);
@@ -728,6 +730,29 @@ class WithdrawController extends BasicController
                 $data = [];
                 $data['point'] = $withdraw->money;
                 $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_WITHDRAW_COMPLETE'), $data);
+            }
+        }
+
+        if($isExistFailed == true) {
+            return config('constants.FAIL');
+        }
+
+        return config('constants.SUCCESS');
+    }
+
+    public function selected_withdraw_delete()
+    {
+        $selected_withdraw_str = $_POST['selected_withdraw_str'];
+        $selected_withdraw_array = explode(',', $selected_withdraw_str);
+
+        $isExistFailed = false;
+        for ($i = 0; $i < count($selected_withdraw_array); $i++) {
+
+            $result = Withdraw::where('no', $selected_withdraw_array[$i])->delete();
+
+            if (!$result) {
+                $isExistFailed = true;
+                continue;
             }
         }
 
