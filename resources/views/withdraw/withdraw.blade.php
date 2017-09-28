@@ -67,6 +67,7 @@
                 <th>{{trans('lang.withdraw_status')}}</th>
                 <th>{{trans('lang.verify_status')}}</th>
                 <th>{{trans('lang.req_date')}}</th>
+                <th>{{trans('lang.withdraw_amount')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -161,7 +162,7 @@
                     },
                     "createdRow": function (row, data, dataIndex) {
                         $('td:eq(1)', row).html(dataIndex + start_index + 1);
-                        $("#total_withdraw_amount").text(data[10]);
+                        $("#total_withdraw_amount").text(data[11]);
                     },
                     "columnDefs": [{
                         'orderable': false,

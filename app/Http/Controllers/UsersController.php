@@ -774,17 +774,18 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $to_user = $results[0];
-        $min = $time_in_second / 60;
+        // $min = $time_in_second / 60;
 
         $type =  config('constants.POINT_HISTORY_TYPE_CHAT');
 
-        $ret = $from_user->addPoint($type, (-1)*$min);
+        $ret = $from_user->addPoint($type, (-1)*$time_in_second);
         if ($ret == false) {
             $response = config('constants.ERROR_NO_PARMA');
             return response()->json($response);
         }
 
-        $ret = $to_user->addPoint($type,  $min);
+        $profit = config('constants.CONSULTING_PROFIT');
+        $ret = $to_user->addPoint($type,  $time_in_second*(1-$profit));
         $response['no'] = round($ret);
 
         // add notification

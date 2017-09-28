@@ -38,7 +38,14 @@ return [
 
         'SMS_TEXT' =>"VoiceTalk인증코드는 %s 입니다.",
 
-        'POINT_ADD_RULE'=>[30, -20, 1, 200, 300, 1, 1, 1, 1],   // 9가지 종류만 가능
+        'CONSULTING_PROFIT' => 0.3,                             // 30%를 회사가 가진다.
+        'SEND_ENVELOP_PROFIT' => 0.3,                           // 30%를 회사가 가진다.
+        'GIFT_PROFIT' => 0.2,                                   // 20%를 회사가 가진다.
+
+        'WITHDRAW_PROFIT' => 0.033,                             // 10%를 회사가 가진다.
+        'WITHDRAW_TAX' => 0.1,                                  // 10%를 회사가 가진다.
+
+        'POINT_ADD_RULE'=>[30, -20, 1, 12, 300, 1, 1, 1, 1],   // 9가지 종류만 가능
         'POINT_HISTORY_TYPE_ROLL_CHECK'=> 0,
         'POINT_HISTORY_TYPE_SEND_ENVELOPE'=> 1,
         'POINT_HISTORY_TYPE_PRESENT'=> 2,            // -이면 전송, +이면 받기

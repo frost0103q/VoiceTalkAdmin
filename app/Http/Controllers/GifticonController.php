@@ -241,7 +241,8 @@ class GifticonController extends BasicController
                 $product->order_id = $w_order_id;
 
                 // user point 감소
-                $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price));
+                $profit = 1 + config('constants.GIFT_PROFIT');
+                $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price) * $profit);
 
                 if($ret == false) {
                     $response = config('constants.ERROR_NOT_ENOUGH_POINT');

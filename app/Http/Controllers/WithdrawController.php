@@ -441,7 +441,11 @@ class WithdrawController extends BasicController
                 }
             ),
             array('db' => 'created_at', 'dt' => 9),
-            array('db' => 'no', 'dt' => 10,
+            array('db' =>'money','dt' => 10, 'formatter' => function($d, $row){
+                $profit = config('constants.WITHDRAW_PROFIT') + config('constants.WITHDRAW_TAX');
+                return $d * (1-$profit);
+            }),
+            array('db' => 'no', 'dt' => 11,
                 'formatter' => function ($d, $row) {
                     global $sum_money;
                     return $sum_money;
@@ -725,6 +729,7 @@ class WithdrawController extends BasicController
                 $withdraw = Withdraw::where('no', $selected_withdraw_array[$i])->first();
                 $user_no = $withdraw->user_no;
                 $user = User::where('no', $user_no)->first();
+
                 $user->addPoint(config('constants.POINT_HISTORY_TYPE_WITDDRAW'), (-1) * $withdraw->money);
 
                 $admin_no = Session::get('u_no');

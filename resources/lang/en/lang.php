@@ -280,6 +280,7 @@ return [
     'number'=>'번호',
     'req_amount'=>'신청금액',
     'wait_amount'=>'대기금액',
+    'withdraw_amount'=>'출금금액',
     'birthday'=>'생년월일',
     'req_date'=>'신청일',
     'cash_manage'=>'결제관리',
