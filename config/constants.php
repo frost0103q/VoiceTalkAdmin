@@ -43,7 +43,7 @@ return [
         'GIFT_PROFIT' => 0.2,                                   // 20%를 회사가 가진다.
         'SEND_POINT_PROFIT' => 0.2,                             // 20%를 회사가 가진다.
 
-        'WITHDRAW_PROFIT' => 0.033,                             // 10%를 회사가 가진다.
+        'WITHDRAW_PROFIT' => 0.03,                             // 10%를 회사가 가진다.
         'WITHDRAW_TAX' => 0.1,                                  // 10%를 회사가 가진다.
 
         'POINT_ADD_RULE'=>[30, -20, 1, 12, 300, 1, 1, 1, 1],   // 9가지 종류만 가능

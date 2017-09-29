@@ -567,7 +567,8 @@ class UsersController extends BasicController
             return response()->json($response);
         }
 
-        $ret = $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_PRESENT'), $point);
+        $profit = config('constants.SEND_POINT_PROFIT');
+        $ret = $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_PRESENT'), $point*(1-$profit));
 
         $data = [];
         $data['point'] = $ret;
