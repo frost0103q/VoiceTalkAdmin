@@ -41,6 +41,7 @@ return [
         'CONSULTING_PROFIT' => 0.3,                             // 30%를 회사가 가진다.
         'SEND_ENVELOP_PROFIT' => 0.3,                           // 30%를 회사가 가진다.
         'GIFT_PROFIT' => 0.2,                                   // 20%를 회사가 가진다.
+        'SEND_POINT_PROFIT' => 0.2,                             // 20%를 회사가 가진다.
 
         'WITHDRAW_PROFIT' => 0.033,                             // 10%를 회사가 가진다.
         'WITHDRAW_TAX' => 0.1,                                  // 10%를 회사가 가진다.

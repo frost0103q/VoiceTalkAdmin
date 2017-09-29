@@ -69,6 +69,8 @@ class AdminNoticeController extends BasicController
         $controller = new IdiomController();
         $response['idiom_list'] = $controller->getIdiomList();
         $response['gift_profit'] = config('constants.GIFT_PROFIT');
+        $response['withdraw_profit'] = config('constants.WITHDRAW_PROFIT');
+        $response['withdraw_tax'] = config('constants.WITHDRAW_TAX');
 
         return response()->json($response);
     }

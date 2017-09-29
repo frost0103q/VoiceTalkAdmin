@@ -350,7 +350,7 @@ class NotificationsController extends BasicController
         }
 
         $profit = config('constants.SEND_ENVELOP_PROFIT');
-        $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*$ret*(1-$profit));
+        $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
         
         $data['content'] = $content;
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
@@ -424,26 +424,22 @@ class NotificationsController extends BasicController
         $data['content'] = $content;
 
         $success_cnt = count($results);
-        $total_send_point = 0;
         if($success_cnt > 0) {
             $from_user = User::where('no', $user_no)->first();
             $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), $success_cnt);
             if ($ret == false) {
                 return config('constants.ERROR_NOT_ENOUGH_POINT');
             }
-
-            $total_send_point = $ret;
         }
 
         $profit = config('constants.SEND_ENVELOP_PROFIT');
-        $send_point = $total_send_point/$success_cnt;
         for ($i = 0; $i < count($results); $i++) {
             $to_user_no = $results[$i]->no;
             $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
 
             $to_user = User::where('no', $to_user_no)->get();
             if($to_user != null) {
-                $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), (-1) * $send_point * (1 - $profit));
+                $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), (-1) * (1 - $profit));
             }
         }
 
