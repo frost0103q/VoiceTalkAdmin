@@ -178,10 +178,13 @@ class GifticonController extends BasicController
         }
 
         // 포인트검사
-        $withdraw_controller = new WithdrawController();
-        $user_enable_point = $withdraw_controller->getWithdrawRequest($user_no);
-        $user_enable_point = $user->point  - $user_enable_point;
-        if($user_enable_point < $product->calc_price) {
+        $profit = 1 + config('constants.GIFT_PROFIT');
+
+        $user_controller = new UsersController();
+        $user_enable_point = $user_controller->getAvailableUserPoint($user_no);
+        $gift_need_price = $product->sell_price * $profit;
+
+        if($user_enable_point < $gift_need_price) {
             $response = config('constants.ERROR_NOT_ENOUGH_POINT');
             return response()->json($response);
         }
@@ -241,8 +244,7 @@ class GifticonController extends BasicController
                 $product->order_id = $w_order_id;
 
                 // user point 감소
-                $profit = 1 + config('constants.GIFT_PROFIT');
-                $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * ($product->calc_price) * $profit);
+                $ret = $user->addPoint(config('constants.POINT_HISTORY_TYPE_GIFTICON'), (-1) * $gift_need_price);
 
                 if($ret == false) {
                     $response = config('constants.ERROR_NOT_ENOUGH_POINT');

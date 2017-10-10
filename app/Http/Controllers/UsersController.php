@@ -1725,4 +1725,18 @@ class UsersController extends BasicController
 
         return config('constants.SUCCESS');
     }
+
+    public function getAvailableUserPoint($user_no) {
+        $withdraw_controller = new WithdrawController();
+        $user_enable_point = $withdraw_controller->getWithdrawRequest($user_no);
+
+        $user = User::where('no', $user_no)->first();
+        if ($user == null) {
+           return 0;
+        }
+
+        $user_enable_point = $user->point  - $user_enable_point;
+
+        return $user_enable_point;
+    }
 }

@@ -230,13 +230,12 @@ class NotificationsController extends BasicController
         $to_user_no = $request->input('to_user_no');
 
         $response = Notification::select('*');
-        $response = $response->where(function ($q) use ($from_user_no, $to_user_no) {
-            $q->where(function ($q) use ($from_user_no, $to_user_no) {
-                $q->where(['from_user_no' => $from_user_no, 'to_user_no' => $to_user_no]);
-                $q->orWhere(['to_user_no' => $from_user_no, 'from_user_no' => $to_user_no]);
-            })->where(function ($q) {
-
-            });
+        $response = $response->where(
+            function ($q) use ($from_user_no, $to_user_no) {
+                $q->where(function ($q) use ($from_user_no, $to_user_no) {
+                    $q->where(['from_user_no' => $from_user_no, 'to_user_no' => $to_user_no]);
+                    $q->orWhere(['to_user_no' => $from_user_no, 'from_user_no' => $to_user_no]);
+                });
         });
         $response = $response->orderBy('created_militime', 'desc')->offset($limit * ($page - 1))->limit($limit)->get();
 
@@ -255,6 +254,74 @@ class NotificationsController extends BasicController
         }
 
         return response()->json($response);
+    }
+
+    private function pointForEnvelop($from_user_no, $to_user_no) {
+
+        $results = User::where('no', $from_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return false;
+        }
+        $from_user = $results[0];
+
+        $results = User::where('no', $to_user_no)->get();
+        if ($results == null || count($results) == 0) {
+            return false;
+        }
+        $to_user = $results[0];
+
+        $user_controller = new UsersController();
+        $avablable_point = $user_controller->getAvailableUserPoint($from_user_no);
+
+        $pointRule = config('constants.POINT_ADD_RULE');
+        $need_point = $pointRule[config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE')];
+
+        //상담<=>상담회원일 경우
+        $need_minus = false;
+        $need_plus = false;
+
+        if($from_user->verified == config('constants.VERIFIED') && $to_user->verified == config('constants.VERIFIED')) {
+            $need_minus = true;
+            $need_plus = true;
+        }
+        //상담<=>일반회원일 경우
+        else if($from_user->verified == config('constants.VERIFIED') && $to_user->verified == config('constants.UNVERIFIED')) {
+            // 이미 이력이 있으며 차감 중지, 이력이 없으면 차감
+            $response = Notification::where('from_user_no', $to_user_no)->where('to_user_no', $from_user_no)->limit(1)->get();
+
+            if($response != null && count($response) > 0) {
+                $need_minus = false;
+            }
+            else {
+                $need_minus = true;
+            }
+            $need_plus = false;
+        }
+        //일반<=>상담회원일 경우
+        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.VERIFIED')) {
+            $need_minus = true;
+            $need_plus = true;
+        }
+        //일반<=>일반회원일 경우
+        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.UNVERIFIED')) {
+            $need_minus = true;
+            $need_plus = false;
+        }
+
+        if($need_minus == true) {
+            if($avablable_point < $need_point) {
+                return false;
+            }
+
+            $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+        }
+
+        if ($need_plus == true) {
+            $profit = config('constants.SEND_ENVELOP_PROFIT');
+            $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
+        }
+
+        return true;
     }
 
     public function doNotification(HttpRequest $request)
@@ -280,6 +347,13 @@ class NotificationsController extends BasicController
             if ($title == null) {
                 $title = config('constants.NOTI_TITLE_CONTENT')[$type]['title'];
             }
+
+            $ret = $this->pointForEnvelop($from_id, $to_id);
+            if($ret == false) {
+                $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+                return response()->json($response);
+            }
+
             $response = $this->addNotification($type, $from_id, $to_id, $title, $content, $data);
         } else if ($oper == 'edit') {
             if ($id == null) {
@@ -344,14 +418,12 @@ class NotificationsController extends BasicController
             return config('constants.ERROR_BLOCK_USER');
         }
 
-        $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
-        if ($ret == false) {
-            return config('constants.ERROR_NOT_ENOUGH_POINT');
+        $ret = $this->pointForEnvelop($user_no, $to_user_no);
+        if($ret == false) {
+            $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+            return response()->json($response);
         }
 
-        $profit = config('constants.SEND_ENVELOP_PROFIT');
-        $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
-        
         $data['content'] = $content;
         $ret = $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
         return response()->json($ret);
@@ -385,8 +457,6 @@ class NotificationsController extends BasicController
         $from_user = $results[0];
         $from_user->fillInfo();
 
-        $query = DB::table('t_user')->select('t_user.no')->where('sex', $sex)->where('no', '!=', $user_no)->where('admin_level', config('constants.NO_ADMIN'));
-
         // 유저를 차단한 유저와 유저가 차단한 유저들을 제외하기
         $disable_results = UserRelation::where(function ($q) use ($user_no) {
                                 $q->where(function ($q) use ($user_no) {
@@ -407,8 +477,11 @@ class NotificationsController extends BasicController
             }
         }
 
+        // DB::enableQueryLog();
+
+        $query = DB::table('t_user')->select('t_user.no')->where('sex', $sex)->where('no', '!=', $user_no)->where('admin_level', config('constants.NO_ADMIN'));
         if(count($disable_array) > 0) {
-            $query->where('no', 'not in', $disable_array);
+            $query->whereNotIn('no', $disable_array);
         }
 
         if ($order == 0) { // distance
@@ -420,26 +493,28 @@ class NotificationsController extends BasicController
 
         $results = $query->offset(0)->limit($count)->get();
 
+        //dd(DB::getQueryLog());
+
         $data = [];
         $data['content'] = $content;
 
         $success_cnt = count($results);
-        if($success_cnt > 0) {
-            $from_user = User::where('no', $user_no)->first();
-            $ret = $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), $success_cnt);
-            if ($ret == false) {
-                return config('constants.ERROR_NOT_ENOUGH_POINT');
-            }
+        $pointRule = config('constants.POINT_ADD_RULE');
+        $need_point = $pointRule[config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE')] * $success_cnt;
+        $user_controller = new UsersController();
+        $user_enable_point = $user_controller->getAvailableUserPoint($user_no);
+
+        if($user_enable_point < $need_point) {
+            return config('constants.ERROR_NOT_ENOUGH_POINT');
         }
 
-        $profit = config('constants.SEND_ENVELOP_PROFIT');
         for ($i = 0; $i < count($results); $i++) {
             $to_user_no = $results[$i]->no;
             $this->sendAlarmMessage($from_user->no, $to_user_no, config('constants.NOTI_TYPE_SEND_ENVELOP'), $data);
 
             $to_user = User::where('no', $to_user_no)->get();
             if($to_user != null) {
-                $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), (-1) * (1 - $profit));
+                $this->pointForEnvelop($from_user->no, $to_user_no);
             }
         }
 
