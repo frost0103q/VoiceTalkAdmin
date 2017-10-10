@@ -167,6 +167,9 @@ return [
 		'UNVERIFIED' => 0,
 		'VERIFIED' => 1,
 
+        'UNREAD' => 0,
+        'READ' => 1,
+
 		'ANDROID' => 0,
 		'IOS'	=> 1,
 

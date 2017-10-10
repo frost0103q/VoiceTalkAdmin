@@ -82,96 +82,109 @@ class NotificationsController extends BasicController
      * @return json user arrya
      */
 
-    public function getNotificationList($search_type, $read_type, $user_no, $limit, $page)
-    {
-
-        $sql = "select * , (SELECT count(*) FROM t_notification d WHERE d.is_read = 0 AND c.from_user_no = d.from_user_no AND c.to_user_no = d.to_user_no ) AS unread_cnt FROM ";
-
-        if ($user_no != null) {
-            $sql = $sql . "(
-                            SELECT
-                                *
-                            FROM
-                                t_notification a
-                            INNER JOIN (
-                                SELECT
-                                    max(created_militime) latest
-                                FROM
-                                    t_notification
-                                WHERE
-                                    from_user_no = " . $user_no . "
-                                OR to_user_no = " . $user_no . "
-                                GROUP BY
-                                    from_user_no, to_user_no
-                            ) b ON a.created_militime = b.latest
-                        ) c";
-        } else {
-            $sql = $sql . "(
-                            SELECT
-                                *
-                            FROM
-                                t_notification a
-                            INNER JOIN (
-                                SELECT
-                                    max(created_militime) latest
-                                FROM
-                                    t_notification
-                                GROUP BY
-                                    from_user_no, to_user_no
-                                ) b ON a.created_militime = b.latest
-                            ) c";
-        }
-
-        $include_where = false;
-        if ($search_type == -1) { // search_all
-            if ($user_no != null) {
-                $sql = $sql . " where (c.to_user_no =" . $user_no . " OR c.from_user_no=" . $user_no . ")";
-                $include_where = true;
-            }
-        } else if ($search_type == -2 && $user_no != null) { // search_friend
-            $sql = $sql . ' where ((c.from_user_no = ' . $user_no . ' and c.to_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1))';
-            $sql = $sql . '       OR (c.to_user_no = ' . $user_no . ' and c.from_user_no in (select t_user_relation.relation_user_no from t_user_relation where t_user_relation.user_no=' . $user_no . ' and t_user_relation.is_friend = 1)))';
-            $include_where = true;
-        }
-
-        if ($read_type == 0 || $read_type == 1) { // unread
-            if ($include_where == false) {
-                $sql = $sql . " where c.is_read =" . $read_type;
-            } else {
-                $sql = $sql . " AND c.is_read =" . $read_type;
-            }
-
-            if ($user_no != null) {
-                $sql = $sql . " AND c.to_user_no=" . $user_no;
-            }
-        }
-
-        $sql = $sql . " ORDER BY c.created_militime DESC";
-
-        if ($page != null && $page > 0 && $limit != null && $limit >= 0) {
-            $sql = $sql . " Limit " . $limit . " OFFSET " . ($limit * ($page - 1));
-        }
-
-        $response = DB::raw($sql);
-
-        return DB::select($response);
-    }
-
     public function getUserUnreadCnt($user_no)
     {
-        $response = $this->getNotificationList(-1, 0, $user_no, -1, -1);
-        $unread_cnt = 0;
-        for ($i = 0; $i < count($response); $i++) {
-            if ($response[$i]->from_user_no == $user_no) {
-                $response[$i]->unread_cnt = 0;
-            }
-            $unread_cnt += $response[$i]->unread_cnt;
-        }
-
+        $unread_cnt =  Notification::where('to_user_no', $user_no)
+                                ->where('is_read', config('constants.UNREAD')) ->count();
         return $unread_cnt;
     }
 
-    public function notificationList(HttpRequest $request)
+    public function getChatRoomInfo($from_user_no, $peer_user_no) {
+        // 마지막 Message
+        $last_notifcation =  Notification::where(function ($q) use ($from_user_no, $peer_user_no) {
+            $q->where(function ($q) use ($from_user_no, $peer_user_no) {
+                $q->where('from_user_no', $from_user_no)->where('to_user_no', $peer_user_no);
+            })
+                ->orWhere(function ($q) use ($from_user_no, $peer_user_no) {
+                    $q->where('to_user_no', $from_user_no)->where('from_user_no', $peer_user_no);
+                });
+        })->orderBy('created_militime', 'desc')->limit(1)->first();
+
+        // 상대유저정보
+        $user = User::where('no', $peer_user_no)->first();
+        $user_relation = UserRelation::where('user_no', $from_user_no)->where('relation_user_no', $peer_user_no)->first();
+        $other_user_relation = UserRelation::where('user_no', $peer_user_no)->where('relation_user_no', $from_user_no)->first();
+
+        // unread_cnt
+        $unread_cnt =  Notification::where('from_user_no', $peer_user_no)->where('to_user_no', $from_user_no)
+            ->where('is_read', config('constants.UNREAD')) ->count();
+
+        $user->fillInfo();
+        $chat_room = $last_notifcation;
+        $chat_room->user = $user;
+        $chat_room->user_relation = $user_relation;
+        $chat_room->other_user_relation = $other_user_relation;
+        $chat_room->from_user_no = $from_user_no;
+        $chat_room->to_user_no = $peer_user_no;
+        $chat_room->unread_cnt = $unread_cnt;
+
+        return $chat_room;
+    }
+
+    public function getChatRoomList($user_no, $page, $limit) {
+        // 1. 채팅방 얻기
+        $sql = "select (SELECT max(created_militime) latest FROM t_notification WHERE (t_notification.from_user_no = a.from_user_no and t_notification.to_user_no = a.to_user_no) or 
+                 (t_notification.from_user_no = a.to_user_no and t_notification.to_user_no = a.from_user_no)) as latest, a.from_user_no, a.to_user_no from ";
+
+        if($user_no != null) {
+            $sql .= "(select from_user_no, to_user_no from t_notification where from_user_no=$user_no group by from_user_no, to_user_no";
+            $sql .= " UNION SELECT to_user_no as from_user_no, from_user_no as to_user_no from t_notification where to_user_no=$user_no group by from_user_no, to_user_no) a";
+        }
+        else {
+            $sql .= "(select from_user_no, to_user_no from t_notification group by from_user_no, to_user_no";
+            $sql .= " UNION SELECT to_user_no as from_user_no, from_user_no as to_user_no from t_notification group by from_user_no, to_user_no) a";
+        }
+        $sql = $sql . " ORDER BY latest DESC";
+        $sql .= " Limit " . $limit . " OFFSET " . ($limit * ($page - 1));
+
+        $response = DB::select($sql);
+
+        // 2. 채팅방별 리스트정보얻기. (마지막 message, 상대유저, unread_cnt)
+        $arr_chat_room = array();
+        for ($i = 0; $i < count($response); $i++) {
+            $chat_room = $response[$i];
+            $from_user_no = $chat_room->from_user_no;
+            $peer_user_no = $chat_room->to_user_no;
+
+            $chat_room_info = $this->getChatRoomInfo($from_user_no, $peer_user_no);
+
+            if($chat_room_info != null) {
+                array_push($arr_chat_room, $chat_room_info);
+            }
+        }
+
+        return $arr_chat_room;
+    }
+
+    public function getFriendRoomList($user_no, $page, $limit) {
+
+        $sql = "select (SELECT max(created_militime) latest FROM t_notification WHERE (t_notification.from_user_no = a.from_user_no and t_notification.to_user_no = a.to_user_no) or 
+                 (t_notification.from_user_no = a.to_user_no and t_notification.to_user_no = a.from_user_no)) as latest, a.from_user_no, a.to_user_no from ";
+
+        $sql .= " (select $user_no as from_user_no , relation_user_no as to_user_no from t_user_relation where user_no=$user_no and is_friend =".config('constants.TRUE').") as a";
+        $sql = $sql . " ORDER BY latest DESC";
+        $sql .= " Limit " . $limit . " OFFSET " . ($limit * ($page - 1));
+
+        $response = DB::select($sql);
+
+        // 2. 채팅방별 리스트정보얻기. (마지막 message, 상대유저, unread_cnt)
+        $arr_chat_room = array();
+        for ($i = 0; $i < count($response); $i++) {
+            $chat_room = $response[$i];
+            $from_user_no = $chat_room->from_user_no;
+            $peer_user_no = $chat_room->to_user_no;
+
+            $chat_room_info = $this->getChatRoomInfo($from_user_no, $peer_user_no);
+
+            if($chat_room_info != null) {
+                array_push($arr_chat_room, $chat_room_info);
+            }
+        }
+
+        return $arr_chat_room;
+    }
+
+    public function chatRoomList(HttpRequest $request)
     {
         $limit = $request->input('rows');
         $page = $request->input('page');
@@ -186,28 +199,12 @@ class NotificationsController extends BasicController
 
         $user_no = $request->input('user_no');
         $search_type = $request->input('search_type') == null ? -1 : $request->input('search_type');
-        $read_type = $request->input('read_type') == null ? -1 : $request->input('read_type');
 
-        $response = $this->getNotificationList($search_type, $read_type, $user_no, $limit, $page);
-
-        for ($i = 0; $i < count($response); $i++) {
-            $notification = $response[$i];
-            $other_user_relation = null;
-            if ($notification->from_user_no == $user_no) {
-                $response[$i]->unread_cnt = 0;
-                $user = User::where('no', $notification->to_user_no)->first();
-                $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->to_user_no)->first();
-                $other_user_relation = UserRelation::where('user_no', $notification->to_user_no)->where('relation_user_no', $user_no)->first();
-            } else {
-                $user = User::where('no', $notification->from_user_no)->first();
-                $user_relation = UserRelation::where('user_no', $user_no)->where('relation_user_no', $notification->from_user_no)->first();
-                $other_user_relation = UserRelation::where('user_no', $notification->from_user_no)->where('relation_user_no', $user_no)->first();
-            }
-
-            $user->fillInfo();
-            $response[$i]->user = $user;
-            $response[$i]->user_relation = $user_relation;
-            $response[$i]->other_user_relation = $other_user_relation;
+        if($search_type == -2) { // 친구
+            $response = $this->getFriendRoomList($user_no, $page, $limit);
+        }
+        else { // 전체
+            $response = $this->getChatRoomList($user_no, $page, $limit);
         }
 
         return response()->json($response);

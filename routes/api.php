@@ -66,7 +66,7 @@ Route::get('/checkDuplicateTalk', 'TalkController@duplicateTalk');
 
 // notification api
 Route::post('/notification', 'NotificationsController@doNotification');
-Route::get('/notificationList', 'NotificationsController@notificationList');
+Route::get('/notificationList', 'NotificationsController@chatRoomList');
 Route::post('/sendEnvelop', 'NotificationsController@sendEnvelop');
 Route::post('/sendGroupEnvelop', 'NotificationsController@sendGroupEnvelop');
 Route::post('/readEnvelop', 'NotificationsController@readEnvelop');
