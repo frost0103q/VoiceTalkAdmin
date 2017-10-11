@@ -176,7 +176,11 @@ class TalkController extends BasicController
                     }
                 }
 
-                $talk = new Talk;
+                $talk = Talk::where('user_no', $user_no)->where('type', $type)->first();
+
+                if($talk == null) {
+                    $talk = new Talk;
+                }
 
                 $talk->subject = $subject;
                 $talk->greeting = $greeting;
@@ -226,6 +230,11 @@ class TalkController extends BasicController
                     }
                 }
 
+                $talk = Talk::where('user_no', $user_no)->where('type', $type)->first();
+
+                if($talk == null) {
+                    $talk = new Talk;
+                }
                 $talk = new Talk;
 
                 $talk->greeting = $greeting;
