@@ -71,6 +71,7 @@ class AdminNoticeController extends BasicController
         $response['gift_profit'] = config('constants.GIFT_PROFIT');
         $response['withdraw_profit'] = config('constants.WITHDRAW_PROFIT');
         $response['withdraw_tax'] = config('constants.WITHDRAW_TAX');
+        $response['send_point_profit'] = config('constants.SEND_POINT_PROFIT');
 
         return response()->json($response);
     }

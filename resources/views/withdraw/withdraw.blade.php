@@ -51,13 +51,13 @@
         </form>
     </div>
     <div class="col-md-12">
-        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_req_amount_by_condition')}} : <span id="total_withdraw_amount"></span>{{trans('lang.won')}}</strong></label>
+        <label class="control-label" style="padding: 20px"><strong>{{trans('lang.total_req_amount_by_condition')}} : <span id="total_withdraw_amount">0</span>{{trans('lang.won')}}</strong></label>
     </div>
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover" id="tbl_withdraw" style="width: 100%">
             <thead>
             <tr>
-                <th></th>
+                <th><input class="select-checkbox" type="checkbox" id="check_all" name="check_all" style="margin-left: -5px;"></th>
                 <th>{{trans('lang.number')}}</th>
                 <th>Nickname</th>
                 <th>{{trans('lang.req_amount')}}</th>
@@ -162,7 +162,9 @@
                     },
                     "createdRow": function (row, data, dataIndex) {
                         $('td:eq(1)', row).html(dataIndex + start_index + 1);
-                        $("#total_withdraw_amount").text(data[11]);
+                        if(data.length > 0) {
+                            $("#total_withdraw_amount").text(data[11]);
+                        }
                     },
                     "columnDefs": [{
                         'orderable': false,
@@ -179,6 +181,10 @@
                 });
             }
         }
+
+        $("#check_all").change(function() {
+            $('#tbl_withdraw .withdraw_no').prop('checked', this.checked);
+        });
     });
 
     $("#btn_w_search").click(function () {
