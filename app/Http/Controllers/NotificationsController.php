@@ -267,55 +267,168 @@ class NotificationsController extends BasicController
         }
         $to_user = $results[0];
 
-        $user_controller = new UsersController();
-        $avablable_point = $user_controller->getAvailableUserPoint($from_user_no);
+        // 대화방의 첫대화얻기
+        $chat_room  = Notification::where(function ($q) use ($from_user_no, $to_user_no) {
+                                                $q->where(function ($q) use ($from_user_no, $to_user_no) {
+                                                    $q->where('from_user_no', $from_user_no)->where('to_user_no', $to_user_no);
+                                                })->orWhere(function ($q) use ($from_user_no, $to_user_no) {
+                                                    $q->where('to_user_no', $from_user_no)->where('from_user_no', $to_user_no);
+                                                });
+                                    })->where(function ($q){
+                                                $q->where('type', config('constants.NOTI_TYPE_SEND_ENVELOP'))
+                                                    ->orWhere('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
+                                    })->orderBy('created_militime')->limit(1)->first();
+
+        if($chat_room != null) {
+            $chatroom_from_user_no = $chat_room->from_user_no;
+            $chatroom_to_user_no = $chat_room->to_user_no;
+        }
+        else {
+            $chatroom_from_user_no = $from_user_no;
+            $chatroom_to_user_no = $to_user_no;
+        }
+
+        if($chatroom_from_user_no == $from_user_no) {
+            $chatroom_from_user = $from_user;
+            $chatroom_to_user = $to_user;
+        }
+        else {
+            $chatroom_from_user = $to_user;
+            $chatroom_to_user = $from_user;
+        }
+
+        $need_a_minus = false;
+        $need_a_plus = false;
+        $need_b_minus = false;
+        $need_b_plus = false;
+
+        // A상담=>B상담회원일 경우
+        if($chatroom_from_user->verified == config('constants.VERIFIED') && $chatroom_to_user->verified == config('constants.VERIFIED')) {
+            // A가 보낼때는 -20, 이때 B가 받으면 +14
+            if($chatroom_from_user->no == $from_user_no) {
+                $need_a_minus = true;
+                $need_a_plus = false;
+                $need_b_minus = false;
+                $need_b_plus = true;
+            }
+            // B가 보낼때는 그냥, 이때 A가 받으면 그냥,
+            else {
+                $need_a_minus = false;
+                $need_a_plus = false;
+                $need_b_minus = false;
+                $need_b_plus = false;
+            }
+        }
+        //A상담=>B일반회원일 경우
+        else if($chatroom_from_user->verified == config('constants.VERIFIED') && $chatroom_to_user->verified == config('constants.UNVERIFIED')) {
+            // B에게서 첫메시지가 있는가 검사
+            $first_b_message  = Notification::where('from_user_no', $chatroom_to_user->no)->where('to_user_no', $chatroom_from_user->no)->where(function ($q){
+                                    $q->where('type', config('constants.NOTI_TYPE_SEND_ENVELOP'))
+                                        ->orWhere('type', config('constants.NOTI_TYPE_CHATMESSAGE'));
+                                })->limit(1)->first();
+
+
+            // B가 보낸 첫메시지가 없는 경우
+            if($first_b_message == null) {
+                // A가 B한테 맹폭격처럼 메세지 보낼때는 -20 되다가
+                if($chatroom_from_user->no == $from_user_no) {
+                    $need_a_minus = true;
+                    $need_a_plus = false;
+                    $need_b_minus = false;
+                    $need_b_plus = false;
+                }
+                else {
+                    // B가 보낼때는 -20, 이때 A가 받으면 적립
+                    $need_b_minus = true;
+                    $need_a_plus = true;
+                    $need_a_minus = false;
+                    $need_b_plus = false;
+                }
+            }
+            else {
+                // 차감 중지, 이때 B는 포인트 그냥
+                if($chatroom_from_user->no == $from_user_no) {
+                    $need_a_minus = false;
+                    $need_a_plus = false;
+                    $need_b_minus = false;
+                    $need_b_plus = false;
+                }
+                else {
+                    // B가 보낼때는 -20, 이때 A가 받으면 적립
+                    $need_b_minus = true;
+                    $need_a_plus = true;
+                    $need_a_minus = false;
+                    $need_b_plus = false;
+                }
+            }
+        }
+        // A일반=>B상담회원일 경우
+        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.VERIFIED')) {
+            // A가 보낼때는 -20, 이때 B가 받으면 적립,
+            if($chatroom_from_user->no == $from_user_no) {
+                $need_a_minus = true;
+                $need_a_plus = false;
+                $need_b_minus = false;
+                $need_b_plus = true;
+            }
+            else {
+                // B가 보낼때는 그냥, 이때 A가 받으면 그냥
+                $need_a_minus = false;
+                $need_a_plus = false;
+                $need_b_minus = false;
+                $need_b_plus = false;
+            }
+        }
+        //일반<=>일반회원일 경우
+        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.UNVERIFIED')) {
+            // A가 보낼때는 -20, 이때 B가 받으면 그냥,
+            if($chatroom_from_user->no == $from_user_no) {
+                $need_a_minus = true;
+                $need_a_plus = false;
+                $need_b_minus = false;
+                $need_b_plus = false;
+            }
+            else {
+                // B가 보낼때는 -20, 이때 A가 받으면 그냥
+                $need_b_minus = true;
+                $need_a_minus = false;
+                $need_a_plus = false;
+                $need_b_plus = false;
+            }
+        }
 
         $pointRule = config('constants.POINT_ADD_RULE');
         $need_point = $pointRule[config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE')];
 
-        //상담<=>상담회원일 경우
-        $need_minus = false;
-        $need_plus = false;
+        if($need_a_minus == true) {
+            $user_controller = new UsersController();
+            $avablable_point = $user_controller->getAvailableUserPoint($chatroom_from_user->no);
 
-        if($from_user->verified == config('constants.VERIFIED') && $to_user->verified == config('constants.VERIFIED')) {
-            $need_minus = true;
-            $need_plus = true;
-        }
-        //상담<=>일반회원일 경우
-        else if($from_user->verified == config('constants.VERIFIED') && $to_user->verified == config('constants.UNVERIFIED')) {
-            // 이미 이력이 있으며 차감 중지, 이력이 없으면 차감
-            $response = Notification::where('from_user_no', $to_user_no)->where('to_user_no', $from_user_no)->limit(1)->get();
-
-            if($response != null && count($response) > 0) {
-                $need_minus = false;
-            }
-            else {
-                $need_minus = true;
-            }
-            $need_plus = false;
-        }
-        //일반<=>상담회원일 경우
-        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.VERIFIED')) {
-            $need_minus = true;
-            $need_plus = true;
-        }
-        //일반<=>일반회원일 경우
-        else if($from_user->verified == config('constants.UNVERIFIED') && $to_user->verified == config('constants.UNVERIFIED')) {
-            $need_minus = true;
-            $need_plus = false;
-        }
-
-        if($need_minus == true) {
             if($avablable_point < $need_point) {
                 return false;
             }
 
-            $from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+            $chatroom_from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
         }
 
-        if ($need_plus == true) {
-            $profit = config('constants.SEND_ENVELOP_PROFIT');
-            $to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
+        if($need_b_minus == true) {
+            $user_controller = new UsersController();
+            $avablable_point = $user_controller->getAvailableUserPoint($chatroom_to_user->no);
+
+            if($avablable_point < $need_point) {
+                return false;
+            }
+
+            $chatroom_to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'), 1);
+        }
+
+        $profit = config('constants.SEND_ENVELOP_PROFIT');
+        if ($need_a_plus == true) {
+            $chatroom_from_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
+        }
+
+        if ($need_b_plus == true) {
+            $chatroom_to_user->addPoint(config('constants.POINT_HISTORY_TYPE_SEND_ENVELOPE'),  (-1)*(1-$profit));
         }
 
         return true;
