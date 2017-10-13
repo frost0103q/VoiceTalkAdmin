@@ -25,7 +25,7 @@ return [
     'notice_manage'=>'공지관리',
     'cach_manage'=>'입출금관리',
     'statistic_manage'=>'통계관리',
-    'admin_notice'=>'운영자계시판',
+    'admin_notice'=>'운영자게시판',
     'interdict_manage'=>'금지어등록',
 
     //home page
@@ -321,7 +321,7 @@ return [
     'cupon'=>'쿠폰',
     'log_in'=>'가입',
     'male'=>'남',
-    'female'=>'녀',
+    'female'=>'여',
     'exit'=>'탈퇴',
     'sum'=>'합계',
     'presnet'=>'선물',
