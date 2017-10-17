@@ -1,8 +1,6 @@
 ## Admin Dashboard
-
-[[https://github.com/happymario/VoiceTalkAdmin/blob/master/img.png|alt=octocat]]
- Contact a human
-
+MemberManager, Talk Manager
+![alt tag](https://github.com/happymario/VoiceTalkAdmin/blob/master/img.png)
 
 ## Project Run
 1. Composer설치
