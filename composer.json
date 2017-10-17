@@ -7,10 +7,12 @@
     "require": {
         "php": ">=5.6.4",
         "barryvdh/laravel-ide-helper": "v2.3.2",
+        "brozot/laravel-fcm": "^1.2",
         "fabiang/xmpp": "^0.7.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "5.4.*",
+        "nexmo/laravel": "^0.4.0",
         "simplesoftwareio/simple-sms": "3.0.*"
     },
     "require-dev": {

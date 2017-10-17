@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="note note-success">
-            <p>대기</p>
+            <p>{{trans('lang.wait')}}</p>
         </div>
     </div>
     @foreach($talk_img as $img_model)

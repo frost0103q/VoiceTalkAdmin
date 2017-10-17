@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -28,7 +27,8 @@ class AuthServiceProvider extends ServiceProvider
         //
     }
 
-    public static function generateRandomString($length = 10) {
+    public static function generateRandomString($length = 10)
+    {
         //$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $characters = '0123456789';
         $charactersLength = strlen($characters);

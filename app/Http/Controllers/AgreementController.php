@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\BasicController;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Http\Response;
+use App\Models\ServerFile;
+use App\Models\Talk;
+use App\Models\User;
 use DB;
 use Request;
-use App\Models\ServerFile;
-
+use Session;
 
 
 class AgreementController extends BasicController
@@ -32,58 +30,46 @@ class AgreementController extends BasicController
      */
     public function __construct()
     {
-        
+
     }
 
     public function agree_photo()
     {
-        $user_profile_query="SELECT t_file.*,t_user.`no` AS user_no,t_user.nickname FROM t_user LEFT JOIN t_file ON t_user.img_no=t_file.`no` WHERE type=0";
-        $user_profile_img=DB::select($user_profile_query);
 
-        $profile_img_declare=array();
-        $profile_img_diff_time=array();
-        foreach ($user_profile_img as $profile_model){
-            $no=$profile_model->user_no;
-            $declare_cnt = DB::table('t_declare')
-                ->where('to_user_no', $no)
-                ->count('no');
-            $profile_img_declare[$no]=$declare_cnt;
-
-            $time=$profile_model->updated_at==null ? $profile_model->created_at:$profile_model->updated_at;
-            $diff_time = $this->get_time_diff($time);
-            $profile_img_diff_time[$no]=$diff_time;
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
         }
 
+        $user_profile_query = "SELECT * FROM  v_profile_file";
+        $user_profile_img = DB::select($user_profile_query);
 
-        $talk_img_query="SELECT A.*,t_user.nickname from (SELECT t_file.*,t_talk.user_no FROM t_talk LEFT JOIN t_file ON t_file.`no`=t_talk.img_no WHERE t_file.type=0) AS A LEFT JOIN t_user ON A.user_no=t_user.no";
-        $talk_img=DB::select($talk_img_query);
-
-        $talk_img_declare=array();
-        $talk_img_diff_time=array();
-        foreach ($talk_img as $talk_img_model){
-            $no=$talk_img_model->user_no;
-            $declare_cnt = DB::table('t_declare')
-                ->where('to_user_no', $no)
-                ->count('no');
-            $talk_img_declare[$no]=$declare_cnt;
-
-            $time=$talk_img_model->updated_at==null ? $talk_img_model->created_at:$talk_img_model->updated_at;
-            $diff_time = $this->get_time_diff($time);
-            $talk_img_diff_time[$no]=$diff_time;
+        $profile_img_diff_time = array();
+        foreach ($user_profile_img as $profile_model) {
+            $time = ($profile_model->updated_at == null || $profile_model->updated_at == '0000-00-00 00:00:00') ? $profile_model->created_at : $profile_model->updated_at;
+            $profile_img_diff_time[$profile_model->no] = $this->get_time_diff($time);
         }
-        
+
+        $talk_img_query = "SELECT * FROM v_talk_file where type='0'";
+        $talk_img = DB::select($talk_img_query);
+
+        $talk_img_diff_time = array();
+        foreach ($talk_img as $talk_img_model) {
+            $time = ($talk_img_model->updated_at == null || $talk_img_model->updated_at == '0000-00-00 00:00:00') ? $talk_img_model->created_at : $talk_img_model->updated_at;
+            $talk_img_diff_time[$talk_img_model->no] = $this->get_time_diff($time);
+        }
+
 
         return view('photo_agree.index',
-            ['menu_index'=>1,
-            'user_profile_img'=>$user_profile_img,
-            'talk_img'=>$talk_img,
-            'profile_img_declare'=>$profile_img_declare,
-            'talk_img_declare'=>$talk_img_declare,
-            'profile_img_diff_time'=>$profile_img_diff_time,
-            'talk_img_diff_time'=>$talk_img_diff_time]);
+            ['menu_index' => 1,
+                'user_profile_img' => $user_profile_img,
+                'talk_img' => $talk_img,
+                'profile_img_diff_time' => $profile_img_diff_time,
+                'talk_img_diff_time' => $talk_img_diff_time]);
     }
-    
-    public function get_time_diff($time){
+
+    public function get_time_diff($time)
+    {
         $year = substr($time, 0, 4);
         $month = substr($time, 5, 2);
         $day = substr($time, 8, 2);
@@ -204,80 +190,306 @@ class AgreementController extends BasicController
         return $result_data;
     }
 
-    public function img_agree(){
+    public function get_declare_cnt($user_no)
+    {
+        $declare_cnt = DB::table('t_declare')
+            ->where('to_user_no', $user_no)
+            ->count('no');
+        return $declare_cnt;
+    }
+
+    public function img_agree()
+    {
 
         $params = Request::all();
         $no = $params['t_file_no'];
+        $type = $params['type'];
 
-        if(!isset($no))
+        if (!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE')]);
-        if(!$results)
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        if (!$results)
             return config('constants.FAIL');
-        else
-            return config('constants.SUCCESS');
+        else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $user = User::where('img_no', $no)->first();
+            $user_no = $user->no;
+
+            $data = [];
+            $data['type'] = $type;
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'), $data);
+
+            return $this->get_img_html($type, $no);
+        }
     }
 
-    public function img_disagree(){
+    public function img_disagree()
+    {
         $params = Request::all();
         $no = $params['t_file_no'];
+        $type = $params['type'];
 
-        if(!isset($no))
+        if (!isset($no))
             return config('constants.FAIL');
 
-        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE')]);
-        if(!$results)
+        $results = ServerFile::where('no', $no)->update(['checked' => config('constants.DISAGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        if (!$results)
             return config('constants.FAIL');
-        else
-            return config('constants.SUCCESS');
+        else {
+
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $user = User::where('img_no', $no)->first();
+            $user_no = $user->no;
+
+            $data = [];
+            $data['type'] = $type;
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_REFUSE_IMAGE'), $data);
+
+            return $this->get_img_html($type, $no);
+        }
     }
 
-    public function all_img_agree(){
+    public function all_img_agree()
+    {
         $params = Request::all();
         $img_no_array = $params['img_no_array'];
 
-        if(!isset($img_no_array))
+        if (!isset($img_no_array))
             return config('constants.FAIL');
 
-        $img_no_array=explode(',',$img_no_array);
+        $img_no_array = explode(',', $img_no_array);
 
-        for ($i=0;$i<count($img_no_array);$i++){
-            $results = ServerFile::where('no', $img_no_array[$i])->update(['checked' => config('constants.AGREE')]);
-            if(!$results)
+        $new_selected_img_array = array();
+
+        foreach ($img_no_array as $item) {
+            if (!in_array($item, $new_selected_img_array))
+                array_push($new_selected_img_array, $item);
+        }
+
+        for ($i = 0; $i < count($new_selected_img_array); $i++) {
+            $results = ServerFile::where('no', $new_selected_img_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+            if (!$results)
                 return config('constants.FAIL');
+
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $user = User::where('img_no', $new_selected_img_array[$i])->first();
+            $user_no = $user->no;
+
+            $data = [];
+            $data['type'] = 'user';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_IMAGE_AGREE'), $data);
         }
 
         return config('constants.SUCCESS');
     }
-    
+
     public function get_user_data()
     {
         $no = $_POST["no"];
         if (!isset($no))
-            die (config('constants.FAIL'));
+            return (config('constants.FAIL'));
         $query = DB::select("select * from t_user where no = ?", [$no]);
-        if (count($query)<0)
-            die (config('constants.FAIL'));
+        if (count($query) < 1)
+            return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
-        if (count($img)<0)
-            die (config('constants.FAIL'));
-        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+        if (count($img) < 1)
+            $img_path = "";
+        else
+            $img_path = $img[0]->path;
+        return (json_encode(array('info' => $query[0], 'path' => $img_path)));
     }
 
     public function talk_confirm()
     {
-        $no = $_POST["no"];
-        if (!isset($no))
-            die (config('constants.FAIL'));
-        $query = DB::select("select * from t_talk where no = ?", [$no]);
-        if (count($query)<0)
-            die (config('constants.FAIL'));
+        $user_no = $_POST["user_no"];
+        if (!isset($user_no))
+            return (config('constants.FAIL'));
+        $query = DB::select("select * from t_talk where user_no = ?", [$user_no]);
+        if (count($query) < 1)
+            return (config('constants.FAIL'));
         $img = DB::select("select * from t_file where no = ?", [$query[0]->img_no]);
-        if (count($img)<0)
-            die (config('constants.FAIL'));
-        die (json_encode(array('info'=>$query[0], 'path'=>$img[0]->path)));
+        if (count($img) < 1)
+            $img_path = "";
+        else
+            $img_path = $img[0]->path;
+
+        $voice = DB::select("select * from t_file where no = ?", [$query[0]->voice_no]);
+        if (count($voice) < 1)
+            $voice_path = "";
+        else
+            $voice_path = $voice[0]->path;
+
+        return (json_encode(array('info' => $query[0], 'img_path' => $img_path, 'voice_path' => $voice_path)));
     }
 
+    public function get_img_html($type, $no)
+    {
+        if ($type == 'talk') {
+            $talk_img_query = "SELECT * FROM v_talk_file where type='0' and `no`='" . $no . "'";
+            $talk_img = DB::select($talk_img_query);
+            $img_model = $talk_img[0];
+
+            $time = ($img_model->updated_at == null || $img_model->updated_at == '0000-00-00 00:00:00') ? $img_model->created_at : $img_model->updated_at;
+            $talk_img_diff_time[$img_model->no] = $this->get_time_diff($time);
+
+            return view('photo_agree.img',
+                ['img_model' => $img_model,
+                    'type' => $type,
+                    'all_flag' => false,
+                    'talk_img_diff_time' => $talk_img_diff_time]);
+        } else {
+            $user_profile_query = "SELECT * FROM  v_profile_file WHERE `no`='" . $no . "'";
+            $user_profile_img = DB::select($user_profile_query);
+            $img_model = $user_profile_img[0];
+
+            $time = ($img_model->updated_at == null || $img_model->updated_at == '0000-00-00 00:00:00') ? $img_model->created_at : $img_model->updated_at;
+            $profile_img_diff_time[$img_model->no] = $this->get_time_diff($time);
+
+            return view('photo_agree.img',
+                ['img_model' => $img_model,
+                    'type' => $type,
+                    'all_flag' => false,
+                    'profile_img_diff_time' => $profile_img_diff_time]);
+        }
+    }
+
+    public function agree_voice()
+    {
+
+        $email = Session::get('u_email');
+        if (!isset($email) || $email == null) {
+            return redirect("/login");
+        }
+
+        $voice_query = "SELECT * FROM v_talk_file where type='1'";
+        $talk_voice = DB::select($voice_query);
+
+        $talk_voice_diff_time = array();
+        foreach ($talk_voice as $model) {
+            $time = ($model->updated_at == null || $model->updated_at == '0000-00-00 00:00:00') ? $model->created_at : $model->updated_at;
+            $talk_voice_diff_time[$model->no] = $this->get_time_diff($time);
+        }
+
+
+        return view('voice_agree.index',
+            ['menu_index' => 2,
+                'talk_voice' => $talk_voice,
+                'talk_voice_diff_time' => $talk_voice_diff_time,
+            ]);
+    }
+
+    public function get_voice_html($talk_no)
+    {
+        $voice_query = "SELECT * FROM v_talk_file where type='1' and talk_no='" . $talk_no . "'";
+        $talk_voice = DB::select($voice_query);
+
+        $talk_voice_diff_time = array();
+        foreach ($talk_voice as $model) {
+            $time = ($model->updated_at == null || $model->updated_at == '0000-00-00 00:00:00') ? $model->created_at : $model->updated_at;
+            $talk_voice_diff_time[$model->no] = $this->get_time_diff($time);
+        }
+
+
+        return view('voice_agree.voice',
+            ['voice_model' => $talk_voice[0],
+                'talk_voice_diff_time' => $talk_voice_diff_time,
+            ]);
+    }
+
+    public function voice_agree()
+    {
+
+        $params = Request::all();
+        $file_no = $params['t_file_no'];
+        $talk_no = $params['talk_no'];
+
+        if (!isset($file_no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $file_no)->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        if (!$results)
+            return config('constants.FAIL');
+        else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $file_no)->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'), $data);
+
+            return $this->get_voice_html($talk_no);
+        }
+    }
+
+    public function voice_disagree()
+    {
+        $params = Request::all();
+        $file_no = $params['t_file_no'];
+        $talk_no = $params['talk_no'];
+
+        if (!isset($file_no))
+            return config('constants.FAIL');
+
+        $results = ServerFile::where('no', $file_no)->update(['checked' => config('constants.DISAGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+        if (!$results)
+            return config('constants.FAIL');
+        else {
+            // send Admin Push
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $file_no)->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_REFUSE'), $data);
+
+            return $this->get_voice_html($talk_no);
+        }
+    }
+
+    public function all_voice_agree()
+    {
+        $params = Request::all();
+        $voice_no_array = $params['voice_no_array'];
+
+        if (!isset($voice_no_array))
+            return config('constants.FAIL');
+
+        $voice_no_array = explode(',', $voice_no_array);
+
+        $new_selected_voice_array = array();
+
+        foreach ($voice_no_array as $item) {
+            if (!in_array($item, $new_selected_voice_array))
+                array_push($new_selected_voice_array, $item);
+        }
+
+        for ($i = 0; $i < count($new_selected_voice_array); $i++) {
+            $results = ServerFile::where('no', $new_selected_voice_array[$i])->update(['checked' => config('constants.AGREE'), 'updated_at' => date('Y-m-d H:i:s')]);
+            if (!$results)
+                return config('constants.FAIL');
+
+            $admin_no = Session::get('u_no');
+            $talk = Talk::where('voice_no', $new_selected_voice_array[$i])->first();
+            $user_no = $talk->user_no;
+
+            $data = [];
+            $data['type'] = 'talk';
+
+            $this->sendAlarmMessage($admin_no, $user_no, config('constants.NOTI_TYPE_ADMIN_VOICE_AGREE'), $data);
+        }
+
+        return config('constants.SUCCESS');
+    }
 }
 

@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: paulo
- * Date: 6/13/2017
- * Time: 4:13 PM
+ * Date: 7/10/2017
+ * Time: 9:55 PM
  */
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ChatHistory  extends Model
+class FreeChargeHistory extends Model
 {
-    protected $table = 't_chathistory';
+    protected $table = 't_free_charge_history';
 
     protected $primaryKey = 'no';
 }
