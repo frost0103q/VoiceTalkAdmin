@@ -413,9 +413,7 @@ class UsersController extends BasicController
             $testmode = config('constants.testmode');
             if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
-            } else {
-                $user->point = config('constants.USER_FIRST_POINT');
-            }
+            } 
 
             $user->save();
             $user->addPoint(config('constants.POINT_HISTORY_TYPE_SIGN_UP'), 1);
