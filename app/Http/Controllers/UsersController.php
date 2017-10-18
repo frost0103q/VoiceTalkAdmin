@@ -316,7 +316,7 @@ class UsersController extends BasicController
         $authcode = $results[0];
         $testmode = config('constants.testmode');
         if ($testmode == config('constants.TEST_MODE_DELIVERY')) {
-            $response = config('constants.ERROR_NO_INFORMATION');
+            $response = config('constants.ERROR_NO');
         }
         else {
             if(strcmp($authcode->auth_code, $auth_code) == 0) {
