@@ -418,7 +418,7 @@ class UsersController extends BasicController
             }
 
             $testmode = config('constants.testmode');
-            if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
+            if ($testmode == config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
             }
 

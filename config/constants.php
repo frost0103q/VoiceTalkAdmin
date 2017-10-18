@@ -22,7 +22,7 @@ return [
         'TEST_MODE_GLOBAL' => 1,
         'TEST_MODE_DELIVERY' => 2,
 
-        'testmode' => 1,
+        'testmode' => 2,
 
         'PUSH_MODE_FCM' => 0,
         'PUSH_MODE_XMPP' => 1,
@@ -31,7 +31,6 @@ return [
 
         'DEFAULT_ADMIN_NO' => 1,
 
-        'USER_FIRST_POINT' => 300,
         'TALK_CONSULTING' =>0,
         'TALK_NORMAL' =>1,
         'TALK_VOICE_TYPE' => ["일반 목소리", "귀여운 목소리", "중후한 목소리","통통목소리","애교목소리"],
