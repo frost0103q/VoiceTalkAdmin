@@ -315,14 +315,21 @@ class UsersController extends BasicController
 
         $authcode = $results[0];
         $testmode = config('constants.testmode');
-        if ($testmode != config('constants.TEST_MODE_DELIVERY') || strcmp($authcode->auth_code, $auth_code) == 0) {
-            $update_data = [];
-            $update_data['verified'] = config("constants.TRUE");
-            $update_data['phone_number'] = $authcode->user_phone_number;
-
-            User::where('no', $authcode->user_no)->update($update_data);
-        } else {
+        if ($testmode == config('constants.TEST_MODE_DELIVERY')) {
             $response = config('constants.ERROR_NO_INFORMATION');
+        }
+        else {
+            if(strcmp($authcode->auth_code, $auth_code) == 0) {
+                $update_data = [];
+                $update_data['verified'] = config("constants.TRUE");
+                $update_data['phone_number'] = $authcode->user_phone_number;
+
+                User::where('no', $authcode->user_no)->update($update_data);
+                $response = config('constants.ERROR_NO');
+            }
+            else {
+                $response = config('constants.ERROR_NO_INFORMATION');
+            }
         }
         AuthCode::where('no', $auth_no)->delete();
 
@@ -413,8 +420,6 @@ class UsersController extends BasicController
             $testmode = config('constants.testmode');
             if ($testmode != config('constants.TEST_MODE_DELIVERY')) {
                 $user->point = 30000;
-            } else {
-                $user->point = config('constants.USER_FIRST_POINT');
             }
 
             $user->save();
