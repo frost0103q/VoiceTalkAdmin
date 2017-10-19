@@ -798,7 +798,7 @@ class UsersController extends BasicController
         $data['point'] = $ret;
         $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_COMPLETE_CONSULTING'), $data);
 
-        $user = $this->getUserInfo($from_user->no);
+        $user = User::where('no', $from_user_no)->first();
         $response['no'] = $user->point;
 
         return response()->json($response);
