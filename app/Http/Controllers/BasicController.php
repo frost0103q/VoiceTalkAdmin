@@ -364,6 +364,12 @@ class BasicController extends Controller
         echo $cont;
     }
 
+    public function getConsultingMinPoint() {
+        $min_point = config('constants.MIN_CONSULTING_POINT');
+
+        return $min_point;
+    }
+
     public static function getChangeDate($date, $count)
     {
         $year = intval(substr($date, 0, 4));

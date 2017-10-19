@@ -780,7 +780,6 @@ class UsersController extends BasicController
             return response()->json($response);
         }
         $to_user = $results[0];
-        // $min = $time_in_second / 60;
 
         $type =  config('constants.POINT_HISTORY_TYPE_CHAT');
 
@@ -1081,6 +1080,15 @@ class UsersController extends BasicController
 
         // 상담신청할때
         if($type == config('constants.NOTI_TYPE_REQUEST_CONSULTING')) {
+
+            // 요청유저의 포인트 검사
+            //
+            $available_point = $this->getAvailableUserPoint($from_user_no);
+            $min_point = $this->getConsultingMinPoint();
+            if($available_point <= $min_point) {
+                $response = config('constants.ERROR_NOT_ENOUGH_POINT');
+                return response()->json($response);
+            }
             
             //상담회원 즉 인증된 회원이 아닐때
             if($to_user->verified == config('constants.UNVERIFIED')) {

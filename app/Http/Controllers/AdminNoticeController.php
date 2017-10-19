@@ -67,11 +67,13 @@ class AdminNoticeController extends BasicController
         $response['talk_notice_list'] = TalkNotice::all("notice_type", "link_url", "content");
 
         $controller = new IdiomController();
-        $response['idiom_list'] = $controller->getIdiomList();
         $response['gift_profit'] = config('constants.GIFT_PROFIT');
         $response['withdraw_profit'] = config('constants.WITHDRAW_PROFIT');
         $response['withdraw_tax'] = config('constants.WITHDRAW_TAX');
         $response['send_point_profit'] = config('constants.SEND_POINT_PROFIT');
+        $response['consulting_min_point'] = $this->getConsultingMinPoint();
+        $response['point_add_rule'] = config('constants.POINT_ADD_RULE');
+        $response['idiom_list'] = $controller->getIdiomList();
 
         return response()->json($response);
     }

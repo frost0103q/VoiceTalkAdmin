@@ -22,7 +22,7 @@ return [
         'TEST_MODE_GLOBAL' => 1,
         'TEST_MODE_DELIVERY' => 2,
 
-        'testmode' => 2,
+        'testmode' => 1,
 
         'PUSH_MODE_FCM' => 0,
         'PUSH_MODE_XMPP' => 1,
@@ -55,6 +55,8 @@ return [
         'POINT_HISTORY_TYPE_FREE_CHARGE'=> 6,
         'POINT_HISTORY_TYPE_GIFTICON'=> 7,
         'POINT_HISTORY_TYPE_WITDDRAW'=> 8,
+
+        'MIN_CONSULTING_POINT'=> 200,
 
         'FREE_CHARGE_TYPE_ADSYNC'=> 0,
         'FREE_CHARGE_TYPE_NAS'=> 1,
