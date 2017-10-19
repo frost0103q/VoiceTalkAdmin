@@ -791,13 +791,15 @@ class UsersController extends BasicController
 
         $profit = config('constants.CONSULTING_PROFIT');
         $ret = $to_user->addPoint($type,  $time_in_second*(1-$profit));
-        $response['no'] = round($ret);
 
         // add notification
         $data = [];
         $data['time'] = $time_in_second;
         $data['point'] = $ret;
         $this->sendAlarmMessage($from_user->no, $to_user->no, config('constants.NOTI_TYPE_COMPLETE_CONSULTING'), $data);
+
+        $user = $this->getUserInfo($from_user->no);
+        $response['no'] = $user->point;
 
         return response()->json($response);
     }
