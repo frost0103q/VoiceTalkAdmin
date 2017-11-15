@@ -41,7 +41,7 @@ class AgreementController extends BasicController
             return redirect("/login");
         }
 
-        $user_profile_query = "SELECT * FROM  v_profile_file";
+        $user_profile_query = "SELECT * FROM  v_profile_file order by updated_at DESC";
         $user_profile_img = DB::select($user_profile_query);
 
         $profile_img_diff_time = array();
@@ -367,7 +367,7 @@ class AgreementController extends BasicController
             return redirect("/login");
         }
 
-        $voice_query = "SELECT * FROM v_talk_file where type='1'";
+        $voice_query = "SELECT * FROM v_talk_file where type='1' order by updated_at DESC";
         $talk_voice = DB::select($voice_query);
 
         $talk_voice_diff_time = array();
